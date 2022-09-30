@@ -1,0 +1,46 @@
+{
+    "Condition": [{
+            "label": "Tema",
+            "value": "Topic"
+        },
+        {
+            "label": "Puntuación del tema",
+            "value": "Score"
+        },
+        {
+            "label": "Sentimiento",
+            "value": "Sentiment"
+        }
+    ],
+    "Topic_SentimentCondition": [{
+            "label": "Igual a",
+            "value": "="
+        },
+        {
+            "label": "No es igual",
+            "value": "<>"
+        }
+    ],
+    "ScoreCondition": [{
+            "label": "Mas grande que",
+            "value": ">"
+        },
+        {
+            "label": "Menos que",
+            "value": "<"
+        }
+    ],
+    "Measure": [{
+            "label": "Positive",
+            "value": "Positive"
+        },
+        {
+            "label": "Neutral",
+            "value": "Neutral"
+        },
+        {
+            "label": "Negative",
+            "value": "Negative"
+        }
+    ]
+}

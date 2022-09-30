@@ -1,0 +1,59 @@
+<div style="margin: 32px 20px 4pc 32px;">
+    <div class="page-title mb-3">
+        <h2>Agent Stats</h2>
+    </div>
+    
+    
+   <div> 
+         
+        <div  class="pr-4 mb-4">
+            <p-table #dt1 class="queue-realtime" [columns]="selectedColumns" [value]="agentList" [resizableColumns]="true" sortField="UserName" [paginator]="true" [rows]="100" 
+            styleClass="p-datatable-gridlines" [globalFilterFields]="['UserName']">
+
+                <ng-template pTemplate="caption">
+                    <div class="p-d-flex" style="height: 30px;">
+                        <span class="col-md-4 pl-0 p-input-icon-left p-ml-auto">
+                            <i class="pi pi-search icon-style"></i>
+                            <input pInputText class="srch-box form-control" type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search by Agent Name" />
+                        </span>
+                        <span class="col-md-5 pl-0 pr-0 p-input-icon-left p-ml-auto">
+                            <p-multiSelect [options]="agentDDList" [(ngModel)]="selectedAgent"  [ngModelOptions]="{standalone: true}"
+                            maxSelectedLabels="0" selectedItemsLabel="{0} agent selected"  defaultLabel="Filter by Agent Name..." (onChange)="onChangefilter(selectedAgent)"></p-multiSelect>
+                        </span>
+                        <span class="col-md-3 pr-0 p-input-icon-left p-ml-auto">
+                            <p-multiSelect [options]="columnList" [(ngModel)]="selectedColumns"  [ngModelOptions]="{standalone: true}" optionLabel="header"
+                            maxSelectedLabels="0" selectedItemsLabel="{0} columns selected"  defaultLabel="Choose columns..." ></p-multiSelect>
+                        </span>
+                    
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header" let-columns>
+                   
+                    <tr>
+                        <th pResizableColumn class="table-header-style" style="width: 4%;">S.No</th>
+                        <th pSortableColumn="UserName" pResizableColumn class="table-header-style" style="width: 15pc;">Agent Name
+                            <p-sortIcon field="UserName"  style="font-size: 10px;"></p-sortIcon>
+                        </th>
+                        <th pResizableColumn [pSortableColumn]="col.field" class="table-header-style" *ngFor="let col of columns">
+                            {{col.header}} <p-sortIcon [field]="col.field"  style="font-size: 10px;"></p-sortIcon>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-queue let-rowIndex="rowIndex" let-columns="columns">
+                    <tr>
+                        <td class="table-data-style">{{rowIndex+1}}</td>
+                        <td class="us-name table-data-style">{{queue.UserName != undefined ? queue.UserName : "N/A"}}</td>
+                        <td class="table-data-style" *ngFor="let col of columns" [ngClass]="col.class">
+                            {{queue[col.field] != undefined ? queue[col.field] : "N/A"}}
+                        </td> 
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+
+   </div>
+
+    
+</div>

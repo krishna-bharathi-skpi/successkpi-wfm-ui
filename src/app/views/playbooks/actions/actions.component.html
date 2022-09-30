@@ -1,0 +1,804 @@
+<!-- <p>actions works!</p> -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+
+<!-- Actions -->
+<div style="margin: 0px 200px 0 32px;" *ngIf="actionNavigate=='card'">
+  <div class="top-header" style="justify-content: space-between;">
+    <h2 class="header-title">{{global.language?.playbooks?.actions?.title}}</h2>
+      <div style="display: flex;">
+        <div class="ipt-theme" style="margin-top: -20px;">
+          <i class="fa fa-search" aria-hidden="true" style="
+              position: relative;
+              left: 5px;
+              opacity: 0.6;
+              top: 29px;
+             "></i>
+          <input type="text" class="inp-searchs form-control" [(ngModel)]="searchActionName"
+            (ngModelChange)="searchAction()" placeholder="{{global.language?.playbooks?.actions?.search}}">
+        </div>
+        <div class="" *ngIf = "global.rolePermissions.playbooks.actions.isViewEdit == true">
+          <!--btn-create-->
+          <button type="button" class="create-theme"
+            (click)="createNewAction()">{{global.language?.playbooks?.actions?.create}}</button>
+        </div>
+      </div>
+  </div>
+  <!-- Card section -->
+  <section style="margin: 10px 0;">
+    <div class="row" *ngIf = "global.rolePermissions.playbooks.actions.isViewEdit == true || global.rolePermissions.playbooks.actions.isView == true">
+      <div class="col-sm-6 col-lg-4 actions-cards" *ngFor="let actionIterate of actionCard">
+        <div class="card ">
+          <div class="card-body ">
+            <div class="row">
+              <div class="card-title col-sm-10 module line-clamp" (click)="clickActionCard(actionIterate)">
+                {{actionIterate.cfaName}}</div>
+              <div class="col-sm-2" style="text-align: right;">
+                <img *ngIf="actionIterate.actionType=='Evaluation'" src="../assets/img/action_types/send_evaluation.svg"
+                  style="width: 20px;height: 20px;">
+                <img *ngIf="actionIterate.actionType=='EMAIL'" src="../assets/img/action_types/email.svg"
+                  style="width: 20px;height: 20px;">
+                <img *ngIf="actionIterate.actionType=='SMS'" src="../assets/img/action_types/sms_msg.svg"
+                  style="width: 20px;height: 20px;">
+                <img *ngIf="actionIterate.actionType=='LAMBDA'" src="../assets/img/action_types/aws_lambda.svg"
+                  style="width: 20px;height: 20px;">
+                <!-- <img *ngIf="actionIterate.actionType=='HTTPS'" src="../assets/img/action_types/https_rest.svg"
+                  style="width: 20px;height: 20px;"> -->
+              </div>
+            </div>
+
+            <div class="card-desc col-sm-10 module line-clamp-desc" style="padding-left: 0;padding-right: 0;"
+              (click)="clickActionCard(actionIterate)">
+              {{actionIterate.cfaDescription}}</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Edit Action -->
+<div style="margin: 36px 220px 0 32px;min-height: 100vh;" *ngIf="actionNavigate=='update'">
+  <div class="edit-header">
+    <div>
+      <img src="../../../../assets/img/back.svg">
+      <ul class="breadcrumb">
+        <li><label class="bread-crumb-label1"
+            (click)="cancelAction()">{{global.language?.playbooks?.actions?.creatAction?.breadcrumb}}</label></li>
+      </ul>
+    </div>
+    <div class="row" style="margin-bottom: 2%">
+      <div class="col-lg-9 col-sm-4">
+        <div class="page-title">
+          <h2>{{actionModel.cfaName}}</h2>
+        </div>
+      </div>
+      <div class="col-lg-3" style="text-align:right" *ngIf = "global.rolePermissions.playbooks.actions.isViewEdit == true">
+        <button type="button form-control" style="width: 117px;" data-toggle="modal" data-target="#myModal"
+          class="btn-delete">{{global.language?.playbooks?.actions?.EditAction?.deleteBtn}}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="edit-theme-ipt">
+
+    <form [formGroup]="actionEditForm">
+      <div class="row" style="margin-top: 30px;">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-12">
+              <span class="label-name">{{global.language?.playbooks?.actions?.creatAction?.actionName}}</span>
+              <span class="label-char" style="float: right;">44
+                {{global.language?.playbooks?.actions?.creatAction?.character}}</span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" id="actionnameid" class="form-control ipt-edit" maxlength="44" formControlName="editActionName"
+                [(ngModel)]="actionModel.cfaName"  (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                placeholder="{{global.language?.playbooks?.actions?.creatAction?.actionName}}" style="height: 56px;" 
+                [ngClass]="{ 'is-invalid': (!actionEditForm.controls['editActionName'].valid && actionEditForm.controls['editActionName'].touched)
+                                            ||(actionEditForm.controls['editActionName'].errors?.required && issubmitCreate)==true?true:false}">
+              <div *ngIf="(!actionEditForm.controls['editActionName'].valid && actionEditForm.controls['editActionName'].touched)
+                 ||(actionEditForm.controls['editActionName'].errors?.required && issubmitCreate)"
+                class="errormsg-topic">
+                {{global.language?.playbooks?.actions?.creatAction?.actionError}}</div>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="col-sm-6 ">
+          <div class="row">
+            <div class="col-sm-12">
+              <span class="label-name">{{global.language?.playbooks?.actions?.creatAction?.actionDescription}}</span>
+              <span class="label-char" style="float: right;">70
+                {{global.language?.playbooks?.actions?.creatAction?.character}}</span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" class="form-control ipt-edit" maxlength="70" [ngModelOptions]="{standalone: true}"
+                [(ngModel)]="actionModel.cfaDescription" 
+                placeholder="{{global.language?.playbooks?.actions?.creatAction?.actionDescription}}"
+                style="height: 56px;">
+              <!-- [ngClass]="{ 'is-invalid':(issubmitCreate || actionEditForm.controls['editActionDesc'].touched) && actionEditForm.controls['editActionDesc'].errors?.required }" -->
+              <!-- <div *ngIf="(issubmitCreate || actionEditForm.controls['editActionDesc'].touched) && actionEditForm.controls['editActionDesc'].errors?.required   "class="errormsg-topic">
+                  Please enter action description</div> -->
+              <!-- </div> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+  <div class="edit-action-types">
+    <div class="row" style="margin-top: 24px;">
+      <div class="col-sm-4">
+        <div class="form-group">
+          <h6>{{global.language?.playbooks?.actions?.creatAction?.actionType}} <img
+              src="../assets/img/microinteraction/helptext.svg"
+              tooltip="{{global.language?.playbooks?.actions?.creatAction?.tooltip}}" style="margin-left: 5px;"
+              placement="right"></h6>
+
+          <p-dropdown class="theme-select dplable" [options]="actionTypeDdl"
+            placeholder="{{global.language?.playbooks?.actions?.creatAction?.select}}"
+            [(ngModel)]="actionModel.actionType" (onChange)="changeActiontype()" [ngModelOptions]="{standalone: true}"
+            [disabled]='true'>
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email in Action type -->
+  <div class="edit-action-email" style="margin-top: 14px;" *ngIf="actionModel.actionType=='EMAIL'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.Email?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Email?.recipients}}</label>
+          <input type="email" class="ipt-actions form-control" name="updaterecipients"
+            [(ngModel)]="actionModel.cfaSnsTopics.emailRecipients" style="height: 56px;">
+          <span class="span-action-msg">{{global.language?.playbooks?.actions?.creatAction?.Email?.placholder}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Email?.subject}}</label>
+          <input type="text" class="ipt-actions form-control" name="usubject"
+            [(ngModel)]="actionModel.cfaSnsTopics.emailSubject" style="height: 36px;">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="form-group ">
+          <h6 class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Email?.message}}</h6>
+          <textarea class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.emailMessage" rows="8"
+            cols="40" style="padding: 12px 16px;">
+            </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMS Details in action type -->
+  <div class="edit-action-message" style="margin-top: 14px;" *ngIf="actionModel.actionType=='SMS'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.SMS?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.recipients}}</label>
+          <input type="email" class="ipt-actions form-control" name="smsrecipients"
+            [(ngModel)]="actionModel.cfaSnsTopics.smsPhoneNumbers" style="height: 56px;">
+          <span class="span-action-msg">{{global.language?.playbooks?.actions?.creatAction?.SMS?.placholder}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.person}}</label>
+          <input type="text" class="ipt-actions form-control" name="utitle"
+            [(ngModel)]="actionModel.cfaSnsTopics.smsTitle" style="height: 36px;">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.phoneNumber}}</label>
+          <input type="text" name="upnumber" [(ngModel)]="actionModel.cfaSnsTopics.smsFromPhoneNumber"
+            class="ipt-actions form-control" style="height: 36px;">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="form-group ">
+          <h6 class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.message}}</h6>
+          <textarea class="ipt-actions form-control" name="umsg" [(ngModel)]="actionModel.cfaSnsTopics.smsMessage"
+            rows="8" cols="40" style="padding: 12px 16px;">
+
+              </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--HTTP Rest in action types  -->
+  <!-- <div class="edit-action-httpRest" style="margin-top: 14px;" *ngIf="actionModel.actionType=='HTTPS'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.title}}</h6>
+    <div class="row" style="margin-top: 18px; margin-bottom: 18px;">
+      <div class="col-sm-9">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.Endpoint}}</label>
+          <input type="text" name="uendpoint" class="ipt-actions form-control"
+            [(ngModel)]="actionModel.cfaSnsTopics.httpsEndurl" style="height: 36px;">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <span>{{global.language?.playbooks?.actions?.creatAction?.HTTP.type}}</span>
+        <div class="form-group" style="margin-top: 4%;">
+          <p-radioButton name="utypeGet" value="Get"
+            label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.types?.get}}"
+            [(ngModel)]="actionModel.cfaSnsTopics.httpsType" inputId="preopt27">
+          </p-radioButton>
+
+          <p-radioButton name="utypePost" value="Post"
+            label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.types?.post}}"
+            [(ngModel)]="actionModel.cfaSnsTopics.httpsType" inputId="preopt28">
+          </p-radioButton>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top: 28px;">
+      <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.title}}</h6>
+
+      <div *ngFor="let paramsiterater of actionModel.cfaSnsTopics.httpsParameters;let j= index">
+
+        <div class="row">
+
+          <div class="col-sm-4">
+            <span>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.type}}</span>
+            <div class="form-group" style="margin-top: 3%;">
+              <p-radioButton name="ugroup{{j}}" value="variable"
+                label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.types?.variable}}"
+                [(ngModel)]="paramsiterater.Parametertype" inputId="preopt{{j}}"></p-radioButton>
+
+              <p-radioButton name="ugroup1{{j}}" value="constant"
+                label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.types?.constant}}"
+                [(ngModel)]="paramsiterater.Parametertype" inputId="preopt3{{j}}"></p-radioButton>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <div class="row" *ngIf="paramsiterater.Parametertype == 'variable'" style="margin-top: 0%;">
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.ParameterName}}</label>
+                  <input type="text" name="upname" class="ipt-actions form-control"
+                    [ngModelOptions]="{standalone: true}" [(ngModel)]="paramsiterater.Key" style="height: 36px;">
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.Parametervalue}}</label>
+                  <p-dropdown class="action-paramter dplable" name="upvalue" [options]="parameterDdl"
+                    [(ngModel)]="paramsiterater.Value"
+                    placeholder="{{global.language.playbooks.actions.creatAction.HTTP.parameters.select}}"
+                    [ngModelOptions]="{standalone: true}" [showClear]="true">
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="form-group" style="margin-top: 2px;">
+                  <label></label><br>
+
+                  <button class="btn-delete-icon mt-2"
+                    (click)="removeParameter(actionModel.cfaSnsTopics.httpsParameters,j)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -16px;"></button>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="paramsiterater.Parametertype == 'constant'" style="margin-top: 0%;">
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.ParameterName}}</label>
+                  <input type="text" name="ucname" class="ipt-actions form-control"
+                    [ngModelOptions]="{standalone: true}" [(ngModel)]="paramsiterater.Key" style="height: 36px;">
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.Parametervalue}}</label>
+                  <input type="text" name="ucvalue" class="ipt-actions form-control" [(ngModel)]="paramsiterater.Value"
+                    [ngModelOptions]="{standalone: true}" style="height: 36px;">
+                </div>
+
+              </div>
+              <div class="col-sm-1">
+                <div class="form-group" style="margin-top: 2px;">
+                  <label></label><br>
+
+                  <button class="btn-delete-icon mt-2"
+                    (click)="removeParameter(actionModel.cfaSnsTopics.httpsParameters,j)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -16px;"></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0;">
+      <button type="button" style="outline: 0px;" class="add-btn"
+        (click)="addParameter(actionModel.cfaSnsTopics.httpsParameters)">
+        <img src="../assets/img/microinteraction/add_item.svg">
+        <span class="btn-txt-add">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.add}}</span>
+      </button>
+    </div>
+
+  </div> -->
+
+  <!-- Evaluation details in action type -->
+  <div class="edit-action-evaluation" style="margin-top: 14px;" *ngIf="actionModel.actionType=='Evaluation'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.Evaluations?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <p-dropdown class="action-evaluation dplable" [options]="evaluationDdl" filter="true"
+            [(ngModel)]="actionModel.cfaSnsTopics.evaluationId"
+            placeholder="{{global.language?.playbooks?.actions?.creatAction?.Evaluations?.select}}"
+            [ngModelOptions]="{standalone: true}"></p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aws Lambda in Action type -->
+  <div class="edit-action-lambda" style="margin-top: 14px;" *ngIf="actionModel.actionType=='LAMBDA'">
+    <form>
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="form-group ">
+            <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Lambda?.endpoint}}</label>
+            <input type="text" name="ularn" class="ipt-actions form-control"
+              [(ngModel)]="actionModel.cfaSnsTopics.lambdaArn" style="height: 36px;">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <span *ngIf="errorValidationCreate!=null && issubmitCreate" class="errormsg-topic"
+    style=" position: relative; top: -14px;">{{errorValidationCreate}}</span>
+
+
+  <!-- Save Cancel buttons -->
+  <div class="save-cancel common-bottom" style="margin-top: 14px;">
+    <form>
+      <div class="row">
+        <div class="col-sm-5" *ngIf = "global.rolePermissions.playbooks.actions.isViewEdit == true">
+          <div class="form-group">
+            <button type="button" class="btn-save"
+            [disabled]="loading" (click)="actionUpdate()">{{global.language?.playbooks?.actions?.creatAction?.saveCancel?.save}}</button>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-group">
+            <button type="button" class="btn-cancel"
+              (click)="cancelAction()">{{global.language?.playbooks?.actions?.creatAction?.saveCancel?.cancel}}</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- create Action -->
+<div style="margin: 36px 220px 0 32px;min-height: 100vh;" *ngIf="actionNavigate=='create'">
+  <div class="edit-header">
+    <div>
+      <img src="../../../../assets/img/back.svg">
+      <ul class="breadcrumb">
+        <li><label class="bread-crumb-label1" style="cursor: pointer;"
+            (click)="cancelAction()">{{global.language?.playbooks?.actions?.creatAction?.breadcrumb}}</label></li>
+      </ul>
+    </div>
+    <div class="row" style="margin-bottom: 2%">
+      <div class="col-lg-9 col-sm-4">
+        <div class="page-title">
+          <h2>{{global.language?.playbooks?.actions?.creatAction?.createTilte}}</h2>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="edit-theme-ipt">
+
+    <form [formGroup]="actionCreateForm">
+      <div class="row" style="margin-top: 30px;">
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-12">
+              <span class="label-name">{{global.language?.playbooks?.actions?.creatAction?.actionName}}</span>
+              <span class="label-char" style="float: right;">44
+                {{global.language?.playbooks?.actions?.creatAction?.character}}</span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" id="actionnameid" class="form-control ipt-edit" maxlength="44" formControlName="createActionName"
+                [(ngModel)]="actionModel.cfaName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                placeholder="{{global.language?.playbooks?.actions?.creatAction?.actionName}}" style="height: 56px;"
+                [ngClass]="{ 'is-invalid': (!actionCreateForm.controls['createActionName'].valid && actionCreateForm.controls['createActionName'].touched)
+                                            ||(actionCreateForm.controls['createActionName'].errors?.required && issubmitCreate)}">
+              <div *ngIf="(!actionCreateForm.controls['createActionName'].valid && actionCreateForm.controls['createActionName'].touched)
+                 ||(actionCreateForm.controls['createActionName'].errors?.required && issubmitCreate)"
+                class="errormsg-topic">
+                {{global.language?.playbooks?.actions?.creatAction?.actionError}}</div>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 ">
+          <div class="row">
+            <div class="col-sm-12">
+              <span class="label-name">{{global.language?.playbooks?.actions?.creatAction?.actionDescription}}</span>
+              <span class="label-char" style="float: right;">70
+                {{global.language?.playbooks?.actions?.creatAction?.character}}</span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" class="form-control ipt-edit" [ngModelOptions]="{standalone: true}" maxlength="70"
+                [(ngModel)]="actionModel.cfaDescription"
+                placeholder="{{global.language?.playbooks?.actions?.creatAction?.actionDescription}}"
+                style="height: 56px;">
+              <!-- [ngClass]="{ 'is-invalid':(issubmitCreate || actionCreateForm.controls['createActionDesc'].touched) && actionCreateForm.controls['createActionDesc'].errors?.required }" -->
+              <!-- <div *ngIf="(issubmitCreate || actionCreateForm.controls['createActionDesc'].touched) && actionCreateForm.controls['createActionDesc'].errors?.required   "class="errormsg-topic">
+                   Please enter action description</div> -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="edit-action-types">
+    <form>
+      <div class="row" style="margin-top: 24px;">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <h6>{{global.language?.playbooks?.actions?.creatAction?.actionType}}</h6>
+            <p-dropdown class="theme-select dplable" [options]="actionTypeDdl"
+              placeholder="{{global.language?.playbooks?.actions?.creatAction?.select}}"
+              [(ngModel)]="actionModel.actionType" (onChange)="changeActiontype()"
+              [ngModelOptions]="{standalone: true}"></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Email in Action type -->
+  <div class="edit-action-email" style="margin-top: 14px;" *ngIf="actionModel.actionType=='EMAIL'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.Email?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="form-label">{{global.language.playbooks?.actions?.creatAction?.Email?.recipients}}</label>
+          <input type="email" class="ipt-actions form-control" name="recipients"
+            [(ngModel)]="actionModel.cfaSnsTopics.emailRecipients" style="height: 56px;">
+          <span class="span-action-msg">{{global.language?.playbooks?.actions?.creatAction?.Email?.placholder}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Email?.subject}}</label>
+          <input type="text" class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.emailSubject"
+            style="height: 36px;">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="form-group ">
+          <h6 class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Email?.message}}</h6>
+          <textarea class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.emailMessage" rows="8"
+            cols="40" style="padding: 12px 16px;">
+            </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMS Details in action type -->
+  <div class="edit-action-message" style="margin-top: 14px;" *ngIf="actionModel.actionType=='SMS'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.SMS?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.recipients}}</label>
+          <input type="email" class="ipt-actions form-control" name="recipients"
+            [(ngModel)]="actionModel.cfaSnsTopics.smsPhoneNumbers" style="height: 56px;">
+          <span class="span-action-msg">{{global.language?.playbooks?.actions?.creatAction?.SMS?.placholder}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.person}}</label>
+          <input type="text" class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.smsTitle"
+            style="height: 36px;">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.phoneNumber}}</label>
+          <input type="text" [(ngModel)]="actionModel.cfaSnsTopics.smsFromPhoneNumber" class="ipt-actions form-control"
+            style="height: 36px;">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="form-group ">
+          <h6 class="form-label">{{global.language?.playbooks?.actions?.creatAction?.SMS?.message}}</h6>
+          <textarea class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.smsMessage" rows="8"
+            cols="40" style="padding: 12px 16px;">
+
+              </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--HTTP Rest in action types  -->
+  <!-- <div class="edit-action-httpRest" style="margin-top: 14px;" *ngIf="actionModel.actionType=='HTTPS'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.title}}</h6>
+    <div class="row" style="margin-top: 18px; margin-bottom: 18px;">
+      <div class="col-sm-9">
+        <div class="form-group ">
+          <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.HTTP?.Endpoint}}</label>
+          <input type="text" class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.httpsEndurl"
+            style="height: 36px;">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <span>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.type}}</span>
+        <div class="form-group" style="margin-top: 4%;">
+          <p-radioButton name="typeGet" value="Get"
+            label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.types?.get}}"
+            [(ngModel)]="actionModel.cfaSnsTopics.httpsType" inputId="preopt27">
+          </p-radioButton>
+
+          <p-radioButton name="typePost" value="Post"
+            label="{{global.language?.playbooks?.actions?.creatAction?.HTTP.types?.post}}"
+            [(ngModel)]="actionModel.cfaSnsTopics.httpsType" inputId="preopt28">
+          </p-radioButton>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top: 28px;">
+      <h6 class="topic-subtitle"> {{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.title}}</h6>
+
+      <div *ngFor="let paramsiterater of actionModel.cfaSnsTopics.httpsParameters;let j= index">
+
+        <div class="row">
+
+          <div class="col-sm-4">
+            <span>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.type}}</span>
+            <div class="form-group" style="margin-top: 3%;">
+              <p-radioButton name="group{{j}}" value="variable"
+                label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.types?.variable}}"
+                [(ngModel)]="paramsiterater.Parametertype" inputId="preopt{{j}}"></p-radioButton>
+
+              <p-radioButton name="group1{{j}}" value="constant"
+                label="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.types?.constant}}"
+                [(ngModel)]="paramsiterater.Parametertype" inputId="preopt3{{j}}"></p-radioButton>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <div class="row" *ngIf="paramsiterater.Parametertype == 'variable'" style="margin-top: 0%;">
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.ParameterName}}</label>
+                  <input type="text" class="ipt-actions form-control" [ngModelOptions]="{standalone: true}"
+                    [(ngModel)]="paramsiterater.Key" style="height: 36px;">
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.Parametervalue}}</label>
+                  <p-dropdown class="action-paramter dplable" [options]="parameterDdl" [(ngModel)]="paramsiterater.Value"
+                    placeholder="{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.select}}"
+                    [ngModelOptions]="{standalone: true}" [showClear]="true">
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <div class="form-group" style="margin-top: 2px;">
+                  <label></label><br>
+
+                  <button class="btn-delete-icon mt-2"
+                    (click)="removeParameter(actionModel.cfaSnsTopics.httpsParameters,j)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -16px;"></button>
+                </div>
+              </div>
+            </div>
+            <div class="row" *ngIf="paramsiterater.Parametertype == 'constant'" style="margin-top: 0%;">
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.ParameterName}}</label>
+                  <input type="text" class="ipt-actions form-control" [ngModelOptions]="{standalone: true}"
+                    [(ngModel)]="paramsiterater.Key" style="height: 36px;">
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <label>{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.Parametervalue}}</label>
+                  <input type="text" class="ipt-actions form-control" [(ngModel)]="paramsiterater.Value"
+                    [ngModelOptions]="{standalone: true}" style="height: 36px;">
+                </div>
+
+              </div>
+              <div class="col-sm-1">
+                <div class="form-group" style="margin-top: 2px;">
+                  <label></label><br>
+
+                  <button class="btn-delete-icon mt-2"
+                    (click)="removeParameter(actionModel.cfaSnsTopics.httpsParameters,j)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -16px;"></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin: 24px 0;">
+      <button type="button" style="outline: 0px;" class="add-btn"
+        (click)="addParameter(actionModel.cfaSnsTopics.httpsParameters)">
+        <img src="../assets/img/microinteraction/add_item.svg">
+        <span
+          class="btn-txt-add">&nbsp;{{global.language?.playbooks?.actions?.creatAction?.HTTP?.parameters?.add}}</span>
+      </button>
+    </div>
+
+  </div> -->
+
+  <!-- Evaluation details in action type -->
+  <div class="edit-action-evaluation" style="margin-top: 14px;" *ngIf="actionModel.actionType=='Evaluation'">
+    <h6 class="topic-subtitle">{{global.language?.playbooks?.actions?.creatAction?.Evaluations?.title}}</h6>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group ">
+          <p-dropdown class="action-evaluation dplable" [options]="evaluationDdl" filter="true"
+            [(ngModel)]="actionModel.cfaSnsTopics.evaluationId"
+            placeholder="{{global.language?.playbooks?.actions?.creatAction?.Evaluations?.select}}"
+            [ngModelOptions]="{standalone: true}"></p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aws Lambda in Action type -->
+  <div class="edit-action-lambda" style="margin-top: 14px;" *ngIf="actionModel.actionType=='LAMBDA'">
+    <form>
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="form-group ">
+            <label class="form-label">{{global.language?.playbooks?.actions?.creatAction?.Lambda?.endpoint}}</label>
+            <input type="text" class="ipt-actions form-control" [(ngModel)]="actionModel.cfaSnsTopics.lambdaArn"
+              [ngModelOptions]="{standalone: true}" style="height: 36px;">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <span *ngIf="errorValidationCreate!=null && issubmitCreate" class="errormsg-topic"
+    style=" position: relative; top: -14px;">{{errorValidationCreate}}</span>
+
+
+
+  <!-- Save Cancel buttons -->
+  <div class="save-cancel common-bottom" style="margin-top: 14px;">
+    <form>
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="form-group">
+            <button type="submit" class="btn-save"
+            [disabled]="loading" (click)="actionCreate()">{{global.language?.playbooks?.actions?.creatAction?.saveCancel?.save}}</button>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-group">
+            <button type="reset" class="btn-cancel"
+              (click)="cancelAction()">{{global.language?.playbooks?.actions?.creatAction?.saveCancel?.cancel}}</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+<!-- ***********************************************Delete Confirm box ***********************************************-->
+<div class="modal" id="myModal" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content delete-popup">
+
+      <!-- Modal Header -->
+      <div class="modal-header" style="border-bottom: 0;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="delete-popup-content">
+          <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+              margin-right: 20px;">
+          <h5>{{global.language?.playbooks?.actions?.EditAction?.popupForm?.title}}</h5>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer " style="border-top: 0px;">
+        <div style="margin-left: 11.6%;">
+          <button type="button" class="btn-pop-del" data-dismiss="modal"
+            (click)="actionDelete()">{{global.language?.playbooks?.actions?.EditAction?.popupForm?.deletebtn}}</button>
+          <button type="submit" class="btn-pop-cancel"
+            data-dismiss="modal">{{global.language?.playbooks?.actions?.EditAction?.popupForm?.cancelbtn}}</button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

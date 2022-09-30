@@ -1,0 +1,134 @@
+.evaluate-sub-title{
+    display: flex;
+    justify-content: space-between;
+}
+.player-left{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 #B3B6C7;
+    /* width: 520px; */
+    /* height: 600px; */
+    width: 50%;
+    padding: 24px 24px;
+}
+.player-right{
+    /* background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 #B3B6C7; */
+    /* width: 520px; */
+    /* height: 600px; */
+    width: 50%;
+    /* height: 600px; */
+    
+    /* padding: 24px 24px; */
+}
+
+/* div#controls {
+    color: #333;
+    display: table;
+    text-align: center;
+    width: 100%;
+    background-color: #e4e7ea;
+}
+.plspan {
+    margin-right: 50px;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+#play-btn {
+    font-size: 20px;
+}
+
+#mute {
+    font-size: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+#refresh-btn {
+    font-size: 20px;
+    margin-left: 40px;
+} */
+
+.score-card{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 #B3B6C7;
+}
+
+.d-flex-content{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+thead tr{
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+thead tr th{
+    color: #3A3E50 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+}
+tbody tr td{
+  color: #3A3E50 !important;
+  font-size: 14px !important;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+.table-header-style{
+    padding: .75rem !important;
+    color: #3a3e50!important;
+    font-size: 12px!important;
+    letter-spacing: .3px !important;
+}
+.conv-label{
+    color: darkgrey;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+}
+
+.hover-conversation:hover{
+    background-color: #D6E3FD !important;
+    border-left: 18px solid #4A82F1 !important;
+    cursor: pointer;
+}
+.hover-conversation:hover .hover-data1{
+    left: 0 !important;
+    padding-left: 10px;
+    cursor: pointer;
+}
+.hover-conversation:hover .hover-data2{
+    right: 63px !important;
+    /* cursor: pointer; */
+}
+.hover-topic:hover{
+    padding: 0px !important;
+    background-color: #D6E3FD !important;
+    border-left: 18px solid #4A82F1 !important;
+    /* cursor: pointer; */
+    font-weight: 600;
+}
+.hover-topic,.hover-conversation{
+    cursor: pointer;
+}
+.hover-topic:hover .hover-topic-report1, .hover-topic:hover .hover-topic-report2{
+    margin-left: -3px !important;
+}
+.table-data-style{
+    font-size: 13px !important;
+}
+.savebtn-disable{
+    background-color: #aaadb3;
+    cursor: not-allowed;
+    border: 0;
+}
+
+.mod-tag {
+    background: #e1fbfa;
+    color: #2182a7;
+}
+
+p-field-checkbox > label, .p-field-radiobutton > label {
+    margin-left: 0.5rem !important;
+    line-height: 1;
+}

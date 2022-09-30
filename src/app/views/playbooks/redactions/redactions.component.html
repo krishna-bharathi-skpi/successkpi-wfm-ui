@@ -1,0 +1,193 @@
+<!-- <p>redactions works!</p> -->
+<!-- Redactions -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+<form [formGroup]="redactionForm" >
+<div style="margin: 0px 250px 0px 32px;">
+    <!-- <div class="edit-header">
+      <div class="row" style="margin-bottom: 2%">
+        <div class="col-lg-8 col-sm-4">
+          <div class="page-title">
+            <h2>{{global.language?.playbooks?.redactions?.title}}</h2>
+          </div>
+        </div> -->
+        <div class="top-header" style="justify-content: space-between;">
+              <h2 class="header-title">{{global.language?.playbooks?.redactions?.title}}</h2>
+        <div class="col-lg-4" style="text-align:right">
+          <span class="on-off-toggle redaction-switch-text" style="top: -5px !important">{{global.language?.playbooks?.redactions?.all}} {{redModelObj.isRedactionActive == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+          <p-inputSwitch class="redaction-all" [(ngModel)]="redModelObj.isRedactionActive" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+        </div>
+    </div>
+    <!-- old design as per existing -->
+    <!-- <div class="redaction-content" style="width: 54%;margin: 24px 0;">
+      <div>
+        <h5>{{global.language?.playbooks?.redactions?.email}}</h5>
+        <div class="redaction-froms">
+         <div class="form-group">
+           <label>{{global.language?.playbooks?.redactions?.replace}}</label>
+           <input  class="redaction-txt-box form-control" id="input" type="text" name="txt-email" pInputText [pKeyFilter]="emailRegex" [pValidateOnly]="true" [(ngModel)]="redModelObj.email" placeholder="test@test.com" formControlName="email" autocomplete="off"
+           [ngClass]="{'is-invalid': (!redactionForm.controls['email'].valid &&redactionForm.controls['email'].touched )||(redactionForm.controls['email'].errors?.required && issubmit ) }">
+          
+         <div *ngIf="(!redactionForm.controls['email'].valid &&redactionForm.controls['email'].touched )||(redactionForm.controls['email'].errors?.required && issubmit ) " class="errormsg-topic">{{global.language?.playbooks?.redactions?.emailError}}</div>
+         
+        
+      </div>
+         <div class="col-sm-2 on-off-switch " >
+            <span class="on-off-toggle">{{redModelObj.isEmailActive == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+             <p-inputSwitch  [(ngModel)]="redModelObj.isEmailActive" [disabled]="!redModelObj.isRedactionActive" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+         </div>
+        </div> 
+      </div>
+
+      <div>
+          <h5>{{global.language?.playbooks?.redactions?.phone}}</h5>
+          <div class="redaction-froms">
+           <div class="form-group" style="display: flex;flex-direction: column;">
+             <label>{{global.language?.playbooks?.redactions?.replace}}</label>
+             <p-inputMask class= "redaction-mask" [ngClass]="{'is-invalid': (redactionForm.controls['phone'].errors?.required && (issubmit || redactionForm.controls['phone'].touched )) }" mask="(999) 999-9999" formControlName="phone" name="txt-phone" size="30"[(ngModel)]="redModelObj.phone"  placeholder="(999) 999-9999" autocomplete="off" >
+            
+            </p-inputMask >
+           
+           <div *ngIf="(redactionForm.controls['phone'].errors?.required && (issubmit || redactionForm.controls['phone'].touched ))" class="errormsg-topic">{{global.language?.playbooks?.redactions?.phoneError}}</div>
+          </div>
+           <div class="col-sm-2 on-off-switch">
+            <span class="on-off-toggle">{{redModelObj.isPhoneActive == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+               <p-inputSwitch  [(ngModel)]="redModelObj.isPhoneActive" [disabled]="!redModelObj.isRedactionActive" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+           </div>
+
+          </div> 
+         
+      </div>
+      
+      <div>
+          <h5>{{global.language?.playbooks?.redactions?.social}}</h5>
+          <div class="redaction-froms">
+           <div class="form-group"style="display: flex;flex-direction: column;">
+             <label>{{global.language?.playbooks?.redactions?.replace}}</label>
+             <p-inputMask class="redaction-mask" [ngClass]="{'is-invalid': (redactionForm.controls['ssn'].errors?.required && (issubmit || redactionForm.controls['ssn'].touched ))}" mask="999-99-9999" size="30" formControlName="ssn" [(ngModel)]="redModelObj.ssn" placeholder="999-99-9999" autocomplete="off">
+            </p-inputMask>
+           <div *ngIf="(redactionForm.controls['ssn'].errors?.required && (issubmit || redactionForm.controls['ssn'].touched ))" class="errormsg-topic">{{global.language?.playbooks?.redactions?.socialError}}</div>
+          </div>
+           <div class="col-sm-2 on-off-switch">
+            <span class="on-off-toggle">{{redModelObj.isSsnActive == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+               <p-inputSwitch  [(ngModel)]="redModelObj.isSsnActive" [disabled]="!redModelObj.isRedactionActive" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+           </div>
+          </div> 
+      </div>
+
+      <div>
+          <h5>{{global.language?.playbooks?.redactions?.credit}} </h5>
+          <div class="redaction-froms">
+           <div class="form-group">
+             <label>{{global.language?.playbooks?.redactions?.replace}}</label>
+             <input id="cc"class="redaction-txt-box form-control" type="text" name="cc" size="30" [(ngModel)]="redModelObj.creditCardNumber" pInputText [pKeyFilter]="ccRegex" [pValidateOnly]="true" placeholder="1234-1234-1234-1234" formControlName="creditcard" autocomplete="off"
+             [ngClass]="{'is-invalid': (!redactionForm.controls['creditcard'].valid && redactionForm.controls['creditcard'].touched)||(redactionForm.controls['creditcard'].errors?.required && issubmit )}">
+            
+             <div *ngIf="(!redactionForm.controls['creditcard'].valid && redactionForm.controls['creditcard'].touched)||(redactionForm.controls['creditcard'].errors?.required && issubmit )"class="errormsg-topic">{{global.language?.playbooks?.redactions?.CreditError}}</div>
+            
+            </div>
+           <div class="col-sm-2 on-off-switch">
+            <span class="on-off-toggle">{{redModelObj.isCreditCardActive == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+               <p-inputSwitch  [(ngModel)]="redModelObj.isCreditCardActive" [disabled]="!redModelObj.isRedactionActive" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+           </div>
+          </div> 
+      </div>
+      
+      <div class="save-cancel" style="margin-top: 28px;">
+           <div class="row">
+             <div class="col-sm-5">
+                 <div class="form-group">
+                 <button type="submit" class="btn-save" >{{global.language?.playbooks?.redactions?.saveCancel?.save}}</button> 
+                 </div>
+             </div>
+             <div class="col-sm-5">
+                  <div class="form-group">
+                 <button type="button" class="btn-cancel"(click)="getRedaction()">{{global.language?.playbooks?.redactions?.saveCancel?.cancel}}</button>
+                 </div>
+             </div>
+       
+           </div>
+      </div>
+
+    </div> -->
+     
+    <!-- new static design in table format  -->
+    <div class="red-content">
+      <div  class="custom-phrases-text">
+        <p>Following information in the transcript will get redacted and replaced by "PII"(English Only):</p>
+      </div>
+      <div>
+        <table class="table table-bordered">
+          <thead>
+            <tr style="background-color: rgba(0, 0, 0, 0.05) !important;">
+              <th scope="col" style="min-width: 350px;">PII Entity</th>
+              <th scope="col">Definition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bank Account Number</td>
+              <td>A number that uniquely identifies a bank account.</td>
+            </tr>
+            <tr>
+              <td>Bank Routing Number</td>
+              <td>A number that identifies the location of a bank account.</td>
+            </tr>
+            <tr>
+              <td>Credit Card Number or Debit Card Number</td>
+              <td>A value that uniquely defines a payment card issued by a bank.</td>
+            </tr>
+            <tr>
+              <td>Credit Card or Debit Card CVV Code</td>
+              <td>A 3 digit or 4 digit security code on each credit card.</td>
+            </tr>
+            <tr>
+              <td>Credit Card or Debit Card Expiration Date</td>
+              <td>The month and year a card expires.</td>
+            </tr>
+            <tr>
+              <td>Credit Card PIN or Debit Card PIN</td>
+              <td>A security code issued by a bank or credit union.This number used for bank accounts and payment cards.</td>
+            </tr>
+            <tr>
+              <td>Email address</td>
+              <td>The unique identifier of an email box where message are delivered.</td>
+            </tr>
+            <tr>
+              <td>US Mailing address</td>
+              <td>The U.S. Mailing address of an individual.</td>
+            </tr>
+            <tr>
+              <td>Name</td>
+              <td>The first name and last name of a person.</td>
+            </tr>
+            <tr>
+              <td>US phone number</td>
+              <td>A 10-digit phone number within the United States.</td>
+            </tr>
+            <tr>
+              <td>Social Security Number</td>
+              <td>A 9-digit number or the last 4 digits of that number.Issued to U.S. citizen,permanent residents,and temporary residents with employments.</td>
+            </tr>
+
+          </tbody>
+        </table>
+        <div class="save-cancel" style="margin-top: 28px;">
+          <div class="row">
+            <div class="col-sm-5" *ngIf = "global.rolePermissions.playbooks.redactions.isViewEdit == true">
+                <div class="form-group">
+                <button type="submit" class="btn-save" [disabled]="loading" (click)="redactionPost()">{{global.language?.playbooks?.redactions?.saveCancel?.save}}</button> 
+                </div>
+            </div>
+            <div class="col-sm-5">
+                 <div class="form-group">
+                <button type="button" class="btn-cancel"(click)="getRedaction()">{{global.language?.playbooks?.redactions?.saveCancel?.cancel}}</button>
+                </div>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+

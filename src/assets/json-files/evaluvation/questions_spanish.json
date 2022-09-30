@@ -1,0 +1,18 @@
+[
+    {
+       "label":"Número",
+       "value":"Number"
+    },
+    {
+       "label":"Elección",
+       "value":"Choice"
+    },
+    {
+       "label":"Sí/No",
+       "value":"Yes/No"
+    },
+    {
+       "label":"Comentarios",
+       "value":"Comments"
+    }
+ ]

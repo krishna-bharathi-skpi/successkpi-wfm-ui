@@ -1,0 +1,141 @@
+.wfm h1,h2,h3,h4,h5,h6,li,p,a,button,label,textarea,small{
+  font-family: sans-serif;
+}
+
+.wfm h1,h2,h3,h4,h5,h6, label{
+    color:#303030;
+    font-weight: 500;
+}
+
+.wfm a{
+    color:#1E50C6;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.pi-sort:before{
+  content:"\e99e";
+}
+
+p-calendar{
+  width:100%;
+  display: flex;
+}
+
+.pt-25{
+  padding-top: 25px;
+}
+
+.form-check{
+    padding-left: 0.4rem;
+    padding-top: 12px;
+}
+
+.card-body h5,h6{
+    font-weight: 600;
+}
+
+.chip {
+    display: inline-block;
+    padding: 0 20px;
+    font-size: 14px;
+    line-height: 35px;
+    border-radius: 25px;
+    background-color: #f1f1f1;
+    border: 1px solid #f1f1f1;
+  }
+  
+  .chip img {
+    float: left;
+    margin: 0 10px 0 -25px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+  }
+
+  .chip:hover {
+    cursor: pointer;
+    color: #3F51B5;
+    border: 1px solid #3F51B5;
+  }
+
+  .chip-sel{
+      color:#ffffff !important;
+      background-color: #3F51B5 !important;
+      border: 1px solid #3F51B5 !important;
+  }
+
+  .dropdown-menu-right{
+    min-width: 100px;
+  }
+
+  a{
+    cursor: pointer;
+  }
+
+  .c-info{
+    padding-bottom: 0;
+  }
+
+  .c-info label{
+    width:185px;
+    font-weight: 600 !important;
+  }
+
+  .cust-a {
+    display: inline-block;
+  }
+
+  .success{
+    color:#34A835;
+  }
+
+  .failure{
+    color:#c01120;
+  }
+
+  .sub-cont{
+    font-size: 0.80rem;
+    letter-spacing: 0.2px;
+  }
+
+  button:disabled,button[disabled]{
+    background-color: #cccccc;
+    cursor:not-allowed;
+  }
+
+  /****** Dialog - Forecasting detail **********/
+.view-content div{
+  line-height: 3rem;
+}
+
+.op-view-content div{
+  line-height: 1.7rem;
+}
+
+.view-content span{
+  font-size: 1em;
+}
+
+.view-content .text-key{
+  color:#575757;
+  padding-right: 10px;
+}
+
+.view-content .text-val{
+  color:#111111;
+  padding-right: 10px;
+  font-weight: 600;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1); 
+  background-color: #aaaaaa;
+}
+

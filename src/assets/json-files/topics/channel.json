@@ -1,0 +1,13 @@
+[{
+        "label": "All",
+        "value": "All"
+    },
+    {
+        "label": "Customer",
+        "value": "Customer"
+    },
+    {
+        "label": "Agent",
+        "value": "Agent"
+    }
+]

@@ -1,0 +1,115 @@
+<!-- <p>phrase-recommendation works!</p> -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<div style="margin: 0px 32px;">
+    <div class="phrase-top-header">
+        <!-- <div style="display: flex; justify-content:space-between;"> -->
+          <div class="phrase-header-title">
+            <h2>Phrase recommendation</h2>
+          </div>
+          <!-- <div style="display: flex;">
+            <div class="form-group mb-1">
+                <p-autoComplete placeholder="Search by topics" class="ipt-search-phrase"
+                [(ngModel)]="topicCategory" [suggestions]="resultTopic"
+                (completeMethod)="searchTopic($event)" (onSelect)="OnchangeTopic()" (onBlur)="EmptyFun()"></p-autoComplete>
+            </div>
+          </div> -->
+         
+        <!-- </div> -->
+    </div>
+    
+    <div class="d-flex w-100 justify-content-between">
+        <div class="w-50">
+            <div class="interactions-sort mb-2 rounded-sm d-flex justify-content-between w-100" style="padding: 10px 16px;">
+                <div class="evaluate-sub-title" style="width: 30%;"><h3 style="margin-top: 3px;">Search by topics</h3></div>
+                <div class="d-flex form-group mb-1 mr-3" style="width: 60%;">
+                    <i class="fa fa-search" aria-hidden="true" style="
+                        position: relative;left: 20px;opacity: 0.6;z-index: 999;align-items: center;display: grid;
+                     "></i>
+                    <p-autoComplete placeholder="Search by topics" class="ipt-search-phrase"
+                    [(ngModel)]="topicCategory" [suggestions]="resultTopic"
+                    (completeMethod)="searchTopic($event)" (ngModelChange)="topicClearEnable(topicCategory)" (onSelect)="OnchangeTopic()" (onBlur)="EmptyFun()"></p-autoComplete>
+                </div>
+                <div>
+                    <button type="button"  class="btn-save mr-0" (click)="clearSearch()" [ngClass]="isDisabled == true ? 'savebtn-disable' : false " [disabled]="isDisabled">Clear</button>
+                </div>
+            </div>
+            <div  class="rounded-sm" style="height: 700px;background: #fff;">
+                <div id="dossierContainer1" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+       
+        <div class="" style="width: 48%;">
+            <!-- <div class="interactions-sort mb-2 rounded-sm d-flex justify-content-between w-100" style="padding: 10px 16px;">
+                <div class="evaluate-sub-title" style="width: 30%;"><h3 style="margin-top: 3px;">Find key phrases</h3></div>
+                <div class="d-flex form-group mb-1" style="width: 54%;">
+                    <div class="ipt-theme mr-0 w-100">
+                        <i class="fa fa-search" aria-hidden="true" style="
+                    position: relative;
+                    left: 5px;
+                    opacity: 0.6;
+                    top: 28px;
+                   "></i>
+                        <input type="text"  class="w-100 inp-searchs form-control" [(ngModel)]="keyPhraseModel" (ngModelChange)="searchKeyPhrase()" placeholder="Search by keyphrases" style="font-size: 15px;">
+                    </div>
+                </div>
+                <div style="width: 12%;">
+                    <button type="button"  class="btn-save mr-0 text-right" (click)="clearSearch('keyphrase')" [ngClass]="isKeyphraseClear == true ? 'savebtn-disable' : false " [disabled]="isKeyphraseClear">Clear</button>
+                </div>
+            </div> -->
+
+            <div class="interactions-sort rounded-sm mb-2" style="height: 80.4%;padding: 10px 16px;display: inherit;">
+                <div class="evaluate-sub-title d-flex">
+                    <h3>Recommmended key phrases</h3>
+                    <button class="ml-2" type="button" *ngIf="tempArr.length > 0" tooltip="Select atleast one of the recommmended key phrases for adding into the topics" placement="right" style="background: transparent;border: 0;outline: 0 !important;">
+                        <img src="../assets/img/microinteraction/helptext.svg" style="margin-top: -8px;">
+                    </button>
+                </div>
+                
+                <div class="row" *ngIf="tempArr.length > 0 && topicText != ''" style="display: inherit;">
+                    <div class="overflow-eval-workspace border-0" style="height: 560px;">
+                        <div class="gethoverBGCLR" *ngFor="let item of getKeyPhrase; let i = index">
+                            <div class="phrase-content col-sm-12 pl-4 pt-2 pb-2 pr-2" >
+                                <p-checkbox  class="d-flex cursor-text check-box-active mb-0" label="{{item}}" (onChange)="onChange($event, item)" binary="false"></p-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pt-3 text-center" *ngIf="tempArr.length == 0 && topicText != ''">
+                    No keyphrases found !
+                </div>
+                <div class="pt-3 text-center" *ngIf="tempArr.length == 0 && topicText == '' ">
+                    No topic selected for recommended keyphrases !
+                </div>
+            </div>
+            
+            <div class="interactions-sort rounded-sm mb-2 d-flex w-100 justify-content-center" style="padding: 10px 16px;font-size: 15px;font-weight:500;">
+                <div *ngIf="tempArr.length == 0">
+                    <span style="color: gray;font-weight: 400;"> No selected keyphrases !</span>
+                </div>
+                <div class="d-flex" *ngIf="tempArr.length > 0">
+                    <div class="mr-3">
+                        <span style="color: gray;">Total selected keyphrases </span> &nbsp;&nbsp; :
+                     </div>
+                     <div>
+                         <span style="color: #8AAEF5;"> {{selectedPharseValue.length}}</span>
+                     </div>
+                </div>
+                
+            </div>
+            
+            <div class="interactions-sort rounded-sm d-flex justify-content-between w-100" style="padding: 10px 16px;">
+                <div class="form-group" style="width: 75%;">
+                    <label class="interaction-label" style="font-size: 14px;">Add selected phrases to the topic</label>
+                    <p-dropdown class="ipt-eval-theme dplable" [options]="topicDDL"  [(ngModel)] ="selectedTopicModel"  (ngModelChange)="topicDDLChange(selectedTopicModel)" [ngModelOptions]="{standalone: true}" filter="true" placeholder="Select a topic">
+                    </p-dropdown>
+                </div>
+                <div  style="width: 14%;display: grid;align-items: center;" *ngIf="global.rolePermissions.playbooks.phraseRecommendation.isViewEdit == true">
+                    <button type="button"  class="btn-save mr-0" (click)="sendKeyPhrase()" [ngClass]="isSubmitEnable == true ? 'savebtn-disable' : false " [disabled]="isSubmitEnable">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

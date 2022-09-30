@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="13px" viewBox="0 0 14 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>dashboards</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-129.000000, -343.000000)" fill="#FFFFFF">
+            <g id="dashboards" transform="translate(126.000000, 340.000000)">
+                <g>
+                    <rect id="Rectangle" fill-opacity="0" x="0" y="0" width="20" height="20"></rect>
+                    <g transform="translate(3.000000, 3.000000)" fill-rule="nonzero" id="Shape">
+                        <path d="M0,1.3125 L0,10.9375 C0,11.6623828 0.587617187,12.25 1.3125,12.25 L12.6875,12.25 C13.4123828,12.25 14,11.6623828 14,10.9375 L14,1.3125 C14,0.587617187 13.4123828,0 12.6875,0 L1.3125,0 C0.587617187,0 0,0.587617188 0,1.3125 Z M6.34375,1.3125 L6.34375,5.46875 L1.3125,5.46875 L1.3125,1.4765625 C1.3125,1.38595328 1.38595328,1.3125 1.4765625,1.3125 L6.34375,1.3125 Z M1.3125,6.78125 L6.34375,6.78125 L6.34375,10.9375 L1.4765625,10.9375 C1.38595328,10.9375 1.3125,10.8640467 1.3125,10.7734375 L1.3125,6.78125 Z M7.65625,10.9375 L7.65625,6.78125 L12.6875,6.78125 L12.6875,10.7734375 C12.6875,10.8640467 12.6140467,10.9375 12.5234375,10.9375 L7.65625,10.9375 Z M12.6875,5.46875 L7.65625,5.46875 L7.65625,1.3125 L12.5234375,1.3125 C12.6140467,1.3125 12.6875,1.38595328 12.6875,1.4765625 L12.6875,5.46875 Z"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,1679 @@
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+
+<!-- <p>platform-setting works!</p> -->
+<div style="margin: 0px 180px 30px 32px; " *ngIf="Editcard == 'PlatformSetting'">
+  <div class="top-header" style="justify-content: space-between;">
+        <h2 class="header-title">CX Center Settings</h2>
+  </div>
+    <!-- Platform selection -->
+    <div class="cx-platform" style="margin: 10px 0px;">
+        <div class="form-group platform-group">
+            <label class="platform-label"> CX Center Platform</label>
+            <input type="text" class="form-control platform-ipt-box" [(ngModel)]="preferencePlatfromName" [ngModelOptions]="{standalone: true}" [disabled]= "true" placeholder="{{global.language?.settings?.platformSettings?.center}}">
+          </div>
+    </div>
+    <!-- Platform Center -->
+    <div class="cx-center">
+         <div class="cx-title">{{global.language?.settings?.platformSettings?.CxCenter}} <span *ngIf="platformCenters.length == 0"> : No CX center available !</span></div>
+         <div style="margin: 0;padding: 0;" *ngIf="platformCenters.length > 0">
+         <div class="card-center" *ngFor="let cards of platformCenters">
+            <div class="card-data">
+              <h5 class="card-content text-ellipsis-card">{{cards.cxCenterName}}</h5>
+
+              <div  class="card-link" (click)="editPlatform(cards,'edit')">
+                <img src="../../../../assets/img/microinteraction/edit.svg" style="padding-right:8px;">  
+                {{global.language?.settings?.platformSettings?.edit}}</div>
+            </div>
+         </div>
+         </div>
+
+         <div class="add-center" *ngIf="global.rolePermissions.settings.platformSettings.isViewEdit == true">
+            <button type="button" style="outline: 0px;" class="add-btn" (click)="editPlatform('', 'create')">
+                <img src="../assets/img/microinteraction/add_item.svg">
+                <span class="btn-txt-add">&nbsp;Add CX Center</span>
+              </button>
+         </div>
+    </div>
+</div>
+
+<!-- platform-centers while click edit -->
+<div style="margin: 40px 220px 50px 32px;" *ngIf="Editcard == 'editCard'">
+    <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb">
+          <li><label class="bread-crumb-label1" (click)="backBreadCrumb()">CX Center Settings</label></li>
+        </ul>
+    </div>
+    <div class="edit-header">
+        <div class="row" style="justify-content:space-between;margin-bottom: 18px !important;">
+          <div class="page-title col-sm-10">
+            <h2 class="platform-name-ellipsis">{{global.language?.settings?.platformSettings?.cxCntr}}: {{platformModel.cxCenterName}}</h2>
+          </div>
+          <div class="col-sm-2" 
+            style="padding-left:0px;padding-right: 0px;text-align: right;" *ngIf="createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true">
+            <button type="button" class="btn-delete"  data-toggle="modal" data-target="#settingModal">Delete CX Center</button>
+          </div>
+        </div>
+    </div>
+    <!-- Genesys Pure Cloud Data'format -->
+      <div class="platform-center-datas" *ngIf="selectedPlatform === 2"> 
+        <form [formGroup]="gensys" autocomplete="off">
+        <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.name}}</label>
+            <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" [(ngModel)]="platformModel.cxCenterName" formControlName="genesysCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+            [ngClass]="{ 'is-invalid ': (submittedGenesys || validationGenesys.genesysCenterName.touched) &&  validationGenesys.genesysCenterName.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.namePlace}}" autocomplete="off">
+            <div *ngIf="(submittedGenesys || validationGenesys.genesysCenterName.touched) && validationGenesys.genesysCenterName.errors" class="is-invalid  ">
+                <div class="errormsg-topic is-invalid" *ngIf="((submittedGenesys ||validationGenesys.genesysCenterName.touched) && validationGenesys.genesysCenterName.errors.required)==null?false:true">
+                    {{global.language?.settings?.platformSettings?.genesys?.errors?.nameErr}}
+                </div>     
+            </div>
+        </div>
+        
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.lang}}</label>
+            <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode" filter="true"
+            placeholder="{{global.language?.settings?.platformSettings?.genesys?.select}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 28px;">
+            <label class="platform-label">Genesys Org ID</label>
+            <input type="text" class="form-control platform-ipt-box" [(ngModel)]="platformModel.genesysOrgId" [ngModelOptions]="{standalone: true}"
+            [ngClass]="errgenesysOrgID == true ? 'is-invalid' : false" placeholder="Genesys Org ID" autocomplete="off">
+            <div class="errormsg-topic" *ngIf="errgenesysOrgID==true">Please enter the genesys org ID</div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.client}}</label>
+                <div style="display: flex;">
+                <input id="g-password-field" type="password" class="form-control platform-ipt-box" formControlName="clientID" [(ngModel)]="platformModel.clientID" (keypress)="keyPressSpaceRemove($event)" 
+                [ngClass]="{ 'is-invalid ': (submittedGenesys || validationGenesys.clientID.touched) &&  validationGenesys.clientID.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.client}}" autocomplete="off" style="padding-right: 35px;">
+                <!-- <img id="g-toggle-passwordId" src="../../../../assets/img/Icons_Settings/icon_view_pw.svg" style="position: relative; right: 2pc;" (click)="g_passwordToggleClientId('g-createId')"> -->
+                <span id="g-toggle-passwordId" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientId('g-createId')"></span>
+                </div>
+                <div *ngIf="(submittedGenesys || validationGenesys.clientID.touched) && validationGenesys.clientID.errors" class="is-invalid  ">
+                    <div class="errormsg-topic is-invalid" *ngIf="((submittedGenesys ||validationGenesys.clientID.touched) && validationGenesys.clientID.errors.required)==null?false:true">
+                        {{global.language?.settings?.platformSettings?.genesys?.errors?.clientErr}}
+                    </div>     
+                </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.secret}}</label>
+                <div style="display: flex;">
+                <input  id="g-password-fieldSecret" type="password" class="form-control platform-ipt-box" formControlName="clientSecret" [(ngModel)]="platformModel.clientSecret" (keypress)="keyPressSpaceRemove($event)" 
+                [ngClass]="{ 'is-invalid ': (submittedGenesys || validationGenesys.clientSecret.touched) &&  validationGenesys.clientSecret.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.secret}}" autocomplete="off" style="padding-right: 35px;">
+                <!-- <img src="../../../../assets/img/Icons_Settings/icon_view_pw.svg" style="position: relative; right: 2pc;"> -->
+                <span id="g-toggle-passwordSecret" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientSecret('g-createSecret')"></span>
+                </div>
+                <div *ngIf="(submittedGenesys || validationGenesys.clientSecret.touched) && validationGenesys.clientSecret.errors" class="is-invalid  ">
+                    <div class="errormsg-topic is-invalid" *ngIf="((submittedGenesys ||validationGenesys.clientSecret.touched) && validationGenesys.clientSecret.errors.required)==null?false:true">
+                        {{global.language?.settings?.platformSettings?.genesys?.errors?.secretErr}}
+                    </div>     
+                </div>
+        </div>
+
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.region}}</label>
+            <p-dropdown class="choose-platform dplable" [options]="genesysRegions" [(ngModel)]="platformModel.genesysRegion"
+            [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.genesys?.region}}" ></p-dropdown>
+        </div>
+        <!-- Adding time-zone Selection (SP-653) -->
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">Time Zone</label>
+            <p-dropdown class="choose-platform dplable"  [options]="timeZones"  [(ngModel)]="platformModel.cusTimeZone" [ngModelOptions]="{standalone: true}" placeholder="Select Time-Zone" ></p-dropdown>
+        </div>
+        <!--End of changes of (SP-653)-->
+        
+        <div class="row mb-3" [ngStyle]="{'cursor' : selectedPlatform === 2 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 2 ? 'lightgray' : ''}" style="padding-top: 16px;">
+            <div class="product-selection col-sm-6" [ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}">
+            <div class="bold-txt" style="margin-bottom: 16px;">{{global.language?.settings?.platformSettings?.genesys?.product}}</div> 
+            <div  style="margin-bottom: 16px;display: flex;">
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.genesys?.historical}}" [(ngModel)]="platformModel.acdType" [ngModelOptions]="{standalone: true}"  binary="false"></p-checkbox>
+                </div>
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active" label="{{global.language?.settings?.platformSettings?.genesys?.speech}}" [(ngModel)]="platformModel.SpeechtxtType" [ngModelOptions]="{standalone: true}" (onChange)="recordingflag()" binary="false"></p-checkbox>
+                </div>
+           
+            </div>
+            <div style="margin-bottom: 16px;display: flex;">
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.genesys?.quality}}" [(ngModel)]="platformModel.qmType" [ngModelOptions]="{standalone: true}" (onChange)="recordingflag()" binary="false"></p-checkbox>
+                </div>
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active" label="{{global.language?.settings?.platformSettings?.genesys?.attr}}" [(ngModel)]="platformModel.Attribute" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                </div>
+            </div>
+            <div style="margin-bottom: 16px;display: flex;">
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active box-genesys" label="WFM" [(ngModel)]="platformModel.isWfmActive" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                </div>
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active " label="Recordings" [(ngModel)]="platformModel.isRecording" [ngModelOptions]="{standalone: true}" binary="false" [disabled]="recDisable"></p-checkbox>
+                </div> 
+                <div style="display: flex;" *ngIf="platformModel.isRecording">
+                    <label class="col-sm-8 mb-0">
+                      <p-radioButton class="rec-option" name="group11" [(ngModel)]="platformModel.callRecordingOption" [ngModelOptions]="{standalone: true}" value="API"  label="API" inputId="preopt11" >
+                      </p-radioButton>
+                    </label>
+                    <label  class="col-sm-8  mb-0">
+                      <p-radioButton class="any-playbook rec-option" [(ngModel)]="platformModel.callRecordingOption" [ngModelOptions]="{standalone: true}"  value="S3" name="group12"   label="S3" inputId="preopt12">
+                      </p-radioButton>
+                    </label>
+                </div>
+            </div>
+            <div style="margin-bottom: 16px;display: flex;">
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active box-genesys" label="Outbound Campaign" [(ngModel)]="platformModel.outboundCampaign" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                </div>
+                <div class="col-sm-6 pl-0 ">
+                    <p-checkbox  class="check-box-active " label="WFM SuccessKPI" [(ngModel)]="platformModel.WFMSuccesskpi" [ngModelOptions]="{standalone: true}" binary="false" ></p-checkbox>
+                </div> 
+            </div>
+            
+            </div>
+            <div class="form-group col-sm-2 pl-0 mt-3" [ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}" *ngIf="platformModel.SpeechtxtType" style="height: 70px;">
+                <label class="platform-label">% Transcription</label>
+                <input type="number" class="form-control  choose-intervals" (keypress)="keyPress($event)"
+                [(ngModel)]="platformModel.percentTranscription"  [ngModelOptions]="{standalone: true}" placeholder="% Transcription" autocomplete="off" min="1" max="100">
+                <div class="errormsg-topic" *ngIf="errValTrans==true">Please enter the value between 1 and 100</div>
+            </div>
+
+            <div class="form-group col-sm-2 mt-3 pt-4 pr-0" [ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}" *ngIf="platformModel.SpeechtxtType" style="height: 70px;">
+                <p-checkbox  class="check-box-active small-checkbox box-genesys" label="Skip wait time" [(ngModel)]="platformModel.isSkpiWaitTime"  [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+            </div>
+
+            <div class="form-group col-sm-2 mt-3 pt-4"[ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}" *ngIf="platformModel.SpeechtxtType" style="height: 70px;">
+                <p-checkbox  class="check-box-active small-checkbox box-genesys" label="Skip IVR time" [(ngModel)]="platformModel.isSkpiIVRTime"  [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+            </div>
+        </div>
+
+        <div class="row p-3" [ngStyle]="{'cursor' : selectedPlatform === 2 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 2 ? 'lightgray' : ''}" style="margin-bottom:8px">
+        <!-- <div class="col-sm-12" style="display: flex;justify-content: space-between;width: 30%;margin-bottom: 28px;"> -->
+            <div class="col-sm-12 pl-0" style="display: flex; width: 30%;margin-bottom: 28px;">
+            <div class="bold-txt">{{global.language?.settings?.platformSettings?.genesys?.realTime}}</div>
+            <div style="padding-left: 5%;">
+                <p-inputSwitch class="ipt-switch-platform" *ngIf="selectedPlatform == '2' && createEdit=='create'" [(ngModel)]="platformModel.genesysRealTimeFlag" [ngModelOptions]="{standalone: true}">
+                </p-inputSwitch>
+
+                <p-inputSwitch class="ipt-switch-platform" *ngIf="selectedPlatform == '2' && createEdit=='edit'"  [(ngModel)]="platformModel.realTimeFlag" [ngModelOptions]="{standalone: true}">
+                </p-inputSwitch>
+
+                <span class="on-off-toggle" style="top: -6px;">{{platformModel.genesysRealTimeFlag == true || platformModel.realTimeFlag  == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+            </div>
+         
+        </div>
+        <!-- <div class="col-sm-12" class="row mb-3" *ngIf = "platformModel.genesysRealTimeFlag == true || platformModel.realTimeFlag  == true"> -->
+            <div class="col-sm-12 mb-3 pl-0" *ngIf = "platformModel.genesysRealTimeFlag == true || platformModel.realTimeFlag  == true">
+            <!-- <div class="product-selection col-sm-12"> -->
+                <div class="product-selection">
+                <div style="margin-bottom: 16px;display: flex;">
+                    <div class="col-sm-2 pl-0 pr-0" [ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}">
+                        <p-checkbox  class="check-box-active box-genesys" label="Agent" [(ngModel)]="agentRTA" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                    </div>
+                    <div class="col-sm-2 pl-0 pr-0" [ngStyle]="{'pointer-events' : selectedPlatform === 2 ? 'none' : 'all'}">
+                        <p-checkbox  class="check-box-active" label="Queue" [(ngModel)]="queueRTA" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.ApiInterval}}</label>
+            <div style="display: flex;">
+            <input type="number" class="form-control  choose-intervals" *ngIf="selectedPlatform == '2' && createEdit=='create'" (keypress)="keyPress($event)"
+            [(ngModel)]="platformModel.genesysHistorcalInterval"  [ngModelOptions]="{standalone: true}" placeholder="API Interval" autocomplete="off">
+
+            <input type="number" class="form-control  choose-intervals"  *ngIf="selectedPlatform == '2' && createEdit=='edit'"  (keypress)="keyPress($event)"
+            [(ngModel)]="platformModel.interval"   [ngModelOptions]="{standalone: true}" placeholder="API Interval" autocomplete="off">
+
+            <span style="margin-left: 12px; padding-top: 6px;">{{global.language?.settings?.platformSettings?.genesys?.min}}</span>
+            </div>
+            <div class="errormsg-topic" *ngIf="intervalValidate==true">Please Enter Historical API Intervals (10 / 15 / 30 / 60) minutes!</div>
+            <!-- <p-dropdown class="choose-intervals" [options]="platform" [(ngModel)]="selectedPlatform"
+            placeholder="Intervals" [ngModelOptions]="{standalone: true}"></p-dropdown> -->
+        </div>
+
+        <!-- <div class="row p-3">
+            <div class="col-sm-2">
+              <label class="platform-label">Allow agent feedback</label>
+            </div>
+            <div class="col-sm-1">
+              <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+            </div>
+            <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+              <div class="row">
+                <div class="col-sm-3 pl-0">
+                  <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" binary="false"></p-checkbox>
+                </div>
+                <div class="col-sm-3 pl-0">
+                  <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" binary="false"></p-checkbox>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+        
+        <div class="save-btns">
+            <button type="button" class="btn-save" *ngIf="selectedPlatform == '2' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" [disabled]="loading"  (click)="updateGenesys()">{{global.language?.settings?.platformSettings?.genesys?.save}}</button>
+            <button type="button" class="btn-save" *ngIf="selectedPlatform == '2' && createEdit=='create'" [disabled]="loading" (click)="saveGenesys()">{{global.language?.settings?.platformSettings?.genesys?.save}}</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Amazon Connect Data's format-->
+       <div class="amazon-center-datas" *ngIf="selectedPlatform === 1">
+           <form [formGroup]="amazon">
+          <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.name}}</label>
+              <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" formControlName="centerName" [(ngModel)]="platformModel.cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+              [ngClass]="{ 'is-invalid ': (submittedAmazon || validationAmazon.centerName.touched) &&  validationAmazon.centerName.errors }" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.namePlace}}" autocomplete="off">
+              <div *ngIf="(submittedAmazon || validationAmazon.centerName.touched) && validationAmazon.centerName.errors" class="is-invalid  ">
+                <div class="errormsg-topic is-invalid" *ngIf="((submittedAmazon ||validationAmazon.centerName.touched) && validationAmazon.centerName.errors.required)==null?false:true">
+                    {{global.language?.settings?.platformSettings?.Amazon?.errors?.nameErr}}
+                </div>     
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.instance}}</label>
+            <input type="text" class="form-control platform-ipt-box" formControlName="instanceID" [(ngModel)]="platformModel.instanceId" 
+            [ngClass]="{ 'is-invalid ': (submittedAmazon || validationAmazon.instanceID.touched) &&  validationAmazon.instanceID.errors }" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.instance}}" autocomplete="off">
+            <div *ngIf="(submittedAmazon || validationAmazon.instanceID.touched) && validationAmazon.instanceID.errors" class="is-invalid  ">
+                <div class="errormsg-topic is-invalid" *ngIf="((submittedAmazon ||validationAmazon.instanceID.touched) && validationAmazon.instanceID.errors.required)==null?false:true">
+                    {{global.language?.settings?.platformSettings?.Amazon?.errors?.instanceErr}}
+                </div>     
+            </div>
+          </div>
+          
+          <div class="form-group" style="margin-bottom: 28px;">
+            <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.accountId}}</label>
+            <input type="text" class="form-control platform-ipt-box" formControlName="accountID" [(ngModel)]="platformModel.accountId" 
+            [ngClass]="{ 'is-invalid ': (submittedAmazon || validationAmazon.accountID.touched) &&  validationAmazon.accountID.errors }"placeholder="{{global.language?.settings?.platformSettings?.Amazon?.accountId}}" autocomplete="off">
+            <div *ngIf="(submittedAmazon || validationAmazon.accountID.touched) && validationAmazon.accountID.errors" class="is-invalid  ">
+                <div class="errormsg-topic is-invalid" *ngIf="((submittedAmazon ||validationAmazon.accountID.touched) && validationAmazon.accountID.errors.required)==null?false:true">
+                    {{global.language?.settings?.platformSettings?.Amazon?.errors?.accErr}}
+                </div>     
+            </div>
+          </div>
+
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">AWS Region</label>
+            <p-dropdown class="choose-platform dplable" [options]="awsRegions" [(ngModel)]="platformModel.awsRegion" [ngModelOptions]="{standalone: true}" placeholder="Select AWS Region" ></p-dropdown>
+        </div>
+
+        <div class="form-group platform-group" style="margin-bottom: 28px;">
+            <label class="platform-label">Time Zone</label>
+            <p-dropdown class="choose-platform dplable" [options]="timeZones" [(ngModel)]="platformModel.cusTimeZone" [ngModelOptions]="{standalone: true}" placeholder="UTC"></p-dropdown>
+        </div>
+
+          <div style="width: 160px;">
+            <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div>
+          </div>
+
+          <div class="data-source" style="margin-bottom: 32px;">
+            <div class="source-title">{{global.language?.settings?.platformSettings?.Amazon?.source}}</div>
+            <div class="type-bucket" *ngFor="let addData of platformModel.dataLocations;let i=index">
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.type}}</label>
+                    <p-dropdown class="choose-type-amazon dplable" [options]="dataLocationDDL" [(ngModel)]="addData.Key"
+                 placeholder="{{global.language?.settings?.platformSettings?.Amazon?.select}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+                <div  class="bucket-box" style="padding: 0 12px;margin-top: -2px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.bucket}}</label>
+                    <input type="text" class="form-control bucket-ipt-box" [(ngModel)]="addData.Value" [ngModelOptions]="{standalone: true}" 
+                    [placeholder]="addData.Key=='Recording Location'?'bucket-name/folder1/folder2/folder3':addData.Key=='Agent Activity'?'Agent Activity Details':addData.Key=='Agent Login-Logout'?'Agent Login-Logout':addData.Key=='IVR Call Flow'?'bucket-name/folder1/folder2/folder3':addData.Key=='CTR'?'bucket-name/folder1/folder2/folder3':''" autocomplete="off">
+                </div>
+                <div class="form-group" style="margin-top: 18px;">
+                    <button class="btn-delete-icon" type="button" style="margin-left: 8px;margin-top: 4px;" (click)="removeDataSource(i)">
+                      <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 3px;">
+                    </button>
+                </div>
+            </div>
+            <!-- <span *ngIf="validationError.dataSource!=null" class="errormsg-topic"style=" position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.Amazon?.errors?.sourceErr}}</span> -->
+            <div *ngIf="isDataError == true" class="errormsg-topic"style="position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.Amazon?.errors?.sameSource}}</div>
+            <div class="add-centers">
+                <button type="button" style="outline: 0px;" class="add-btn" (click)="addDataSource()">
+                    <img src="../assets/img/microinteraction/add_item.svg">
+                    <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.Amazon?.addSource}}</span>
+                  </button>
+             </div>
+          </div>
+
+          <div class="call-recording mb-3" [ngStyle]="{'cursor' : selectedPlatform === 1 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 1 ? 'lightgray' : '', 'padding': selectedPlatform === 1 ?'16px':'0px'}">
+            <div class="source-title">{{global.language?.settings?.platformSettings?.Amazon?.callRecord}}</div>
+
+            <div style="display: flex;margin-bottom: 24px;">
+                <label [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}">
+                  <p-radioButton name="group11" value="Historical"  [(ngModel)]="platformModel.callrecording"  [ngModelOptions]="{standalone: true}"label="{{global.language?.settings?.platformSettings?.Amazon?.historical}}" inputId="preopt1">
+                  </p-radioButton>
+                </label>
+                <!-- <label>
+                  <p-radioButton class="any-playbook" name="group12"  [(ngModel)]="platformModel.callrecording"  [ngModelOptions]="{standalone: true}" value="Real-Time" label="{{global.language?.settings?.platformSettings?.Amazon?.real}}" inputId="preopt2">
+                  </p-radioButton>
+                </label> -->
+                <label [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}">
+                <p-radioButton name="group13" value="None" label="{{global.language?.settings?.platformSettings?.Amazon?.none}}"  [(ngModel)]="platformModel.callrecording"  [ngModelOptions]="{standalone: true}" inputId="preopt3">
+                </p-radioButton>
+                </label>
+
+                <label *ngIf="platformModel.callrecording !== 'None'">
+                    <button type="button" style="outline: 0px;" class="add-btn" (click)="op.show($event)">
+                        <img src="../assets/img/microinteraction/edit.svg">
+                        <span class="btn-txt-add">&nbsp;Rules</span>
+                      </button>
+                </label>
+
+                <p-overlayPanel #op for="op" [showCloseIcon]="true" [style]="{width: '820px'}" [dismissable]="false">
+                      <!-- <div>Content ....</div> -->
+                    <div class="p-3">
+                        <div class="source-title mb-3">Historical speech analytics rule</div>
+                        <div class="row mb-2">
+                            <div class="form-group col-sm-3 mb-0">
+                                <label class="platform-label">% Transcription</label>
+                                <input type="number" class="form-control w-100 platform-ipt-box" (keypress)="keyPress($event)"
+                                [(ngModel)]="platformModel.percentTranscription"  [ngModelOptions]="{standalone: true}" placeholder="% Transcription" autocomplete="off" min="1" max="100">
+                                <div class="errormsg-topic" *ngIf="errValTrans==true">Please enter the value between 1 and 100</div>
+                            </div>
+                
+                            <div class="form-group col-sm-4 pt-4  mb-0">
+                                <p-checkbox  class="check-box-active box-genesys" label="SKPI Recording" [(ngModel)]="platformModel.SKPI_Recording" [ngModelOptions]="{standalone: true}"  binary="false"></p-checkbox>
+                                <i class="fa fa-info-circle ml-2 info-icon" aria-hidden="true" tooltip="You can set up Amazon Connect Attribute - SKPI-Recording and set the value to - 'true'"
+                                    placement="bottom"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-eval-workspace border-0" style="height: 326px;">
+                            <div class="row mb-2" style="height: 100px;">
+                                <div class="col-sm-2 align-centers">
+                                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.Queue_Name_Flag"  [ngModelOptions]="{standalone: true}" label="Queues" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                                </div>
+                                <div class="col-sm-4 align-centers" *ngIf="platformModel.Queue_Name_Flag == true">
+                                    <p-multiSelect [options]="ddl_custom_List" [(ngModel)]="platformModel.Queue_Name" [ngModelOptions]="{standalone: true}" (onFocus)="ddlModelValue('Queues')"   maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-6 label-section" *ngIf="platformModel.Queue_Name_Flag == true">
+                                    <button class="select-label mr-2 mb-2 label-odd"  *ngFor="let customLabel of platformModel.Queue_Name">
+                                        {{customLabel}}
+                                        <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabel('Queues', customLabel)"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mb-2" style="height: 100px;">
+                                <div class="col-sm-2 align-centers">
+                                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.Agent_Username_Flag"  [ngModelOptions]="{standalone: true}" label="Agents" (onChange)="onChange($event, 'Agents')"binary="false"></p-checkbox>
+                                </div>
+                                <div class="col-sm-4 align-centers" *ngIf="platformModel.Agent_Username_Flag == true">
+                                    <p-multiSelect [options]="ddl_custom_List" [(ngModel)]="platformModel.Agent_Username" [ngModelOptions]="{standalone: true}" (onFocus)="ddlModelValue('Agents')"   maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-6 label-section" *ngIf="platformModel.Agent_Username_Flag == true">
+                                    <button class="select-label mr-2 mb-2 label-odd" *ngFor="let customLabel of platformModel.Agent_Username">
+                                        {{customLabel}}
+                                        <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabel('Agents',customLabel)"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mb-2" style="height: 100px;">
+                                <div class="col-sm-2 align-centers">
+                                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.Dialing_Number_Flag"  [ngModelOptions]="{standalone: true}" label="DNIS" (onChange)="onChange($event, 'DNIS')"binary="false"></p-checkbox>
+                                </div>
+                                <div class="col-sm-4 align-centers" *ngIf="platformModel.Dialing_Number_Flag == true">
+                                    <p-multiSelect [options]="ddl_custom_List" [(ngModel)]="platformModel.Dialing_Number" [ngModelOptions]="{standalone: true}" (onFocus)="ddlModelValue('DNIS')"   maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-6 label-section" *ngIf="platformModel.Dialing_Number_Flag == true">
+                                    <button class="select-label mr-2 mb-2 label-odd" *ngFor="let customLabel of platformModel.Dialing_Number">
+                                        {{customLabel}}
+                                        <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabel('DNIS',customLabel)"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mb-2" style="height: 100px;">
+                                <div class="col-sm-2 align-centers">
+                                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.Instance_id_Flag"  [ngModelOptions]="{standalone: true}" label="Instances" (onChange)="onChange($event, 'Instances')"binary="false"></p-checkbox>
+                                </div>
+                                <div class="col-sm-4 align-centers" *ngIf="platformModel.Instance_id_Flag == true">
+                                    <p-multiSelect [options]="ddl_custom_List" [(ngModel)]="platformModel.Instance_id" [ngModelOptions]="{standalone: true}" (onFocus)="ddlModelValue('Instances')"  maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                                </div>
+                                <div class="col-sm-6 label-section" *ngIf="platformModel.Instance_id_Flag == true">
+                                    <button class="select-label mr-2 mb-2 label-odd"  *ngFor="let customLabel of platformModel.Instance_id">
+                                        {{customLabel}}
+                                        <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabel('Instances',customLabel)"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="errormsg-topic" *ngIf="dataAccessErr == true">Please select atleast 1 data filter value</div>
+                        <div class="d-flex justify-content-between">
+                            <div style="width:80%;color: grey;">Note : All condition need to meet for Speech analytics on a conversation</div>
+                            <button style="width:10%" type="button" class="btn-save" (click)="addRule($event, op)">Add</button>
+                        </div>
+                    </div>
+                </p-overlayPanel>
+                
+            </div>
+            
+            <div *ngIf="platformModel.callrecording !== 'None'">
+                    
+                <div style="width: 160px;">
+                    <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div>
+                </div>
+                <div class="form-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 10px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.recordLoc}}</label>
+                    <input type="text" class="form-control  platform-ipt-box" [ngClass]="recordLoc == true ? 'is-invalid' : false " [(ngModel)]="platformModel.connectRecodingLocation" [ngModelOptions]="{standalone: true}"
+                      placeholder="{{global.language?.settings?.platformSettings?.Amazon.LocPlace}}" autocomplete="off">
+                    <div class="errormsg-topic" *ngIf="recordLoc==true">{{global.language?.settings?.platformSettings?.Amazon?.errors?.LocErr}}</div>
+                </div>
+                <div class="form-group platform-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.channel}}</label>
+                    <p-dropdown class="choose-platform dplable" [options]="channelList"  placeholder="{{global.language?.settings?.platformSettings?.Amazon?.selectChn}}" [(ngModel)]="platformModel.channel" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+                <!-- <div style="display: flex;justify-content: space-between;width: 18%;">
+                    <div class="source-title">Key</div>
+                    <div>
+                        <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.keyRoleRatio" [ngModelOptions]="{standalone: true}">
+                        </p-inputSwitch>
+                        <span class="on-off-toggle" style="top: -6px;">{{platformModel.keyRoleRatio == true ? 'Enable' : 'Disable'}}</span>
+                    </div> 
+                </div>
+                <div *ngIf="platformModel.keyRoleRatio ">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="platform-label">Access Key </label>
+                        <div style="display: flex;">
+                        <input id="password-field" type="password" name="AccessKeyF" class="form-control platform-ipt-box" [(ngModel)]="platformModel.accessKey" [ngModelOptions]="{standalone: true}" (keypress)="keyPressSpaceRemove($event)" placeholder="Access Key">
+                        <span id="toggle-password" class="fa fa-fw fa-eye eye-icon" (click)="passwordToggleAccessKey()"></span>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label class="platform-label">Secret Key</label>
+                        <div style="display: flex;">
+                        <input id="password-fieldsecret" type="password" name="SecretKeyF" class="form-control  platform-ipt-box" [(ngModel)]="platformModel.secretKey" [ngModelOptions]="{standalone: true}" (keypress)="keyPressSpaceRemove($event)" placeholder="Secret Key">
+                        <span id="toggle-passwordsecret" class="fa fa-fw fa-eye eye-icon" (click)="passwordToggleSecret()"></span>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="language">
+                <div class="form-group platform-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.language}}</label>
+                    <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode" filter="true"
+                    placeholder="{{global.language?.settings?.platformSettings?.Amazon?.selectLang}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+            </div>
+          </div>
+
+
+        <!-- <div class="mb-3" [ngStyle]="{'cursor' : selectedPlatform === 1 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 1 ? 'lightgray' : '', 'padding': selectedPlatform === 1 ?'16px':'0px'}"> -->
+            <!-- <div class="mb-3"> -->
+        <div class="mb-3" >
+            <div style="display: flex;justify-content: space-between;width: 30%;margin-bottom: 28px;">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.title}}</div>
+                <!-- <div [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}"> -->
+                    <div>
+                    <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.realTimeFlag" [ngModelOptions]="{standalone: true}">
+                    </p-inputSwitch>
+                    <span class="on-off-toggle" style="top: -6px;">{{platformModel.realTimeFlag == true ? global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.on : global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.off}}</span>
+                </div> 
+            </div>
+            <div *ngIf="platformModel.realTimeFlag">
+                <div>    
+                <!-- <div class="form-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 28px;"> -->
+                    <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.refresh}}</label>
+                    <div style="display: flex;">
+                        <input type="number" class="form-control interval-box"  [(ngModel)]="platformModel.interval"  [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.refresh}}">
+                        <span style="padding-top: 5px;">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.sec}}</span>
+                    </div>
+                    <div class="errormsg-topic" *ngIf="refInterval==true">{{global.language?.settings?.platformSettings?.Amazon?.errors?.intervalErr}}</div>
+                </div>
+
+                <!-- <div class="form-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 10px;"> -->
+                    <div class="form-group"  style="margin-bottom: 10px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleArn}}</label>
+                    <input type="text" class="form-control role-arn-box" [(ngModel)]="platformModel.roleArn"  autocomplete="off" 
+                    [ngModelOptions]="{standalone: true}" [ngClass]="roleArnAc == true ? 'is-invalid' : false "  placeholder="{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.rolePlace}}" autocomplete="off">
+                    <div class="errormsg-topic" *ngIf="roleArnAc == true">{{global.language?.settings?.platformSettings?.Amazon?.errors?.roleApiErr}}</div>
+                </div>
+
+                <div class="modal-realtime-pop" style="width: 19%;">
+                    <div  class="card-link" data-toggle="modal" data-target="#myModal"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.setUp}}</p></div>
+                    <!-- <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div> -->
+                </div>
+                </div>
+
+                <div class="queues" style="margin-bottom: 28px;">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.title}}</div>
+                <div class="type-bucket" *ngFor="let queue of platformModel.queueNameArn;let j=index">
+                    <!-- <div class="form-group platform-group" [ngStyle]="{'pointer-events' : selectedPlatform === 1 ? 'none' : 'all'}" style="margin-bottom: 28px;"> -->
+                        <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.name}}</label>
+                    <input type="text" class="form-control choose-type-amazon" [(ngModel)]="queue.queueName" [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.name}}" autocomplete="off">
+                    </div>
+                    <div  class="bucket-box" style="padding: 0 12px;margin-top: -2px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.bucket}}</label>
+                        <input type="text" class="form-control bucket-ipt-box" [(ngModel)]="queue.queueArn" [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.bucket}}" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="margin-top: 18px;">
+                        <button class="btn-delete-icon" type="button" style="margin-left: 8px;margin-top: 4px;" (click)="removeQueue(j)">
+                        <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 3px;">
+                        </button>
+                    </div>
+                </div>
+                <span *ngIf="validationError.queues!=null" class="errormsg-topic"style=" position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.Amazon?.errors?.sourceErr}}</span>
+                <div class="add-centers">
+                    <button type="button" style="outline: 0px;" class="add-btn" (click)="addQueue()">
+                        <img src="../assets/img/microinteraction/add_item.svg">
+                        <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.queues?.add}}</span>
+                    </button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- <div class="row p-3">
+          <div class="col-sm-2">
+            <label class="platform-label">Allow agent feedback</label>
+          </div>
+          <div class="col-sm-1">
+            <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+          </div>
+          <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+            <div class="row">
+              <div class="col-sm-3 pl-0">
+                <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+              </div>
+              <div class="col-sm-3 pl-0">
+                <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+          <div class="save-btns">
+            <button type="button" class="btn-save" *ngIf="selectedPlatform == '1' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" (click)=" updateAmazon()" [disabled]="loading">{{global.language?.settings?.platformSettings?.Amazon?.save}}</button>
+            <button type="button" class="btn-save" *ngIf="selectedPlatform == '1' && createEdit=='create'" (click)="saveAmazon()" [disabled]="loading">{{global.language?.settings?.platformSettings?.Amazon?.save}}</button>
+          </div>
+        </form>
+       </div>
+  
+    <!-- UJET's Data format -->
+        <div class="ujet-center-datas" *ngIf="selectedPlatform === 6">
+            <form [formGroup]="ujet">
+                <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.UJET?.name}}</label>
+                    <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" formControlName="centerName" [(ngModel)]="platformModel.cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                    [ngClass]="{ 'is-invalid ': (submittedUJET || validationUJET.centerName.touched) &&  validationUJET.centerName.errors }" placeholder="{{global.language?.settings?.platformSettings?.Amazon?.namePlace}}" autocomplete="off">
+                    <div *ngIf="(submittedUJET || validationUJET.centerName.touched) && validationUJET.centerName.errors" class="is-invalid  ">
+                        <div class="errormsg-topic is-invalid" *ngIf="((submittedUJET ||validationUJET.centerName.touched) && validationUJET.centerName.errors.required)==null?false:true">
+                            {{global.language?.settings?.platformSettings?.UJET?.errors?.nameErr}}
+                        </div>     
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.UJET?.client}}</label>
+                        <div style="display: flex;">
+                        <input id="g-password-field" type="password" class="form-control platform-ipt-box" formControlName="clientID" [(ngModel)]="platformModel.clientID" (keypress)="keyPressSpaceRemove($event)" 
+                        [ngClass]="{ 'is-invalid ': (submittedUJET || validationUJET.clientID.touched) &&  validationUJET.clientID.errors }" placeholder="{{global.language?.settings?.platformSettings?.UJET?.client}}" autocomplete="off" style="padding-right: 35px;">
+                        <span id="g-toggle-passwordId" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientId('g-createId')"></span>
+                        </div>
+                        <div *ngIf="(submittedUJET || validationUJET.clientID.touched) && validationUJET.clientID.errors" class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid" *ngIf="((submittedUJET ||validationUJET.clientID.touched) && validationUJET.clientID.errors.required)==null?false:true">
+                                {{global.language?.settings?.platformSettings?.UJET?.errors?.clientErr}}
+                            </div>     
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.UJET?.secret}}</label>
+                            <div style="display: flex;">
+                            <input  id="g-password-fieldSecret" type="password" class="form-control platform-ipt-box" formControlName="clientSecret" [(ngModel)]="platformModel.clientSecret" (keypress)="keyPressSpaceRemove($event)" 
+                            [ngClass]="{ 'is-invalid ': (submittedUJET || validationUJET.clientSecret.touched) &&  validationUJET.clientSecret.errors }" placeholder="{{global.language?.settings?.platformSettings?.UJET?.secret}}" autocomplete="off" style="padding-right: 35px;"> 
+                            <span id="g-toggle-passwordSecret" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientSecret('g-createSecret')"></span>
+                            </div>
+                            <div *ngIf="(submittedUJET || validationUJET.clientSecret.touched) && validationUJET.clientSecret.errors" class="is-invalid  ">
+                                <div class="errormsg-topic is-invalid" *ngIf="((submittedUJET ||validationUJET.clientSecret.touched) && validationUJET.clientSecret.errors.required)==null?false:true">
+                                    {{global.language?.settings?.platformSettings?.UJET?.errors?.secretErr}}
+                                </div>     
+                            </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">Domain Name</label>
+                        <input type="text" class="form-control platform-ipt-box" formControlName="domainName" [(ngModel)]="platformModel.domainName" 
+                        [ngClass]="{ 'is-invalid ': (submittedUJET || validationUJET.domainName.touched) &&  validationUJET.domainName.errors }" placeholder="UJET Domain Name" autocomplete="off">
+                            <div *ngIf="(submittedUJET || validationUJET.domainName.touched) && validationUJET.domainName.errors" class="is-invalid  ">
+                                <div class="errormsg-topic is-invalid" *ngIf="((submittedUJET ||validationUJET.domainName.touched) && validationUJET.domainName.errors.required)==null?false:true">
+                                    Please enter your Domain Name
+                                </div>     
+                            </div>
+                </div>
+                <!-- Adding time-zone Selection (SP-653) -->
+                    <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">AWS Region</label>
+                        <p-dropdown class="choose-platform dplable" [options]="awsRegions" [(ngModel)]="platformModel.awsRegion" [ngModelOptions]="{standalone: true}" placeholder="Select AWS Region" ></p-dropdown>
+                    </div>
+                    
+                    <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">Time Zone</label>
+                        <p-dropdown class="choose-platform dplable" [options]="timeZones" [(ngModel)]="platformModel.cusTimeZone" [ngModelOptions]="{standalone: true}" placeholder="UTC"></p-dropdown>
+                    </div>
+                <!--End of changes of (SP-653)-->  
+                <div class="call-recording">           
+                        <div>
+                            <h4>Call Recording</h4>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label class="platform-label">{{global.language?.settings?.platformSettings?.UJET?.recordLoc}} (Amazon S3)</label>
+                            <input type="text" class="form-control  platform-ipt-box" 
+                            
+                            [ngClass]="recordLoc == true ? 'is-invalid' : false "
+                            [(ngModel)]="platformModel.dataLocations[0].Value" [ngModelOptions]="{standalone: true}"
+                            placeholder="{{global.language?.settings?.platformSettings?.UJET.LocPlace}}" autocomplete="off">
+                            <div class="errormsg-topic" *ngIf="recordLoc==true">{{global.language?.settings?.platformSettings?.UJET?.errors?.LocErr}}</div>
+                        </div>
+                        <div>
+                            <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.UJET?.realAnalytics?.s3Script}}</p></div>
+                        </div>
+                </div>
+                <div class="language">
+                    <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.UJET?.language}}</label>
+                        <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode" filter="true"
+                        placeholder="{{global.language?.settings?.platformSettings?.UJET?.selectLang}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                    </div>
+                </div>
+                <div class="call-metadata pb-3 mb-3" [ngStyle]="{'cursor' : selectedPlatform === 6 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 6 ? 'lightgray' : '', 'padding': selectedPlatform === 6 ?'16px':'0px'}">           
+                        <div>
+                            <h4>Interaction Metadata</h4>
+                        </div>
+                            <div [ngStyle]="{'pointer-events' : selectedPlatform === 6 ? 'none' : 'all'}" style="display: flex;margin-bottom: 12px;">
+                            <label  class="role-options">
+                            <p-radioButton class="any-playbook"  name="group12" value="s3"  [(ngModel)]="platformModel.dataSyncMethod" [ngModelOptions]="{standalone: true}"  label="S3 Location" inputId="preopt12">
+                            </p-radioButton>
+                            </label>
+                            <label class="role-options">
+                            <p-radioButton  class="any-playbook" name="group11" value="api" [(ngModel)]="platformModel.dataSyncMethod"  [ngModelOptions]="{standalone: true}" label="API (above details apply)" inputId="preopt11">
+                            </p-radioButton>
+                            </label>
+                        </div>
+                        <div [ngStyle]="{'pointer-events' : selectedPlatform === 6 ? 'none' : 'all'}" class="form-group" style="margin-bottom: 10px;" *ngIf = "platformModel.dataSyncMethod === 's3'">
+                            <label class="platform-label">Amazon S3 Metadata Location</label>
+                            <input type="text" class="form-control  platform-ipt-box" 
+                            
+                            [ngClass]="recordLoc == true ? 'is-invalid' : false "
+                            [(ngModel)]="platformModel.dataLocations[1].Value" [ngModelOptions]="{standalone: true}"
+                            placeholder="{{global.language?.settings?.platformSettings?.UJET.LocPlace}}" autocomplete="off">
+                            <div class="errormsg-topic" *ngIf="recordLoc==true">{{global.language?.settings?.platformSettings?.UJET?.errors?.LocErr}}</div>
+                        </div>
+                        <div *ngIf = "platformModel.dataSyncMethod === 's3'">
+                            <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.UJET?.realAnalytics?.s3Script}}</p></div>
+                        </div>
+                </div>  
+
+                <!-- <div class="row p-3">
+                  <div class="col-sm-2">
+                    <label class="platform-label">Allow agent feedback</label>
+                  </div>
+                  <div class="col-sm-1">
+                    <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                  </div>
+                  <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+                    <div class="row">
+                      <div class="col-sm-3 pl-0">
+                        <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                      </div>
+                      <div class="col-sm-3 pl-0">
+                        <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+
+                <div class="save-btns">         
+                    <button type="button" class="btn-save" *ngIf="selectedPlatform == '6' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" (click)="updateUJET()" [disabled]="loading">{{global.language?.settings?.platformSettings?.UJET?.save}}</button>
+                    <button type="button" class="btn-save" *ngIf="selectedPlatform == '6' && createEdit=='create'" (click)="saveUJET()" [disabled]="loading">{{global.language?.settings?.platformSettings?.UJET?.save}}</button>
+                </div>
+            </form>
+        </div>
+
+    <!-- other contact centers -->
+       <div class="contact-centers-datas" *ngIf="selectedPlatform === 3">
+           <form [formGroup]="otherContactCenters">
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.name}}</label>
+                <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" placeholder="{{global.language?.settings?.platformSettings?.otherContactCenters?.namePlace}}" formControlName="centerName" [(ngModel)]="platformModel.cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                [ngClass]="{ 'is-invalid ': (submittedOtherContactCenter || validationOtherContactCenter.centerName.touched) &&  validationOtherContactCenter.centerName.errors }" autocomplete="off">
+                <div *ngIf="(submittedOtherContactCenter || validationOtherContactCenter.centerName.touched) && validationOtherContactCenter.centerName.errors" class="is-invalid  ">
+                    <div class="errormsg-topic is-invalid" *ngIf="((submittedOtherContactCenter ||validationOtherContactCenter.centerName.touched) && validationOtherContactCenter.centerName.errors.required)==null?false:true">
+                        {{global.language?.settings?.platformSettings?.otherContactCenters?.errors?.nameErr}}
+                    </div>     
+                </div>
+             </div>
+             <!-- Adding time-zone Selection (SP-653) -->
+             <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">AWS Region</label>
+                <p-dropdown class="choose-platform dplable" [options]="awsRegions" [(ngModel)]="platformModel.awsRegion" [ngModelOptions]="{standalone: true}" placeholder="Select AWS Region" ></p-dropdown>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">Time Zone</label>
+                <p-dropdown class="choose-platform dplable" [options]="timeZones" [(ngModel)]="defTimeZone" [ngModelOptions]="{standalone: true}" placeholder="UTC" disabled></p-dropdown>
+            </div>
+            <!--End of changes of (SP-653)-->
+
+             <div>
+                <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div>
+              </div>
+
+             <div class="call-recording-others" style="margin-bottom: 32px;">
+                <div class="recording-others-title" style="margin-bottom: 16px;">
+                    {{global.language?.settings?.platformSettings?.otherContactCenters?.callRecord}}
+                </div>
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.recordLoc}}</label>
+                    <input type="text" class="form-control platform-ipt-box" placeholder="{{global.language?.settings?.platformSettings?.otherContactCenters?.locPlace}}" [(ngModel)]="platformModel.recodingLocation" 
+                    formControlName="recordingLocation"  autocomplete="off" style="width: 500px;"
+                    [ngClass]="{ 'is-invalid ': (submittedOtherContactCenter || validationOtherContactCenter.recordingLocation.touched) &&  validationOtherContactCenter.recordingLocation.errors }">
+                    <div *ngIf="(submittedOtherContactCenter || validationOtherContactCenter.recordingLocation.touched) && validationOtherContactCenter.recordingLocation.errors" class="is-invalid  ">
+                        <div class="errormsg-topic is-invalid" *ngIf="((submittedOtherContactCenter ||validationOtherContactCenter.recordingLocation.touched) && validationOtherContactCenter.recordingLocation.errors.required)==null?false:true">
+                            {{global.language?.settings?.platformSettings?.otherContactCenters?.errors?.recordErr}}
+                        </div>     
+                    </div>
+                </div>
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.channel}}</label>
+                    <p-dropdown class="choose-platform dplable" [options]="channelList"  placeholder="Select a Channel" [(ngModel)]="platformModel.channelawsS3" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.lang}}</label>
+                    <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode" filter="true"
+                    placeholder="Select a Language" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+             </div>
+
+             <div>
+                <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div>
+             </div>
+
+             <div class="data-source-others" style="margin-bottom:40px;">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.otherContactCenters?.dataSource}}</div>
+                <div class="type-bucket" *ngFor="let others of platformModel.textDataLocations;let j =index">
+                    <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.type}}</label>
+                        <p-dropdown class="choose-type-amazon dplable" [options]="ccOtherDataLocations" [(ngModel)]="others.Key"
+                        placeholder="{{global.language?.settings?.platformSettings?.otherContactCenters?.select}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                    </div>
+                    <div  class="bucket-box" style="padding: 0 12px;margin-top: -2px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.otherContactCenters?.bucket}}</label>
+                        <input type="text" class="form-control bucket-ipt-box" [(ngModel)]="others.Value"  [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.otherContactCenters?.bucket}}" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="margin-top: 18px;">
+                        <button class="btn-delete-icon" type="button" style="margin-left: 8px;margin-top: 4px;" (click)="removeOtherData(j)">
+                          <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 3px;">
+                        </button>
+                    </div>
+                </div>
+                <!-- <span *ngIf="validationError.ccDataSource!=null" class="errormsg-topic"style=" position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.otherContactCenters?.errors?.dataErr}}</span> -->
+                <div *ngIf="isDataError == true" class="errormsg-topic"style="position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.otherContactCenters?.errors?.sameErr}}</div>
+                <div class="add-centers">
+                    <button type="button" style="outline: 0px;" class="add-btn" (click)="otherData()">
+                        <img src="../assets/img/microinteraction/add_item.svg">
+                        <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.otherContactCenters?.add}}</span>
+                      </button>
+                 </div>
+             </div>
+
+             <!-- <div class="row p-3">
+              <div class="col-sm-2">
+                <label class="platform-label">Allow agent feedback</label>
+              </div>
+              <div class="col-sm-1">
+                <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+              </div>
+              <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+                <div class="row">
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+             <div class="save-btns">
+                <button type="button" class="btn-save" *ngIf="selectedPlatform == '3' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" [disabled]="loading"  (click)="updateOtherContactCenters()">{{global.language?.settings?.platformSettings?.otherContactCenters?.save}}</button>
+                <button type="button" class="btn-save" *ngIf="selectedPlatform == '3' && createEdit=='create'" [disabled]="loading"  (click)="saveOtherContactCenter()">{{global.language?.settings?.platformSettings?.otherContactCenters?.save}}</button>
+              </div>
+
+           </form>
+       </div>
+
+    <!-- Text Analytics -->
+        <div class="text-analytics"  *ngIf="selectedPlatform === 5">
+            <form [formGroup]="textAnalytics">
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.textAnalytics?.name}}</label>
+                <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" formControlName="centerName" [(ngModel)]="platformModel.cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                [ngClass]="{ 'is-invalid ': (submittedTextAnalytics || validationTextAnalytics.centerName.touched) &&  validationTextAnalytics.centerName.errors }" placeholder="{{global.language?.settings?.platformSettings?.textAnalytics?.namePlace}}" autocomplete="off">
+                <div *ngIf="(submittedTextAnalytics || validationTextAnalytics.centerName.touched) && validationTextAnalytics.centerName.errors" class="is-invalid  ">
+                    <div class="errormsg-topic is-invalid" *ngIf="((submittedTextAnalytics ||validationTextAnalytics.centerName.touched) && validationTextAnalytics.centerName.errors.required)==null?false:true">
+                        {{global.language?.settings?.platformSettings?.textAnalytics?.errors?.nameErr}}
+                    </div>     
+                </div>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.textAnalytics?.lang}}</label>
+                <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode"
+                filter="true" placeholder="Select a Language" [ngModelOptions]="{standalone: true}"></p-dropdown>
+            </div>
+            
+             <!-- Adding time-zone Selection (SP-653) -->
+             <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">AWS Region</label>
+                <p-dropdown class="choose-platform dplable" [options]="awsRegions" [(ngModel)]="platformModel.awsRegion" [ngModelOptions]="{standalone: true}" placeholder="Select AWS Region" ></p-dropdown>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">Time Zone</label>
+                <p-dropdown class="choose-platform dplable" [options]="timeZones" [(ngModel)]="defTimeZone" [ngModelOptions]="{standalone: true}" placeholder="UTC" disabled></p-dropdown>
+            </div>
+            <!--End of changes of (SP-653)-->
+            <div>
+                <div  class="card-link" style="margin: 0;" data-toggle="modal" data-target="#myModal11"><p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Script}}</p></div>
+             </div>
+
+            <div class="data-source-textAnalytics" style="margin-bottom:40px;">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.textAnalytics?.dataSource}}</div>
+                <div class="type-bucket" *ngFor="let text of platformModel.textDataLocations;let j =index">
+                    <div class="form-group platform-group" style="margin-bottom: 28px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.textAnalytics?.type}}</label>
+                        <p-dropdown class="choose-type-amazon dplable" [options]="textDataLocation" [(ngModel)]="text.Key"
+                        placeholder="{{global.language?.settings?.platformSettings?.textAnalytics?.select}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                    </div>
+                    <div  class="bucket-box" style="padding: 0 12px;margin-top: -2px;">
+                        <label class="platform-label">{{global.language?.settings?.platformSettings?.textAnalytics?.bucket}}</label>
+                        <input type="text" class="form-control bucket-ipt-box" [(ngModel)]="text.Value"  [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.textAnalytics?.bucket}}" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="margin-top: 18px;">
+                        <button class="btn-delete-icon" type="button" style="margin-left: 8px;margin-top: 4px;" (click)="removeAnalytics(j)">
+                          <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 3px;">
+                        </button>
+                    </div>
+                </div>
+                <span *ngIf="validationError.ccDataSource!=null" class="errormsg-topic"style=" position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.textAnalytics?.errors?.dataErr}}</span>
+                <div *ngIf="isDataError == true" class="errormsg-topic"style="position: relative; top: -14px;">{{global.language?.settings?.platformSettings?.textAnalytics?.errors?.sameErr}}</div>
+                <div class="add-centers">
+                    <button type="button" style="outline: 0px;" class="add-btn" (click)="addTextAnalytics()">
+                        <img src="../assets/img/microinteraction/add_item.svg">
+                        <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.textAnalytics?.add}}</span>
+                    </button>
+                 </div>
+            </div>
+
+            <!-- <div class="row p-3">
+              <div class="col-sm-2">
+                <label class="platform-label">Allow agent feedback</label>
+              </div>
+              <div class="col-sm-1">
+                <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+              </div>
+              <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+                <div class="row">
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="save-btns">
+                <button type="button" class="btn-save" *ngIf="selectedPlatform == '5' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" [disabled]="loading" (click)=" updateTextAnalytics()">{{global.language?.settings?.platformSettings?.textAnalytics?.save}}</button>
+                <button type="button" class="btn-save" *ngIf="selectedPlatform == '5' && createEdit=='create'" [disabled]="loading" (click)="saveTextAnalytics()">{{global.language?.settings?.platformSettings?.textAnalytics?.save}}</button>
+            </div>
+            </form>
+        </div>
+
+    <!-- Talk Desk -->
+        <div class="platform-center-datas" *ngIf="selectedPlatform === 7"> 
+            <form [formGroup]="talkDesk" >
+                <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.name}}</label>
+                    <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" [(ngModel)]="platformModel.cxCenterName" formControlName="cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                    [ngClass]="{ 'is-invalid ': (submittedTalkdesk || validationTalkDesk.cxCenterName.touched) &&  validationTalkDesk.cxCenterName.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.namePlace}}" autocomplete="off">
+                    <div *ngIf="(submittedTalkdesk || validationTalkDesk.cxCenterName.touched) && validationTalkDesk.cxCenterName.errors" class="is-invalid  ">
+                        <div class="errormsg-topic is-invalid" *ngIf="((submittedTalkdesk ||validationTalkDesk.cxCenterName.touched) && validationTalkDesk.cxCenterName.errors.required)==null?false:true">
+                            {{global.language?.settings?.platformSettings?.genesys?.errors?.nameErr}}
+                        </div>     
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.client}}</label>
+                        <div style="display: flex;">
+                        <input id="g-password-field" type="password" class="form-control platform-ipt-box" formControlName="clientID" [(ngModel)]="platformModel.clientID" (keypress)="keyPressSpaceRemove($event)" 
+                        [ngClass]="{ 'is-invalid ': (submittedTalkdesk || validationTalkDesk.clientID.touched) &&  validationTalkDesk.clientID.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.client}}" autocomplete="off" style="padding-right: 35px;">
+                        <!-- <img id="g-toggle-passwordId" src="../../../../assets/img/Icons_Settings/icon_view_pw.svg" style="position: relative; right: 2pc;" (click)="g_passwordToggleClientId('g-createId')"> -->
+                        <span id="g-toggle-passwordId" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientId('g-createId')"></span>
+                        </div>
+                        <div *ngIf="(submittedTalkdesk || validationTalkDesk.clientID.touched) && validationTalkDesk.clientID.errors" class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid" *ngIf="((submittedTalkdesk ||validationTalkDesk.clientID.touched) && validationTalkDesk.clientID.errors.required)==null?false:true">
+                                {{global.language?.settings?.platformSettings?.genesys?.errors?.clientErr}}
+                            </div>     
+                        </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.secret}}</label>
+                        <div style="display: flex;">
+                        <input  id="g-password-fieldSecret" type="password" class="form-control platform-ipt-box" formControlName="clientSecret" [(ngModel)]="platformModel.clientSecret" (keypress)="keyPressSpaceRemove($event)" 
+                        [ngClass]="{ 'is-invalid ': (submittedTalkdesk || validationTalkDesk.clientSecret.touched) &&  validationTalkDesk.clientSecret.errors }" placeholder="{{global.language?.settings?.platformSettings?.genesys?.secret}}" autocomplete="off" style="padding-right: 35px;">
+                        <!-- <img src="../../../../assets/img/Icons_Settings/icon_view_pw.svg" style="position: relative; right: 2pc;"> -->
+                        <span id="g-toggle-passwordSecret" class="fa fa-fw fa-eye eye-icon" (click)="g_passwordToggleClientSecret('g-createSecret')"></span>
+                        </div>
+                        <div *ngIf="(submittedTalkdesk || validationTalkDesk.clientSecret.touched) && validationTalkDesk.clientSecret.errors" class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid" *ngIf="((submittedTalkdesk ||validationTalkDesk.clientSecret.touched) && validationTalkDesk.clientSecret.errors.required)==null?false:true">
+                                {{global.language?.settings?.platformSettings?.genesys?.errors?.secretErr}}
+                            </div>     
+                        </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">Domain Name</label>
+                    <input type="text" class="form-control platform-ipt-box" formControlName="domainName" [(ngModel)]="platformModel.domainName" 
+                    [ngClass]="{ 'is-invalid ': (submittedTalkdesk || validationTalkDesk.domainName.touched) &&  validationTalkDesk.domainName.errors }" placeholder="Domain Name" autocomplete="off">
+                        <div *ngIf="(submittedTalkdesk || validationTalkDesk.domainName.touched) && validationTalkDesk.domainName.errors" class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid" *ngIf="((submittedTalkdesk ||validationTalkDesk.domainName.touched) && validationTalkDesk.domainName.errors.required)==null?false:true">
+                                Please enter your Domain Name
+                            </div>     
+                        </div>
+                </div>
+
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">Time Zone</label>
+                    <p-dropdown class="choose-platform dplable" [options]="timeZones"  [(ngModel)]="platformModel.cusTimeZone" [ngModelOptions]="{standalone: true}" placeholder="Select Time-Zone" ></p-dropdown>
+                </div>
+                
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">AWS Region</label>
+                    <p-dropdown class="choose-platform dplable" [options]="awsRegions" [(ngModel)]="platformModel.awsRegion" [ngModelOptions]="{standalone: true}" placeholder="Select AWS Region" ></p-dropdown>
+                </div>
+                
+                <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.genesys?.lang}}</label>
+                    <p-dropdown class="choose-platform dplable" [options]="languageList" [(ngModel)]="platformModel.languageCode" filter="true"
+                    placeholder="{{global.language?.settings?.platformSettings?.genesys?.select}}" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="product-selection col-sm-6">
+                        <div class="bold-txt" style="margin-bottom: 16px;">{{global.language?.settings?.platformSettings?.genesys?.product}}</div> 
+                        <div  style="margin-bottom: 16px;display: flex;">
+                            <div class="col-sm-6 pl-0 ">
+                                <p-checkbox  class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.genesys?.historical}}" [(ngModel)]="platformModel.talkdeskHistorical" [ngModelOptions]="{standalone: true}"  binary="false" [disabled]="true"></p-checkbox>
+                            </div>
+                            <div class="col-sm-6 pl-0 ">
+                                <p-checkbox  class="check-box-active" label="{{global.language?.settings?.platformSettings?.genesys?.speech}}" [(ngModel)]="platformModel.SpeechtxtType" [ngModelOptions]="{standalone: true}" binary="false" [disabled]="true"></p-checkbox>
+                            </div>
+                    
+                        </div>
+                        <div style="margin-bottom: 16px;display: flex;">
+                            <div class="col-sm-6 pl-0 ">
+                                <p-checkbox  class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.genesys?.quality}}" [(ngModel)]="platformModel.qmType" [ngModelOptions]="{standalone: true}"  binary="false" [disabled]="true"></p-checkbox>
+                            </div>
+                            <div class="col-sm-6 pl-0 ">
+                                <p-checkbox  class="check-box-active" label="Recording" [(ngModel)]="platformModel.isRecording" [ngModelOptions]="{standalone: true}" binary="false" [disabled]="true"></p-checkbox>
+                            </div>
+                        </div>
+                        
+                    </div>
+                  
+                </div>
+                
+                <!-- <div class="row p-3">
+                  <div class="col-sm-2">
+                    <label class="platform-label">Allow agent feedback</label>
+                  </div>
+                  <div class="col-sm-1">
+                    <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="platformModel.allowAgentFeedback" [ngModelOptions]="{standalone: true}"></p-inputSwitch>
+                  </div>
+                  <div class="col-sm-6" *ngIf='platformModel.allowAgentFeedback'>
+                    <div class="row">
+                      <div class="col-sm-3 pl-0">
+                        <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.accept"  [ngModelOptions]="{standalone: true}" label="Accept" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                      </div>
+                      <div class="col-sm-3 pl-0">
+                        <p-checkbox  class="check-box-active box-genesys" [(ngModel)]="platformModel.dispute"  [ngModelOptions]="{standalone: true}" label="Dispute" (onChange)="onChange($event, 'Queues')"binary="false"></p-checkbox>
+                      </div>
+                    </div>
+                  </div>
+                </div> -->
+
+                <div class="save-btns">
+                    <button type="button" class="btn-save" *ngIf="selectedPlatform == '7' && createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" (click)="updateTalkDesk()" [disabled]="loading" >{{global.language?.settings?.platformSettings?.genesys?.save}}</button>
+                    <button type="button" class="btn-save" *ngIf="selectedPlatform == '7' && createEdit=='create'" (click)="saveTalkDesk()" [disabled]="loading" >{{global.language?.settings?.platformSettings?.genesys?.save}}</button>
+                </div>
+            </form>
+        </div>
+       <!-- Talk Desk -->
+       <div class="platform-center-datas" *ngIf="selectedPlatform === 9"> 
+        <form [formGroup]="livevox">
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.cxCenterName}}</label>
+              <input type="text" id="cxcenternameid" class="form-control platform-ipt-box" formControlName="cxCenterName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.cxCenterName}}">
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('cxCenterName').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.cxCenterName}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;margin-top: 24px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.domainURL}}</label>
+                <p-dropdown class="choose-platform dplable" [options]="domainURLLivevox" formControlName="domainURL"
+                placeholder="{{global.language?.settings?.platformSettings?.Livevox?.select}} {{global.language?.settings?.platformSettings?.Livevox?.domainURL}}"></p-dropdown>
+                <small class="text-danger" *ngIf="submittedLivevox && livevox.get('domainURL').hasError('required')">
+                  {{global.language?.settings?.platformSettings?.Livevox?.domainURL}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+                </small>
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.clientName}}</label>
+                <input type="text" class="form-control platform-ipt-box" formControlName="clientName"
+                  placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.clientName}}">
+                <small class="text-danger" *ngIf="submittedLivevox && livevox.get('clientName').hasError('required')">
+                  {{global.language?.settings?.platformSettings?.Livevox?.clientName}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+                </small>
+            </div>
+            <div class="language">
+                  <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.languageCode1}} ({{global.language?.settings?.platformSettings?.Livevox?.languageCode2}})
+                    </label>
+                    <p-dropdown class="choose-platform dplable" [options]="languageList" formControlName="languageCode"
+                      placeholder="{{global.language?.settings?.platformSettings?.Livevox?.select}} {{global.language?.settings?.platformSettings?.Livevox?.languageCode1}}"></p-dropdown>
+                      <small class="text-danger" *ngIf="submittedLivevox && livevox.get('languageCode').hasError('required')">
+                        {{global.language?.settings?.platformSettings?.Livevox?.languageCode1}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+                      </small>
+                  </div>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.awsRegion}}</label>
+              <p-dropdown class="choose-platform dplable" [options]="awsRegions" formControlName="awsRegion"
+              placeholder="{{global.language?.settings?.platformSettings?.Livevox?.select}} {{global.language?.settings?.platformSettings?.Livevox?.awsRegion}}"></p-dropdown>
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('awsRegion').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.awsRegion}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+        
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.cusTimeZone}}</label>
+              <p-dropdown class="choose-platform dplable" [options]="timeZones" formControlName="cusTimeZone"
+              placeholder="{{global.language?.settings?.platformSettings?.Livevox?.select}} {{global.language?.settings?.platformSettings?.Livevox?.cusTimeZone}}"></p-dropdown>
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('cusTimeZone').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.cusTimeZone}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.userName}}</label>
+              <div style="display: flex;">
+                <input id="g-username-field" type="password" class="form-control platform-ipt-box" formControlName="userName"
+                  (keypress)="keyPressSpaceRemove($event)" placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.userName}}" autocomplete="off">
+                <span id="g-toggle-username" class="fa fa-fw fa-eye eye-icon"
+                  (click)="g_passwordToggleUsername('g-createId')"></span>
+              </div>
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('userName').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.userName}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.password}}</label>
+              <div style="display: flex;">
+                <input id="g-passwordLV-field" type="password" class="form-control platform-ipt-box" formControlName="password"
+                  (keypress)="keyPressSpaceRemove($event)" placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.password}}" autocomplete="off">
+                <span id="g-toggle-passwordLV" class="fa fa-fw fa-eye eye-icon"
+                  (click)="g_passwordTogglePassword('g-createId')"></span>
+              </div>
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('password').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.password}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.LVAccess}}</label>
+              <div style="display: flex;">
+                <input id="g-LVAccess-field" type="password" class="form-control platform-ipt-box" formControlName="LVAccess"
+                  (keypress)="keyPressSpaceRemove($event)" placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.LVAccess}}" autocomplete="off">
+                <span id="g-toggle-LVAccess" class="fa fa-fw fa-eye eye-icon"
+                  (click)="g_passwordToggleLVAccess('g-createId')"></span>
+              </div>
+              <small class="text-danger" *ngIf="submittedLivevox && livevox.get('LVAccess').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Livevox?.LVAccess}} {{global.language?.settings?.platformSettings?.Livevox?.required}}
+              </small>
+            </div>
+            <div class="pb-2 pl-4 pt-4" [ngStyle]="{'cursor' : selectedPlatform === 9 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 9 ? 'lightgray' : ''}">
+            <div class="row mb-3">
+              <div class="product-selection col-sm-8">
+                <div class="bold-txt" style="margin-bottom: 16px;">{{global.language?.settings?.platformSettings?.Livevox?.ProductSelection}}</div>
+                <div style="margin-bottom: 16px;display: flex;">
+                  <div class="col-sm-6 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 9 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.acdType}}" formControlName="acdType"
+                      binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-4 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 9 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active" label="{{global.language?.settings?.platformSettings?.Livevox?.SpeechtxtType}}" formControlName="SpeechtxtType"
+                      binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-2 pl-0 ">
+                      <div *ngIf="createEdit=='edit'">
+                        <a data-toggle="modal" data-target="#rulesLVModal" aria-hidden="true" id="rulesLVModalOpen"></a>
+                        <button type="button" style="outline: 0px;" class="add-btn" (click)="openLVRulesPopup()">
+                          <img src="../assets/img/microinteraction/edit.svg">
+                          <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.Livevox?.rules}}</span>
+                        </button>
+                      </div>
+                   
+                    <div class="modal fade" id="rulesLVModal" data-backdrop="static">
+                      <div class="modal-dialog modalrulesplatform">
+                        <div class="modal-content">
+                          <div class="modal-header" style="border-bottom: 0;">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <div class="modal-body" style="padding-bottom: 18px">
+                              <div class="row mb-2">
+                                <div class="form-group col mb-0">
+                                  <label class="platform-label">% {{global.language?.settings?.platformSettings?.Livevox?.Transcription}}</label>
+                                  <input type="number" class="form-control col-4 w-100 platform-ipt-box" (keypress)="keyPress($event)"
+                                    [(ngModel)]="LVTranscription" [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} % {{global.language?.settings?.platformSettings?.Livevox?.Transcription}}"
+                                    autocomplete="off" min="1" max="100">
+                                    <small class="text-danger" *ngIf="LVTranscription==null || LVTranscription <= 0 || LVTranscription > 100">{{global.language?.settings?.platformSettings?.Livevox?.TranscriptionValid}}</small>
+                                </div>
+                            </div>
+                            <!-- Services -->
+                            <div class="row mb-2">
+                              <div class="col-sm-2 pr-0 mt-1">
+                                <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.Services}}" [(ngModel)]="LVServices" [ngModelOptions]="{standalone: true}"
+                                  binary="false"></p-checkbox>
+                              </div>
+                              <div class="col-sm-4 pl-0" *ngIf="LVServices">
+                                <p-multiSelect [options]="LVServicesFilterList" [(ngModel)]="LVServicesFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-6 label-section pr-0" *ngIf="LVServices">
+                                <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVServicesFilter">
+                                    {{label}}
+                                    <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('Services',label)"></i>
+                                </button>
+                            </div>
+                          </div>
+                          <!-- DNIS -->
+                          <div class="row mb-2">
+                            <div class="col-sm-2 mt-1 pr-0">
+                              <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.DNIS}}" [(ngModel)]="LVDNIS" [ngModelOptions]="{standalone: true}"
+                                binary="false"></p-checkbox>
+                            </div>
+                            <div class="col-sm-4 pl-0" *ngIf="LVDNIS">
+                              <p-multiSelect [options]="LVDNISFilterList" [(ngModel)]="LVDNISFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                            </div>
+                            <div class="col-sm-6 label-section pr-0" *ngIf="LVDNIS">
+                              <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVDNISFilter">
+                                  {{label}}
+                                  <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('DNIS',label)"></i>
+                              </button>
+                          </div>
+                        </div>
+                        <!-- Campaigns -->
+                        <div class="row mb-2">
+                          <div class="col-sm-2 pr-0 mt-1">
+                            <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.Campaigns}}" [(ngModel)]="LVCampaigns" [ngModelOptions]="{standalone: true}"
+                              binary="false"></p-checkbox>
+                          </div>
+                          <div class="col-sm-4 pl-0" *ngIf="LVCampaigns">
+                            <p-multiSelect [options]="LVCampaignsFilterList" [(ngModel)]="LVCampaignsFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                          </div>
+                          <div class="col-sm-6 label-section pr-0" *ngIf="LVCampaigns">
+                            <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVCampaignsFilter">
+                                {{label}}
+                                <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('Campaigns',label)"></i>
+                            </button>
+                        </div>
+                      </div>
+                      <!-- Teams -->
+                      <div class="row mb-2">
+                        <div class="col-sm-2 pr-0 mt-1">
+                          <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.Teams}}" [(ngModel)]="LVTeams" [ngModelOptions]="{standalone: true}"
+                            binary="false"></p-checkbox>
+                        </div>
+                        <div class="col-sm-4 pl-0" *ngIf="LVTeams">
+                          <p-multiSelect [options]="LVTeamsFilterList" [(ngModel)]="LVTeamsFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                        </div>
+                        <div class="col-sm-6 label-section pr-0" *ngIf="LVTeams">
+                          <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVTeamsFilter">
+                              {{label}}
+                              <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('Teams',label)"></i>
+                          </button>
+                      </div>
+                    </div>
+                    <!-- Agents -->
+                    <div class="row mb-2">
+                      <div class="col-sm-2 pr-0 mt-1">
+                        <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.Agents}}" [(ngModel)]="LVAgents" [ngModelOptions]="{standalone: true}"
+                          binary="false"></p-checkbox>
+                      </div>
+                      <div class="col-sm-4 pl-0" *ngIf="LVAgents">
+                        <p-multiSelect [options]="LVAgentsFilterList" [(ngModel)]="LVAgentsFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                      </div>
+                      <div class="col-sm-6 label-section pr-0" *ngIf="LVAgents">
+                        <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVAgentsFilter">
+                            {{label}}
+                            <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('Agents',label)"></i>
+                        </button>
+                    </div>
+                  </div>                        
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col-7">
+                              <div style="color: grey;" class="pl-2 pb-2">{{global.language?.settings?.platformSettings?.Livevox?.Note}}</div>
+                            </div>
+                            <div class="col-5" *ngIf="createEdit=='edit'">
+                                <div class="row">
+                                  <button type="button" class="btn-save mr-2" (click)="updateLVRules()">{{global.language?.settings?.platformSettings?.Livevox?.Save}}</button>
+                                  <button type="button" class="btn btn-cancel ml-2 mr-3" data-dismiss="modal" id="closeModal">{{global.language?.settings?.platformSettings?.Livevox?.Cancel}}</button>
+                                </div>
+                            </div>
+                          </div>
+                          <!-- <div class="modal-footer">
+                          </div> -->
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <i class="fa fa-pencil-square edit-clr mt-1 float-right pr-2" (click)="editData(customerDetails)"
+                            data-toggle="modal" data-target="#editModal" aria-hidden="true" tooltip="Edit Details"
+                            placement="top"></i>
+                            <span class="btn-txt-add">&nbsp;Rules</span> -->
+                  </div>
+                </div>
+                <div style="margin-bottom: 16px;display: flex;">
+                  <div class="col-sm-6 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 9 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Livevox?.qmType}}" formControlName="qmType"
+                      binary="false"></p-checkbox>
+                  </div>
+                </div>
+              </div>
+        
+            </div>
+            <div style="display: flex;justify-content: space-between;width: 30%;margin-bottom: 28px;" [ngStyle]="{'pointer-events' : selectedPlatform === 9 ? 'none' : 'all'}">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.Livevox?.realTimeFlag}}</div>
+                    <div>
+                    <p-inputSwitch class="ipt-switch-platform" formControlName="realTimeFlag">
+                    </p-inputSwitch>
+                    <span class="on-off-toggle" style="top: -6px;">{{livevox.get('realTimeFlag').value ? global.language?.settings?.platformSettings?.Livevox?.On:global.language?.settings?.platformSettings?.Livevox?.Off}}</span>
+                </div> 
+            </div>
+  
+        </div>
+            <div class="bold-txt mt-2 mb-2">{{global.language?.settings?.platformSettings?.Livevox?.SFTP}}</div>
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.SFTPHostName}}</label>
+              <input type="text" class="form-control platform-ipt-box" formControlName="SFTPHostName"
+                placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.SFTPHostName}}">
+                <label class="mt-2">{{global.language?.settings?.platformSettings?.Livevox?.SFTPNote}} <i>&lt;Hostname&gt;/ftpout/SuccessKPI</i></label>
+                <!-- <small class="text-danger" *ngIf="submittedLivevox && livevox.get('SFTPHostName').hasError('required')">Hostname
+                is
+                required</small> -->
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.SFTPPort}}</label>
+              <input type="text" class="form-control platform-ipt-box" formControlName="SFTPPort" 
+              placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.SFTPPort}}">
+              <!-- <small class="text-danger" *ngIf="submittedLivevox && livevox.get('SFTPPort').hasError('required')">Port
+                is
+                required</small> -->
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.userName}}</label>
+              <div style="display: flex;">
+                <input id="g-SFTPUserName-field" type="password" class="form-control platform-ipt-box"
+                  formControlName="SFTPUserName" (keypress)="keyPressSpaceRemove($event)" 
+              placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.userName}}"
+                  autocomplete="off">
+                <span id="g-toggle-SFTPUserName" class="fa fa-fw fa-eye eye-icon"
+                  (click)="g_passwordToggleSFTPUserName('g-createId')"></span>
+              </div>
+              <!-- <small class="text-danger" *ngIf="submittedLivevox && livevox.get('SFTPUserName').hasError('required')">Username is
+                required</small> -->
+            </div>
+            <div class="form-group" style="margin-bottom: 28px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Livevox?.password}}</label>
+              <div style="display: flex;">
+                <input id="g-SFTPPassword-field" type="password" class="form-control platform-ipt-box"
+                  formControlName="SFTPPassword" (keypress)="keyPressSpaceRemove($event)" 
+              placeholder="{{global.language?.settings?.platformSettings?.Livevox?.enter}} {{global.language?.settings?.platformSettings?.Livevox?.password}}"
+                  autocomplete="off">
+                <span id="g-toggle-SFTPPassword" class="fa fa-fw fa-eye eye-icon"
+                  (click)="g_passwordToggleSFTPPassword('g-createId')"></span>
+              </div>
+              <!-- <small class="text-danger" *ngIf="submittedLivevox && livevox.get('SFTPPassword').hasError('required')">Password is
+                required</small> -->
+            </div>
+
+            <!-- <div class="row p-3">
+              <div class="col-sm-2">
+                <label class="platform-label">Allow agent feedback</label>
+              </div>
+              <div class="col-sm-1">
+                <p-inputSwitch class="ipt-switch-platform" formControlName="allowAgentFeedback"></p-inputSwitch>
+              </div>
+              <div class="col-sm-6" *ngIf="livevox.get('allowAgentFeedback').value">
+                <div class="row">
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" formControlName="accept" label="Accept" binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-3 pl-0">
+                    <p-checkbox  class="check-box-active box-genesys" formControlName="dispute" label="Dispute" binary="false"></p-checkbox>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+            
+            <div class="save-btns">
+                <button type="button" class="btn-save" *ngIf="createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" [disabled]="loading" (click)="updateLiveVox('update')">{{global.language?.settings?.platformSettings?.Livevox?.Update}}</button>
+                <button type="button" class="btn-save" *ngIf="createEdit=='create'" [disabled]="loading" (click)="updateLiveVox('create')">{{global.language?.settings?.platformSettings?.Livevox?.Save}}</button>
+            </div>
+            <br>
+          </form>
+    </div>
+
+    <!-- Avaya -->
+    <div class="platform-center-datas" *ngIf="selectedPlatform === 10"> 
+        <form [formGroup]="avaya">
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+              <label class="platform-label">{{global.language?.settings?.platformSettings?.Avaya?.cxCenterName}}</label>
+              <input type="text" class="form-control platform-ipt-box" formControlName="cxCenterName"
+                placeholder="{{global.language?.settings?.platformSettings?.Avaya?.enter}} {{global.language?.settings?.platformSettings?.Avaya?.cxCenterName}}">
+              <small class="text-danger" *ngIf="submittedAvaya && avaya.get('cxCenterName').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Avaya?.cxCenterName}} {{global.language?.settings?.platformSettings?.Avaya?.required}}
+              </small>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Avaya?.clientName}}</label>
+                <input type="text" class="form-control platform-ipt-box" formControlName="clientName"
+                  placeholder="{{global.language?.settings?.platformSettings?.Avaya?.enter}} {{global.language?.settings?.platformSettings?.Avaya?.clientName}}">
+                <small class="text-danger" *ngIf="submittedAvaya && avaya.get('clientName').hasError('required')">
+                  {{global.language?.settings?.platformSettings?.Avaya?.clientName}} {{global.language?.settings?.platformSettings?.Avaya?.required}}
+                </small>
+            </div>
+            <div class="language">
+                  <div class="form-group platform-group" style="margin-bottom: 28px;">
+                    <label class="platform-label">{{global.language?.settings?.platformSettings?.Avaya?.languageCode1}} ({{global.language?.settings?.platformSettings?.Avaya?.languageCode2}})
+                    </label>
+                    <p-dropdown class="choose-platform dplable" [options]="languageList" formControlName="languageCode"
+                      placeholder="{{global.language?.settings?.platformSettings?.Avaya?.select}} {{global.language?.settings?.platformSettings?.Avaya?.languageCode1}}"></p-dropdown>
+                      <small class="text-danger" *ngIf="submittedAvaya && avaya.get('languageCode').hasError('required')">
+                        {{global.language?.settings?.platformSettings?.Avaya?.languageCode1}} {{global.language?.settings?.platformSettings?.Avaya?.required}}
+                      </small>
+                  </div>
+            </div>
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Avaya?.awsRegion}}</label>
+              <p-dropdown class="choose-platform dplable" [options]="awsRegions" formControlName="awsRegion"
+              placeholder="{{global.language?.settings?.platformSettings?.Avaya?.select}} {{global.language?.settings?.platformSettings?.Avaya?.awsRegion}}"></p-dropdown>
+              <small class="text-danger" *ngIf="submittedAvaya && avaya.get('awsRegion').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Avaya?.awsRegion}} {{global.language?.settings?.platformSettings?.Avaya?.required}}
+              </small>
+            </div>
+        
+            <div class="form-group platform-group" style="margin-bottom: 28px;">
+                <label class="platform-label">{{global.language?.settings?.platformSettings?.Avaya?.cusTimeZone}}</label>
+              <p-dropdown class="choose-platform dplable" [options]="timeZones" formControlName="cusTimeZone"
+              placeholder="{{global.language?.settings?.platformSettings?.Avaya?.select}} {{global.language?.settings?.platformSettings?.Avaya?.cusTimeZone}}"></p-dropdown>
+              <small class="text-danger" *ngIf="submittedAvaya && avaya.get('cusTimeZone').hasError('required')">
+                {{global.language?.settings?.platformSettings?.Avaya?.cusTimeZone}} {{global.language?.settings?.platformSettings?.Avaya?.required}}
+              </small>
+            </div>
+            
+            <div class="pb-2 pl-4 pt-4" style="margin-bottom: 28px;" [ngStyle]="{'cursor' : selectedPlatform === 10 ? 'not-allowed' : 'pointer', 'background-color' : selectedPlatform === 10 ? 'lightgray' : ''}">
+            <div class="row mb-3">
+              <div class="product-selection col-sm-8">
+                <div class="bold-txt" style="margin-bottom: 16px;">{{global.language?.settings?.platformSettings?.Avaya?.ProductSelection}}</div>
+                <div style="margin-bottom: 16px;display: flex;">
+                  <div class="col-sm-6 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 10 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Avaya?.acdType}}" formControlName="acdType"
+                      binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-4 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 10 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active" label="{{global.language?.settings?.platformSettings?.Avaya?.SpeechtxtType}}" formControlName="SpeechtxtType"
+                      binary="false"></p-checkbox>
+                  </div>
+                  <div class="col-sm-2 pl-0 ">
+                      <div *ngIf="createEdit=='edit'">
+                        <a data-toggle="modal" data-target="#rulesLVModal" aria-hidden="true" id="rulesLVModalOpen"></a>
+                        <button type="button" style="outline: 0px;" class="add-btn" (click)="openLVRulesPopup()">
+                          <img src="../assets/img/microinteraction/edit.svg">
+                          <span class="btn-txt-add">&nbsp;{{global.language?.settings?.platformSettings?.Avaya?.rules}}</span>
+                        </button>
+                      </div>
+                   
+                    <div class="modal fade" id="rulesLVModal" data-backdrop="static">
+                      <div class="modal-dialog modalrules">
+                        <div class="modal-content">
+                          <div class="modal-header" style="border-bottom: 0;">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                          <div class="modal-body" style="padding-bottom: 18px">
+                              <div class="row mb-2">
+                                <div class="form-group col mb-0">
+                                  <label class="platform-label">% {{global.language?.settings?.platformSettings?.Avaya?.Transcription}}</label>
+                                  <input type="number" class="form-control col-4 w-100 platform-ipt-box" (keypress)="keyPress($event)"
+                                    [(ngModel)]="LVTranscription" [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.platformSettings?.Avaya?.enter}} % {{global.language?.settings?.platformSettings?.Avaya?.Transcription}}"
+                                    autocomplete="off" min="1" max="100">
+                                    <small class="text-danger" *ngIf="LVTranscription==null">{{global.language?.settings?.platformSettings?.Avaya?.TranscriptionValid}}</small>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-sm-2 pr-0 mt-1">
+                                <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Avaya?.Services}}" [(ngModel)]="LVServices" [ngModelOptions]="{standalone: true}"
+                                  binary="false"></p-checkbox>
+                              </div>
+                              <div class="col-sm-4 pl-0" *ngIf="LVServices">
+                                <p-multiSelect [options]="LVServicesFilterList" [(ngModel)]="LVServicesFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                              </div>
+                              <div class="col-sm-6 label-section pr-0" *ngIf="LVServices">
+                                <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVServicesFilter">
+                                    {{label}}
+                                    <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('Services',label)"></i>
+                                </button>
+                            </div>
+                          </div>
+                          <div class="row mb-2">
+                            <div class="col-sm-2 mt-1 pr-0">
+                              <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Avaya?.DNIS}}" [(ngModel)]="LVDNIS" [ngModelOptions]="{standalone: true}"
+                                binary="false"></p-checkbox>
+                            </div>
+                            <div class="col-sm-4 pl-0" *ngIf="LVDNIS">
+                              <p-multiSelect [options]="LVDNISFilterList" [(ngModel)]="LVDNISFilter" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected"  defaultLabel="Choose data filter" [virtualScroll]="true"  [itemSize]="34" class="multiselect-custom-virtual-scroll data-access-ddl" [showToggleAll]="false"></p-multiSelect>
+                            </div>
+                            <div class="col-sm-6 label-section pr-0" *ngIf="LVDNIS">
+                              <button class="select-label mr-2 mb-2 label-odd" *ngFor="let label of LVDNISFilter">
+                                  {{label}}
+                                  <i class="fa fa-times-circle cross-btn" aria-hidden="true" (click)="deleteLabelLV('DNIS',label)"></i>
+                              </button>
+                          </div>
+                        </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col-7">
+                              <div style="color: grey;" class="pl-2 pb-2">{{global.language?.settings?.platformSettings?.Avaya?.Note}}</div>
+                            </div>
+                            <div class="col-5" *ngIf="createEdit=='edit'">
+                                <div class="row">
+                                  <button type="button" class="btn-save mr-2" (click)="updateAVRules()" data-dismiss="modal">{{global.language?.settings?.platformSettings?.Avaya?.Save}}</button>
+                                  <button type="button" class="btn btn-cancel ml-2 mr-3" data-dismiss="modal">{{global.language?.settings?.platformSettings?.Avaya?.Cancel}}</button>
+                                </div>
+                            </div>
+                          </div>
+                          <!-- <div class="modal-footer">
+                          </div> -->
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <i class="fa fa-pencil-square edit-clr mt-1 float-right pr-2" (click)="editData(customerDetails)"
+                            data-toggle="modal" data-target="#editModal" aria-hidden="true" tooltip="Edit Details"
+                            placement="top"></i>
+                            <span class="btn-txt-add">&nbsp;Rules</span> -->
+                  </div>
+                </div>
+                <div style="margin-bottom: 16px;display: flex;">
+                  <div class="col-sm-6 pl-0" [ngStyle]="{'pointer-events' : selectedPlatform === 10 ? 'none' : 'all'}">
+                    <p-checkbox class="check-box-active box-genesys" label="{{global.language?.settings?.platformSettings?.Avaya?.qmType}}" formControlName="qmType"
+                      binary="false"></p-checkbox>
+                  </div>
+                </div>
+              </div>
+        
+            </div>
+            <div style="display: flex;justify-content: space-between;width: 30%;margin-bottom: 28px;" [ngStyle]="{'pointer-events' : selectedPlatform === 10 ? 'none' : 'all'}">
+                <div class="source-title">{{global.language?.settings?.platformSettings?.Avaya?.realTimeFlag}}</div>
+                    <div>
+                    <p-inputSwitch class="ipt-switch-platform" formControlName="realTimeFlag">
+                    </p-inputSwitch>
+                    <span class="on-off-toggle" style="top: -6px;">{{avaya.get('realTimeFlag').value ? global.language?.settings?.platformSettings?.Avaya?.On:global.language?.settings?.platformSettings?.Avaya?.Off}}</span>
+                </div> 
+            </div>
+  
+        </div>
+        <!-- <div class="row p-3">
+          <div class="col-sm-2">
+            <label class="platform-label">Allow agent feedback</label>
+          </div>
+          <div class="col-sm-1">
+            <p-inputSwitch class="ipt-switch-platform" formControlName="allowAgentFeedback"></p-inputSwitch>
+          </div>
+          <div class="col-sm-6" *ngIf="avaya.get('allowAgentFeedback').value">
+            <div class="row">
+              <div class="col-sm-3 pl-0">
+                <p-checkbox  class="check-box-active box-genesys" formControlName="accept" label="Accept" binary="false"></p-checkbox>
+              </div>
+              <div class="col-sm-3 pl-0">
+                <p-checkbox  class="check-box-active box-genesys" formControlName="dispute" label="Dispute" binary="false"></p-checkbox>
+              </div>
+            </div>
+          </div>
+        </div> -->
+            
+          
+            <div class="save-btns">
+                <button type="button" class="btn-save" *ngIf="createEdit=='edit' && global.rolePermissions.settings.platformSettings.isViewEdit == true" [disabled]="loading" (click)="updateAvaya('update')">{{global.language?.settings?.platformSettings?.Avaya?.Update}}</button>
+                <button type="button" class="btn-save" *ngIf="createEdit=='create'" [disabled]="loading" (click)="updateAvaya('create')">{{global.language?.settings?.platformSettings?.Avaya?.Save}}</button>
+            </div>
+            <br>
+          </form>
+    </div>
+
+    <!--  Avaya end -->
+</div>
+
+<!-- pop up Role ARN -->
+<div class="modal" id="myModal" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content modal-role-popup">
+      
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 0;padding: 0;">
+          <h4 class="modal-title title-rolearn">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.title}}</h4>
+          <button type="button" class="close" data-dismiss="modal"
+          style="margin-right: -40px;margin-top: -46px;">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body" style="padding: 0;">
+            <div class="role-steps">
+                <ol>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step1}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step2}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step3}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step4}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step5}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step6}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step7}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step8}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step9}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step10}}</li>
+                    <li>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.step11}}</li>
+                </ol>
+            </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer footer-modal-btns" style="padding: 0;">
+            <div class="save-cancel" style="margin:0;">
+                <button type="button" data-dismiss="modal" class="btn-delete">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.roleSetup?.close}}</button>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+<!-- popup S3 Permission -->
+<div class="modal" id="myModal11" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content modal-role-popup">
+      
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 0;padding: 0;">
+          <h4 class="modal-title title-rolearn">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Popup?.title}}</h4>
+          <button type="button" class="close" data-dismiss="modal"
+          style="margin-right: -40px;margin-top: -46px;">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body" style="padding: 0;">
+           <div class="s3-desc">
+               <p>{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Popup?.content}}</p>
+           </div>
+           <div  class="s3-content">     
+            <pre style="height: 422px;"><code>  {{roleJson | json}} </code></pre>
+           </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer footer-modal-btns" style="padding: 0;">
+            <div class="save-cancel" style="margin: 18px 0;">
+                <button type="button" data-dismiss="modal" class="btn-delete">{{global.language?.settings?.platformSettings?.Amazon?.realAnalytics?.s3Popup?.close}}</button>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+<!-- Delete popup box -->
+<div class="modal" id="settingModal" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content delete-popup">
+  
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 0;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="delete-popup-content" style="margin-left: -8%;">
+            <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+                margin-right: 20px;">
+            <h5>{{global.language?.settings?.platformSettings?.Deletefrom?.title}}</h5>
+          </div>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer " style="border-top: 0px;">
+          <div style="margin-left: 8.6%;">
+            <button type="button" class="btn-pop-del" data-dismiss="modal" (click)="deletePlatform()">{{global.language?.settings?.platformSettings?.Deletefrom?.save}}</button>
+            <button type="submit" class="btn-pop-cancel" data-dismiss="modal">{{global.language?.settings?.platformSettings?.Deletefrom?.cancel}}</button>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+</div>
+

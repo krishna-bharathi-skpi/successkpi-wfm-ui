@@ -1,0 +1,74 @@
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff !important;
+}
+thead tr{
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+thead tr th{
+    color: #3A3E50 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+}
+tbody tr td{
+  color: #3A3E50 !important;
+  font-size: 14px !important;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+tbody tr td.us-name{
+    color: #0D4DCE !important;
+    cursor: pointer;
+}
+tbody tr td.us-name:hover{
+    color: #012169 !important;
+}
+.table-user-row .ui-table .ui-table-tbody > tr > td:nth-child(1){
+    color: #0D4DCE !important;
+    cursor: pointer;
+}
+.table-header-style{
+    padding: .75rem !important;
+    color: #3a3e50!important;
+    font-size: 14px!important;
+    letter-spacing: .3px !important;
+}
+
+.user-name{
+    color: #0D4DCE !important;
+    cursor: pointer !important;
+}
+.user-name:hover{
+    color: #012169 !important;
+}
+
+.ui-table .ui-table-tbody > tr> td{
+    padding: .75rem !important;
+}
+
+.upload-id{
+    cursor: pointer;
+}
+
+.sync-border{
+    border: 1px solid grey;
+    padding: 4px;
+    border-radius: 50%;
+    color: #0D4DCE;
+    cursor: pointer;
+    
+}
+
+.sync-border:hover{
+    border: 1px solid #012169;
+    background: #012169;
+    color: #fff;
+}
+.sync-border:hover i{
+    transition-duration: 3s;
+    transition-delay: 0.5s;
+    transform: rotate(540deg);
+}

@@ -1,0 +1,1149 @@
+<!-- <p>topics works!</p> -->
+<!-- Toast Message -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+
+<!-- Topics -->
+<div style="margin: 0px 200px 0 32px;" *ngIf="createEdit_Topic == 'list'">
+
+    <div class="top-header" style="justify-content: space-between;">
+             <h2 class="header-title">{{global.language?.playbooks?.topics?.title}}</h2>
+            <div style="display: flex;">
+                <div class="ipt-theme">
+                    <i class="fa fa-search" aria-hidden="true" style="
+                position: relative;
+                left: 5px;
+                opacity: 0.6;
+                top: 29px;
+               "></i>
+                    <input type="text" [(ngModel)]="searchTopicName" (ngModelChange)="searchTopic()"
+                        class="inp-searchs form-control" placeholder="{{global.language?.playbooks?.topics?.search}}">
+                </div>
+                <div style="margin:0 16px 0 0">
+                    <button type="button" class="btn-templates" (click)="getTopicTemplateItems();">
+                        <!--{{global.language?.playbooks?.myPlaybooks?.template }}-->Topic Templates
+                    </button>
+                </div>
+                <div class="" *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true">
+                    <!--btn-create-->
+                    <button type="button" class="create-theme"
+                        (click)="createNewTopic()">{{global.language?.playbooks?.topics?.create}}</button>
+                </div>
+            </div>
+            <!-- <div class="col-lg-8"> 
+            <form>
+                <div class="row" > 
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-7">
+                        <i class="fa fa-search" aria-hidden="true" style="z-index: 99999;
+                        position: absolute;
+                        left: 22px;
+                        opacity: 0.6;
+                        top: 10px;"></i>
+                    <input type="text" class="inp-search form-control" placeholder="Find a Topic…">
+                    </div>
+                    
+                    <div class="col-sm-3 " style="text-align: right;">
+                        <button type="button" class="btn-create">Create a Topic</button>
+                    </div>
+                </div>
+            </form>
+          </div> -->
+    </div>
+
+    <!-- Card section -->
+    <section style="margin: 10px 0;">
+        <div class="row"
+            *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true || global.rolePermissions.playbooks.topics.isView == true">
+            <div *ngFor="let topicCard of cards ;let i=index;" class="col-sm-6 col-lg-4 topic-cards">
+                <div class="card ">
+                    <div>
+                        <!-- <div class="tiles-topics">
+                          <img src="../assets/img/TilePatterns/Pattern_Topics.svg">
+                      </div> -->
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="card-title col-sm-6 module line-clamp" (click)="editTopic(topicCard)">
+                                    {{topicCard.topicName}}</div>
+                                <div class="col-sm-5" style="text-align: right;padding: 0;">
+                                    <span class="on-off-toggle" style="top: -5px;">{{topicCard.active == true ?
+                                        global.language?.playbooks?.myPlaybooks?.on :
+                                        global.language?.playbooks?.myPlaybooks?.off}}</span>
+                                    <p-inputSwitch [(ngModel)]="topicCard.active" (onChange)="toggleTopic(topicCard)">
+                                    </p-inputSwitch>
+
+                                </div>
+                            </div>
+
+                            <div class="card-desc module line-clamp-desc" (click)="editTopic(topicCard)">
+                                {{topicCard.topicDescription}}</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!--  -->
+            <!-- <div class="col-sm-6 col-lg-4 topic-cards">
+        <div class="card " >
+          <div class="card-body ">
+            <div class="row" >
+              <div class="card-title col-sm-8">Cancellation</div>
+              <div class="col-sm-4" style="text-align: right;">
+               <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+              </div>
+            </div>  
+            
+            <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+          </div>
+        
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4 topic-cards">
+        <div class="card " >
+          <div class="card-body ">
+            <div class="row" >
+              <div class="card-title col-sm-8">Cancellation</div>
+              <div class="col-sm-4" style="text-align: right;">
+               <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+              </div>
+            </div>  
+            
+            <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+          </div>
+        
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4 topic-cards">
+        <div class="card " >
+          <div class="card-body ">
+            <div class="row" >
+              <div class="card-title col-sm-8">Cancellation</div>
+              <div class="col-sm-4" style="text-align: right;">
+               <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+              </div>
+            </div>  
+            
+            <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+          </div>
+        
+        </div>
+      </div> -->
+        </div>
+    </section>
+</div>
+
+<!-- Edit topics -->
+<form [formGroup]="topicEditForm" *ngIf="createEdit_Topic == 'edit'">
+    <!--(ngSubmit)="onSubmitEditTopic()"-->
+    <div style="margin: 32px 250px 0px 32px;">
+        <div class="edit-header">
+            <div>
+                <img src="../../../../assets/img/back.svg">
+                <ul class="breadcrumb">
+                    <li><label class="bread-crumb-label1"
+                            (click)="editCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.breadcrumb}}</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="row" style="margin-bottom: 2%">
+                <div class="col-sm-8">
+                    <div class="page-title">
+                        <h2>{{topicModel.topicName}}</h2>
+                    </div>
+                </div>
+                <!-- SP-602 Export Button Start-->
+                <div class="col-sm-2" style="text-align:right ;padding-right: 0;"
+                    *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true">
+                    <button type="button" class="btn-save" (click)="exportTopic()" style="float:right">Export
+                        Topic</button>
+                </div>
+                <!-- SP-602 End-->
+                <div class="col-sm-2" data-toggle="modal" data-target="#myModal"
+                    style="text-align:right ;padding-right: 0;"
+                    *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true">
+                    <button type="button" class="btn-delete form-control"
+                        style="float:right">{{global.language?.playbooks?.topics?.EditTopic?.deleteBtn}}</button>
+                </div>
+            </div>
+        </div>
+        <div class="topic-edit-ipt common-bottom">
+            <!-- <form [formGroup]="topicEditForm" (ngSubmit)="onSubmitEditTopic()"> -->
+            <div class="row">
+                <div class="col-sm-4 name-description">
+                    <div class="form-group">
+                        <label>{{global.language?.playbooks?.topics?.TopicCreate?.topicName}}</label>
+                        <input type="text" id="topicnameid" class="topic-ipt form-control" maxlength="44" autocomplete="off" 
+                            [(ngModel)]="topicModel.topicName" (keypress)="omit_special_char($event)" 
+                            (ngModelChange)="onPaste($event,'topicname')"
+                            placeholder="{{global.language.playbooks.topics.TopicCreate.topicName}}"
+                            formControlName="editTopicName"
+                            [ngClass]="{ 'is-invalid': (submittedTopicEdit || validationTopicEdit.editTopicName.touched) && validationTopicEdit.editTopicName.errors}">
+                        <div *ngIf="(submittedTopicEdit || validationTopicEdit.editTopicName.touched )&& validationTopicEdit.editTopicName.errors"
+                            class="is-invalid ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="(submittedTopicEdit ||  validationTopicEdit.editTopicName.touched) && validationTopicEdit.editTopicName.errors.required">
+                                {{global.language?.playbooks?.topics?.TopicCreate?.topicError}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5 name-description">
+                    <div class="form-group">
+                        <label>{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}</label>
+                        <input type="text" id="topicdescriptionid" class="topic-ipt form-control" maxlength="70" autocomplete="off" 
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="topicModel.topicDescription"  (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event,'topicdescription')" 
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}">
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>{{global.language?.playbooks?.topics?.TopicCreate?.channel}}</label>
+                        <p-dropdown class="edit-topic-channel dplable" [options]="channel" formControlName="editChannelName"
+                            placeholder="Select a Category" [(ngModel)]="topicModel.channel"
+                            [ngClass]="{ 'is-invalid': (submittedTopicEdit || validationTopicEdit.editChannelName.touched) && validationTopicEdit.editChannelName.errors}">
+                        </p-dropdown>
+                        <!-- <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"> -->
+                        <!-- <p-dropdown [options]="channel" [(ngModel)]="selectedChannel" placeholder="Select a Category"[ngModelOptions]="{standalone: true}" optionLabel="name" [showClear]="true"></p-dropdown> -->
+
+                        <div *ngIf="(submittedTopicEdit || validationTopicEdit.editChannelName.touched) && validationTopicEdit.editChannelName.errors"
+                            class="is-invalid ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="(submittedTopicEdit ||  validationTopicEdit.editChannelName.touched) && validationTopicEdit.editChannelName.errors.required">
+                                {{global.language?.playbooks?.topics?.TopicCreate?.channelError}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- </form> -->
+        </div>
+        <div class="topic-edit-tag common-bottom">
+            <div style="display: flex;
+    margin-bottom: 12px;">
+                <h6 style="margin: 0;
+      padding-right: 12px;" class="topic-subtitle">{{global.language?.playbooks?.topics?.TopicCreate?.tags}}</h6>
+                <button tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.tooltip}}" placement="right"
+                    style="background: transparent;border: 0;margin-top: -4px;">
+                    <img src="../assets/img/microinteraction/helptext.svg">
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+
+                        <input #text2 (keyup.enter)="addTextTagUpdate(text2.value); text2.value='' "
+                            (blur)="addTextTagUpdate(text2.value); text2.value='' " class="topic-ipt form-control"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.tagsplaceHolder}}">
+
+                    </div>
+                    <!-- Changed during SP-319 -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button *ngFor="let text2 of topicModel.tags" class="tag-value">
+                                {{text2}}
+                                <img src="../assets/img/microinteraction/delete_tag.svg" (click)="deleteMsgEdit(text2)"
+                                    onclick="this.parentElement.style.display='none';">
+                            </button>
+                        </div>
+                    </div>
+                    <!-- end of change SP-319-->
+                </div>
+                <!-- Changed during SP-319 -->
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-3">
+                    <div class="row" style="padding-left:15px;">
+                        <p-checkbox class="check-box-active box-genesys" label="Detection time"
+                            [(ngModel)]="topicModel.timeBased" (ngModelChange)="timeToggle();topicModel.detectiontype='range'"
+                            [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                    </div>
+                    <div class="row" style="padding: 0px 0px 8px 10px;" *ngIf="!topicModel.timeBased">
+                        &nbsp;
+                    </div>
+                    <div class="row" style="padding:0px 0px 8px 10px;" *ngIf="!topicModel.timeBased">
+                        &nbsp;
+                    </div>
+                    <div *ngIf="topicModel.timeBased">
+                        <div class="row">
+                            <label class="col-sm-4 mb-0">
+                                <p-radioButton class="rec-option" name="detectiontype1"
+                                    [(ngModel)]="topicModel.detectiontype" [ngModelOptions]="{standalone: true}"
+                                    value="range"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    label="Range" inputId="detectiontype11">
+                                </p-radioButton>
+                            </label>
+                            <label class="col-sm-4  mb-0">
+                                <p-radioButton class="any-playbook rec-option" [(ngModel)]="topicModel.detectiontype"
+                                    [ngModelOptions]="{standalone: true}" value="first"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    name="detectiontype1" label="First" inputId="detectiontype12">
+                                </p-radioButton>
+                            </label>
+                            <label class="col-sm-4  mb-0">
+                                <p-radioButton class="any-playbook rec-option" [(ngModel)]="topicModel.detectiontype"
+                                    [ngModelOptions]="{standalone: true}" value="last"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    name="detectiontype1" label="Last" inputId="detectiontype13">
+                                </p-radioButton>
+                            </label>
+                        </div>
+                        <div class="mt-3">
+                            <div class="row mb-1">
+                                <div class="col offset-5">
+                                    Min &nbsp;: &nbsp;Sec
+                                </div>
+                            </div>
+                            <div class="row mb-2" style="padding-left:15px;"
+                                *ngIf="topicModel.detectiontype != 'first'">
+                                <label *ngIf="topicModel.detectiontype == 'range'" class="mt-1">Start Time :
+                                    &nbsp;</label>
+                                <label *ngIf="topicModel.detectiontype != 'range'"
+                                    class="mt-1 ml-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="startTimeMinutes" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0">
+                                <span class="mt-1">&nbsp;:&nbsp;</span>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="startTimeSeconds" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0" max="59">
+                            </div>
+                            <div class="row mb-2" style="padding-left:15px;" *ngIf="topicModel.detectiontype != 'last'">
+                                <label *ngIf="topicModel.detectiontype == 'range'" class="mt-1"
+                                    style="padding-right: 2px;">End Time&nbsp;&nbsp;: &nbsp;</label>
+                                <label *ngIf="topicModel.detectiontype != 'range'"
+                                    class="mt-1 ml-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="endTimeMinutes" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0">
+                                <span class="mt-1">&nbsp;:&nbsp;</span>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="endTimeSeconds" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0" max="59">
+                            </div>
+                        </div>
+                        <div class="is-invalid"
+                            *ngIf="topicModel.startTime > topicModel.endTime && (topicModel.endTime != 0) && topicModel.detectiontype == 'range'">
+                            <p style="color : red">Please enter valid Time Input</p>
+                        </div>
+                        <div *ngIf="topicModel.detectiontype != 'range'" class="mt-5" style="padding-top: 1px;"></div>
+                    </div>
+                </div>
+
+                <!--End of Changed during SP-319-->
+            </div>
+            <!--
+                 <div class="row">
+                <div class="col-md-12">
+                    <button *ngFor="let text2 of topicModel.tags" class="tag-value">  
+         {{text2}}
+         <img src="../assets/img/microinteraction/delete_tag.svg" (click)="deleteMsgEdit(text2)" onclick="this.parentElement.style.display='none';">
+        </button>
+                </div>
+            </div>
+            -->
+        </div>
+        <div class="topic-edit-keyphrase common-bottom">
+            <div style="display: flex;
+    margin-bottom: 12px;">
+                <h6 style="margin: 0;
+      padding-right: 12px;" class="topic-subtitle">
+                    {{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.title}}</h6>
+                <button type="button" tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.tooltip}}"
+                    placement="right" style="background: transparent;border: 0;margin-top: -4px;">
+                    <img src="../assets/img/microinteraction/helptext.svg">
+                </button>
+            </div>
+            <!-- <form> -->
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="row m-0">
+                            <div class="col p-0">
+                                <label class="label-name"
+                                    style="margin-bottom: 4px;margin-top: 3px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.add}}</label>
+                            </div>
+                            <div class="col p-0">
+                                <a data-toggle="modal" data-target="#testKeyphrase" aria-hidden="true"
+                                    id="testKeyphraseOpen"></a>
+                                <button type="button"
+                                    style="height: 28px;line-height: 12px;font-size: 12px;float: right;margin-bottom: 6px;"
+                                    class="btn-save p-2" (click)="openTestKeyphrasePopup()">
+                                    Test Keyphrase
+                                </button>
+                                <div class="modal fade" id="testKeyphrase" data-backdrop="static">
+                                    <div class="modal-dialog modalrules">
+                                        <div class="modal-content">
+                                            <div class="modal-header pb-0" style="border-bottom: 0;">
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body pl-3 pr-3 pt-0 pb-0">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="label-name"
+                                                                style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.add}}</label>
+                                                            <input #newtext11
+                                                                (keyup.enter)="addText(newtext11.value);resultKeyPhrase = []; newtext11.value='' "
+                                                                (blur)="addText(newtext11.value);resultKeyPhrase = []; newtext11.value='' "
+                                                                class="topic-ipt form-control"
+                                                                placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.placeHolder}}"
+                                                                [ngClass]="{'is-invalid ': submittedTestKeyphrase && topicModel.topicPhrases.length==0}">
+                                                            <div *ngIf="submittedTestKeyphrase && topicModel.topicPhrases.length==0"
+                                                                class="is-invalid">
+                                                                <div class="errormsg-topic is-invalid"
+                                                                    *ngIf="(submittedTestKeyphrase  && topicModel.topicPhrases.length==0)==null?false:true">
+                                                                    Enter atleast 1 Keyphrase
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="label-name"
+                                                                style="margin-bottom: 4px;">Language</label>
+                                                            <p-dropdown class="edit-topic-channel"
+                                                                [options]="languageList"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                [(ngModel)]="language" placeholder="Select Language"
+                                                                [ngClass]="{'is-invalid ': submittedTestKeyphrase && language==''}">
+                                                            </p-dropdown>
+                                                            <div *ngIf="submittedTestKeyphrase && language==''"
+                                                                class="is-invalid">
+                                                                <div class="errormsg-topic is-invalid"
+                                                                    *ngIf="(submittedTestKeyphrase && language=='')==null?false:true">
+                                                                    Language is Required
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12" *ngIf="resultKeyPhrase.length==0">
+                                                        <button *ngFor="let text1 of topicModel.topicPhrases"
+                                                            class="keyphrase-value">
+                                                            {{text1}}
+                                                            <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                                                                style="padding-left: 12px;"
+                                                                (click)="deletePhrasescreation(text1)">
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-12" *ngIf="resultKeyPhrase.length>0">
+                                                        <button *ngFor="let text1 of topicModel.topicPhrases;let i = index"
+                                                            class="keyphrase-value" [ngClass]="{'keyphrase-value-highlight': resultKeyPhrase[i].isExists}">
+                                                            {{text1}}
+                                                            <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                                                                style="padding-left: 12px;"
+                                                                (click)="resultKeyPhrase=[];deletePhrasescreation(text1)">
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="source-title">Paragraph</div>
+                                                <div class="row">
+                                                    <textarea class="form-control ml-3 mr-3" [(ngModel)]="paragraph"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        style="width: 100%;border: 1px solid #a6a6a6;" rows="8"
+                                                        placeholder="Enter paragraph here"
+                                                        [ngClass]="{'is-invalid ': submittedTestKeyphrase && paragraph==''}">
+                                                        </textarea>
+                                                    <div *ngIf="submittedTestKeyphrase && paragraph==''"
+                                                        class="is-invalid ml-3">
+                                                        <div class="errormsg-topic is-invalid"
+                                                            *ngIf="(submittedTestKeyphrase && paragraph=='')==null?false:true">
+                                                            Paragraph is Required
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="modal-footer" style="justify-content: end;">
+                                                <button type="button" class="btn-save mr-2"
+                                                    (click)="testKeyphrase()">Test</button>
+                                                <button type="button" class="btn btn-cancel ml-2 mr-3"
+                                                    data-dismiss="modal">Close</button>
+                                            </div>
+                                            <!-- <div class="modal-footer">
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input #newtext12 (keyup.enter)="addText(newtext12.value);resultKeyPhrase = []; newtext12.value='' "
+                            (blur)="addText(newtext12.value);resultKeyPhrase = []; newtext12.value='' " class="topic-ipt form-control"
+                            placeholder="Type a keyphrase and hit enter"
+                            [ngClass]="{'is-invalid ': submittedTopicEdit && topicModel.topicPhrases.length==0}">
+                        <div *ngIf="submittedTopicEdit && topicModel.topicPhrases.length==0" class="is-invalid">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="(submittedTopicEdit  && topicModel.topicPhrases.length==0)==null?false:true">
+                                Enter atleast 1 Keyphrase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 mt-2">
+                    <div class="form-group">
+                        <label class="label-name"
+                            style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.find}}</label>
+                        <i class="fa fa-search" aria-hidden="true" style="
+                position: absolute;
+                left: 22px;
+                opacity: 0.6;
+                top: 35px;"></i>
+                        <input type="text" autocomplete="off" class="topic-ipt form-control" [(ngModel)]="searchKey"
+                            [ngModelOptions]="{standalone: true}" (ngModelChange)="searchKeyPhrases()"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.findPlaceholder}}"
+                            style="padding-left: 24px;">
+
+                    </div>
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+
+            </div>
+            <!-- </form> -->
+            <div class="row">
+                <div class="col-md-12">
+                    <button *ngFor="let text1 of topicModel.topicPhrases" class="keyphrase-value">
+                        {{text1}}
+                        <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;"
+                            (click)="deletePhrasescreation(text1)">
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="save-cancel common-bottom">
+            <!-- <form>  -->
+            <div class="row">
+                <div class="col-sm-5" *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true">
+                    <div class="form-group">
+                        <button type="submit" class="btn-save" [disabled]="loading"
+                            (click)="updateTopic()">{{global.language?.playbooks?.topics?.TopicCreate?.saveCancel?.save}}</button>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <button type="button" class="btn-cancel"
+                            (click)="editCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.saveCancel?.cancel}}</button>
+                    </div>
+                </div>
+
+            </div>
+            <!-- </form> -->
+        </div>
+    </div>
+</form>
+
+<!-- Create Topic -->
+<form [formGroup]="topicCreateForm" (ngSubmit)="onSubmitCreateTopic()" *ngIf="createEdit_Topic == 'create'">
+    <div style="margin: 32px 250px 0px 32px;">
+        <div class="edit-header">
+            <div>
+                <img src="../../../../assets/img/back.svg">
+                <ul class="breadcrumb">
+                    <li><label class="bread-crumb-label1" style="cursor: pointer;"
+                            (click)="createCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.breadcrumb}}</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="row" style="margin-bottom: 2%">
+                <div class="col-lg-9 col-sm-4">
+                    <div class="page-title">
+                        <h2>{{global.language?.playbooks?.topics?.TopicCreate?.createTilte}}</h2>
+                    </div>
+                </div>
+                <div class="col-lg-3" style="text-align:right">
+                    <!-- <button type="button form-control" class="btn-delete">Delete Topic</button> -->
+                    <!-- SP-602 Import button Start-->
+                    <button type="button" class="btn-save"
+                        onclick="document.getElementById('upload-topic').click()">Import Topic</button>
+                    <input #importfile type="file" id="upload-topic" accept='.csv,text/csv' style="display:none"
+                        (change)="importTopic()" />
+                    <!-- SP-602 End-->
+                </div>
+            </div>
+        </div>
+        <div class="topic-edit-ipt common-bottom">
+            <!-- <form [formGroup]="topicCreateForm" (ngSubmit)="onSubmitCreateTopic()"> -->
+            <div class="row">
+                <div class="col-sm-4 name-description">
+                    <div class="form-group">
+                        <label class="label-name"
+                            style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.topicName}}</label>
+                        <input type="text" id="topicnameid" maxlength="44" class="topic-ipt form-control"
+                            [(ngModel)]="topicModel.topicName"
+                            (ngModelChange)="onPaste($event,'topicname')"
+                            (keypress)="omit_special_char($event)" formControlName="createTopicName" autocomplete="off"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.topicName}}" 
+                            [ngClass]="{ 'is-invalid ': (submittedTopicCreate || validationTopicCreate.createTopicName.touched) && validationTopicCreate.createTopicName.errors }">
+                        <div *ngIf="(submittedTopicCreate || validationTopicCreate.createTopicName.touched) && validationTopicCreate.createTopicName.errors "
+                            class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="((submittedTopicCreate ||validationTopicCreate.createTopicName.touched) && validationTopicCreate.createTopicName.errors.required)==null?false:true">
+                                {{global.language?.playbooks?.topics?.TopicCreate?.topicError}}
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-5 name-description">
+                    <div class="form-group">
+                        <label class="label-name"
+                            style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}</label>
+                        <input type="text" id="topicdescriptionid" maxlength="70" class="topic-ipt form-control"  
+                            [ngModelOptions]="{standalone: true}" [(ngModel)]="topicModel.topicDescription"
+                            autocomplete="off" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event,'topicdescription')"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}">
+
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label class="label-name"
+                            style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.channel}}</label>
+                        <p-dropdown class="edit-topic-channel dplable" [options]="channel" formControlName="createChannelName"
+                            placeholder="Select a Category" [(ngModel)]="topicModel.channel"
+                            [ngClass]="{ 'is-invalid': (submittedTopicCreate || validationTopicCreate.createChannelName.touched) && validationTopicCreate.createChannelName.errors}">
+                        </p-dropdown>
+                        <!-- <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"> -->
+                        <!-- <p-dropdown [options]="channel" [(ngModel)]="selectedChannel" placeholder="Select a Category"[ngModelOptions]="{standalone: true}" optionLabel="name" [showClear]="true"></p-dropdown> -->
+                        <div *ngIf="(submittedTopicCreate || validationTopicCreate.createChannelName.touched) && validationTopicCreate.createChannelName.errors"
+                            class="is-invalid ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="(submittedTopicCreate ||  validationTopicCreate.createChannelName.touched) && validationTopicCreate.createChannelName.errors.required">
+                                {{global.language?.playbooks?.topics?.TopicCreate?.channelError}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- </form> -->
+        </div>
+        <div class="topic-edit-tag common-bottom">
+            <div style="display: flex;
+      margin-bottom: 12px;">
+                <h6 style="margin: 0;
+        padding-right: 12px;" class="topic-subtitle">{{global.language?.playbooks?.topics?.TopicCreate?.tags}}</h6>
+                <button tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.tooltip}}" placement="right"
+                    style="background: transparent;border: 0;margin-top: -4px;">
+                    <img src="../assets/img/microinteraction/helptext.svg">
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+
+                        <input #text2 (keyup.enter)="addText2(text2.value); text2.value='' "
+                            (blur)="addText2(text2.value); text2.value='' " class="topic-ipt form-control"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.tagsplaceHolder}}">
+
+                    </div>
+                    <!-- Changed during SP-319 -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button *ngFor="let text2 of topicModel.tags" class="tag-value">
+                                {{text2}}
+                                <img src="../assets/img/microinteraction/delete_tag.svg" (click)="deleteMsgEdit(text2)"
+                                    onclick="this.parentElement.style.display='none';">
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End of Changes SP-319 -->
+                </div>
+                <!-- Changed during SP-319 -->
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-3">
+                    <div class="row" style="padding-left:15px;">
+                        <p-checkbox class="check-box-active box-genesys" label="Detection time"
+                            [(ngModel)]="topicModel.timeBased" (ngModelChange)="timeToggle();topicModel.detectiontype='range'"
+                            [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                    </div>
+                    <div class="row" style="padding: 0px 0px 8px 10px;" *ngIf="!topicModel.timeBased">
+                        &nbsp;
+                    </div>
+                    <div class="row" style="padding:0px 0px 8px 10px;" *ngIf="!topicModel.timeBased">
+                        &nbsp;
+                    </div>
+                    <div *ngIf="topicModel.timeBased">
+                        <div class="row">
+                            <label class="col-sm-4 mb-0">
+                                <p-radioButton class="rec-option" name="detectiontype2"
+                                    [(ngModel)]="topicModel.detectiontype" [ngModelOptions]="{standalone: true}"
+                                    value="range"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    label="Range" inputId="detectiontype21">
+                                </p-radioButton>
+                            </label>
+                            <label class="col-sm-4  mb-0">
+                                <p-radioButton class="any-playbook rec-option" [(ngModel)]="topicModel.detectiontype"
+                                    [ngModelOptions]="{standalone: true}" value="first"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    name="detectiontype2" label="First" inputId="detectiontype22">
+                                </p-radioButton>
+                            </label>
+                            <label class="col-sm-4  mb-0">
+                                <p-radioButton class="any-playbook rec-option" [(ngModel)]="topicModel.detectiontype"
+                                    [ngModelOptions]="{standalone: true}" value="last"
+                                    (ngModelChange)="startTimeMinutes = 0;startTimeSeconds = 0;endTimeMinutes = 0; endTimeSeconds = 0;topicModel.startTime = 0; topicModel.endTime = 0"
+                                    name="detectiontype2" label="Last" inputId="detectiontype23">
+                                </p-radioButton>
+                            </label>
+                        </div>
+                        <div class="mt-3">
+                            <div class="row mb-1">
+                                <div class="col offset-5">
+                                    Min &nbsp;: &nbsp;Sec
+                                </div>
+                            </div>
+                            <div class="row" style="padding-left:15px;" *ngIf="topicModel.detectiontype != 'first'">
+                                <label *ngIf="topicModel.detectiontype == 'range'" class="mt-1">Start Time :
+                                    &nbsp;</label>
+                                <label *ngIf="topicModel.detectiontype != 'range'"
+                                    class="mt-1 ml-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="startTimeMinutes" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0">
+                                <span class="mt-1">&nbsp;:&nbsp;</span>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="startTimeSeconds" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0" max="59">
+                            </div>
+                            <div class="row" style="padding-left:15px;" *ngIf="topicModel.detectiontype != 'last'">
+                                <label *ngIf="topicModel.detectiontype == 'range'" class="mt-1"
+                                    style="padding-right: 2px;">End Time&nbsp;&nbsp;: &nbsp;</label>
+                                <label *ngIf="topicModel.detectiontype != 'range'"
+                                    class="mt-1 ml-5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="endTimeMinutes" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0">
+                                <span class="mt-1">&nbsp;:&nbsp;</span>
+                                <input class="col-sm-3 form-control" style="padding: 0px 0px 0px 10px;height: 32px;
+                        border: 1px solid #B3B6C7;" [(ngModel)]="endTimeSeconds" (ngModelChange)="onChangeTime()"
+                                    [ngModelOptions]="{standalone: true}" type="number" min="0" max="59">
+                            </div>
+                        </div>
+                        <div class="is-invalid"
+                            *ngIf="topicModel.startTime > topicModel.endTime && (topicModel.endTime != 0)  && topicModel.detectiontype == 'range'">
+                            <p style="color : red">Please enter valid Time Input</p>
+                        </div>
+                        <div *ngIf="topicModel.detectiontype != 'range'" class="mt-4" style="padding-top: 9px;"></div>
+                    </div>
+                </div>
+                <!-- End of changes for SP-319 -->
+            </div>
+            <!-- change during Sp-319
+            <div class="row">
+                <div class="col-md-12">
+                    <button *ngFor="let text2 of topicModel.tags" class="tag-value">  
+           {{text2}}
+           <img src="../assets/img/microinteraction/delete_tag.svg"   (click)="deleteMsg(text2)">
+          </button>
+                </div>
+            </div>
+            -->
+        </div>
+        <div class="topic-edit-keyphrase common-bottom">
+            <div style="display: flex;
+      margin-bottom: 12px;">
+                <h6 style="margin: 0;
+        padding-right: 12px;" class="topic-subtitle">
+                    {{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.title}}</h6>
+                <button tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.tooltip}}"
+                    placement="right" style="background: transparent;border: 0;margin-top: -4px;">
+                    <img src="../assets/img/microinteraction/helptext.svg">
+                </button>
+            </div>
+            <!-- <form> -->
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <div class="row m-0">
+                            <div class="col p-0">
+                                <label class="label-name"
+                                    style="margin-bottom: 4px;margin-top: 3px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.add}}</label>
+                            </div>
+                            <div class="col p-0">
+                                <a data-toggle="modal" data-target="#testKeyphraseCreate" aria-hidden="true"
+                                    id="testKeyphraseCreateOpen"></a>
+                                <button type="button"
+                                    style="height: 28px;line-height: 12px;font-size: 12px;float: right;margin-bottom: 6px;"
+                                    class="btn-save p-2" (click)="openTestKeyphraseCreatePopup()">
+                                    Test Keyphrase
+                                </button>
+                                <div class="modal fade" id="testKeyphraseCreate" data-backdrop="static">
+                                    <div class="modal-dialog modalrules">
+                                        <div class="modal-content">
+                                            <div class="modal-header pb-0" style="border-bottom: 0;">
+                                                <button type="button" class="close"
+                                                    data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body pl-3 pr-3 pt-0 pb-0">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="label-name"
+                                                                style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.add}}</label>
+                                                            <input #newtext21
+                                                                (keyup.enter)="addTextPhraseUpdate(newtext21.value);resultKeyPhrase = []; newtext21.value='' "
+                                                                (blur)="addTextPhraseUpdate(newtext21.value);resultKeyPhrase = []; newtext21.value='' "
+                                                                class="topic-ipt form-control"
+                                                                placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.placeHolder}}"
+                                                                [ngClass]="{'is-invalid ': submittedTestKeyphrase && topicModel.topicPhrases.length==0}">
+                                                                <div *ngIf="submittedTestKeyphrase && topicModel.topicPhrases.length==0"
+                                                                    class="is-invalid">
+                                                                    <div class="errormsg-topic is-invalid"
+                                                                        *ngIf="(submittedTestKeyphrase  && topicModel.topicPhrases.length==0)==null?false:true">
+                                                                        Enter atleast 1 Keyphrase
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="label-name"
+                                                                style="margin-bottom: 4px;">Language</label>
+                                                            <p-dropdown class="edit-topic-channel dplable"
+                                                                [options]="languageList"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                [(ngModel)]="language" placeholder="Select Language"
+                                                                [ngClass]="{'is-invalid ': submittedTestKeyphrase && language==''}">
+                                                            </p-dropdown>
+                                                            <div *ngIf="submittedTestKeyphrase && language==''"
+                                                                class="is-invalid">
+                                                                <div class="errormsg-topic is-invalid"
+                                                                    *ngIf="(submittedTestKeyphrase && language=='')==null?false:true">
+                                                                    Language is Required
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12" *ngIf="resultKeyPhrase.length==0">
+                                                        <button *ngFor="let text1 of topicModel.topicPhrases"
+                                                            class="keyphrase-value">
+                                                            {{text1}}
+                                                            <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                                                                style="padding-left: 12px;"
+                                                                (click)="deletePhrasescreation(text1)">
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-12" *ngIf="resultKeyPhrase.length>0">
+                                                        <button *ngFor="let text1 of topicModel.topicPhrases;let i = index"
+                                                            class="keyphrase-value" [ngClass]="{'keyphrase-value-highlight': resultKeyPhrase[i].isExists}">
+                                                            {{text1}}
+                                                            <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                                                                style="padding-left: 12px;"
+                                                                (click)="resultKeyPhrase=[];deletePhrasescreation(text1)">
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="source-title">Paragraph</div>
+                                                <div class="row">
+                                                    <textarea class="form-control ml-3 mr-3" [(ngModel)]="paragraph"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        style="width: 100%;border: 1px solid #a6a6a6;" rows="8"
+                                                        placeholder="Enter paragraph here"
+                                                        [ngClass]="{'is-invalid ': submittedTestKeyphrase && paragraph==''}">
+                                                    </textarea>
+                                                <div *ngIf="submittedTestKeyphrase && paragraph==''"
+                                                    class="is-invalid ml-3">
+                                                    <div class="errormsg-topic is-invalid"
+                                                        *ngIf="(submittedTestKeyphrase && paragraph=='')==null?false:true">
+                                                        Paragraph is Required
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="modal-footer" style="justify-content: end;">
+                                                <button type="button" class="btn-save mr-2"
+                                                    (click)="testKeyphrase()">Test</button>
+                                                <button type="button" class="btn btn-cancel ml-2 mr-3"
+                                                    data-dismiss="modal">Close</button>
+                                            </div>
+                                            <!-- <div class="modal-footer">
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input #newtext22 (keyup.enter)="addTextPhraseUpdate(newtext22.value);resultKeyPhrase = []; newtext22.value='' "
+                            (blur)="addTextPhraseUpdate(newtext22.value);resultKeyPhrase = []; newtext22.value='' "
+                            class="topic-ipt form-control"
+                            placeholder="Type a keyphrase and hit enter"
+                            [ngClass]="{'is-invalid ': submittedTopicCreate && topicModel.topicPhrases.length==0}">
+                        <div *ngIf="submittedTopicCreate && topicModel.topicPhrases.length==0" class="is-invalid">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="(submittedTopicCreate  && topicModel.topicPhrases.length==0)==null?false:true">
+                                Enter atleast 1 Keyphrase
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 mt-2">
+                    <div class="form-group">
+                        <label class="label-name"
+                            style="margin-bottom: 4px;">{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.find}}</label>
+                        <i class="fa fa-search" aria-hidden="true" style="z-index: 99999;
+                  position: absolute;
+                  left: 22px;
+                  opacity: 0.6;
+                  top: 35px;"></i>
+                        <input type="text" class="topic-ipt form-control" autocomplete="off" [(ngModel)]="searchKey"
+                            [ngModelOptions]="{standalone: true}" (ngModelChange)="searchKeyPhrases()"
+                            placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.findPlaceholder}}"
+                            style="padding-left: 24px;">
+
+                    </div>
+                </div>
+                <div class="col-sm-2">
+
+                </div>
+
+            </div>
+            <!-- </form> -->
+            <div class="row">
+                <div class="col-md-12">
+                    <button *ngFor="let text1 of topicModel.topicPhrases;" class="keyphrase-value">
+                        {{text1}}
+                        <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;"
+                            (click)="deletePhrases(text1)">
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="save-cancel common-bottom">
+            <!-- <form>  -->
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <button type="submit" class="btn-save" [disabled]="loading"
+                            (click)="createTopic()">{{global.language?.playbooks?.topics?.TopicCreate?.saveCancel?.save}}</button>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-group">
+                        <button type="reset" class="btn-cancel"
+                            (click)="createCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.saveCancel?.cancel}}</button>
+                    </div>
+                </div>
+
+            </div>
+            <!-- </form> -->
+        </div>
+    </div>
+</form>
+
+<!-- Delete Confirm box -->
+<div class="modal" id="myModal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content delete-popup">
+
+            <!-- Modal Header -->
+            <div class="modal-header" style="border-bottom: 0;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="delete-popup-content">
+                    <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+              margin-right: 20px;">
+                    <h5>{{global.language?.playbooks?.topics?.EditTopic?.popupForm?.title}}</h5>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer " style="border-top: 0px;">
+                <div style="margin-left: 11.6%;">
+                    <button type="button" class="btn-pop-del" data-dismiss="modal"
+                        (click)="deleteTopic()">{{global.language?.playbooks?.topics?.EditTopic?.popupForm?.deletebtn}}</button>
+                    <button type="submit" class="btn-pop-cancel"
+                        data-dismiss="modal">{{global.language?.playbooks?.topics?.EditTopic?.popupForm?.cancelbtn}}</button>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- SP-419 Sample Templates for topics-->
+<!-- ***********************************************Topic Template cards*********************************************** -->
+<div style="margin: 36px 155px 0 32px;" *ngIf="createEdit_Topic == 'template'">
+    <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb" style="background-color: #eee;">
+            <li><label class="bread-crumb-label1"
+                    (click)="editCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.breadcrumb}} </label>
+            </li>
+        </ul>
+    </div>
+    <div class="playbook-header">
+        <div class="page-title">
+            <h2>Topic Templates</h2>
+        </div>
+    </div>
+    <section style="margin: 24px 0;">
+        <div class="row"
+            *ngIf="global.rolePermissions.playbooks.topics.isViewEdit == true || global.rolePermissions.playbooks.topics.isView == true">
+            <div *ngFor="let templateTopicCard of templateTopicCards" class="col-sm-6 col-lg-4 topic-cards">
+                <div class="card" style="height: 200px;">
+                    <div>
+                        <div class="card-body">
+                            <div class="row" style="height: 20px;margin-bottom:30px;padding-left:15px;">
+                                <div class="card-title module line-clamp" style="flex:70%">
+                                    {{templateTopicCard.topicName}}</div>
+                                <div class="playbook-template" style="margin-right:10px;">
+                                    {{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.template}}</div>
+                            </div>
+                            <div class="card-desc-template module line-clamp">{{templateTopicCard.topicDescription}}
+                            </div>
+                            <div>
+                                <footer style="position: absolute;
+                            bottom: 5px;">
+                                    <div><label class="template-links"
+                                            (click)="viewTemplate(templateTopicCard);createEdit_Topic ='templateCard'">{{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.view}}</label>
+                                    </div>
+                                    <div *ngIf="global.rolePermissions.playbooks.myPlaybooks.isViewEdit == true"><label
+                                            class="template-links"
+                                            (click)="copyTemplate(templateTopicCard)">{{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.copy}}</label>
+                                    </div>
+                                </footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!--*********************************************** Topic template - view details*********************************************** -->
+
+
+<div style="margin: 46px 230px 50px 32px;" *ngIf="createEdit_Topic == 'templateCard'">
+    <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb">
+            <li><label class="bread-crumb-label1"
+                    (click)="editCancel()">{{global.language?.playbooks?.topics?.TopicCreate?.breadcrumb}}</label>
+            </li>
+            <li><label class="bread-crumb-label1" (click)="getTopicTemplateItems();">
+                    Topic Templates</label></li>
+        </ul>
+    </div>
+    <div class="edit-header">
+        <div style="display: flex;">
+            <div class="page-title" style="padding-right: 16px;">
+                <h2>{{topicTemplateList.topicName}}</h2>
+            </div>
+            <div>
+                <div class="playbook-template" style="margin-top: 8px;">
+                    {{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.template}}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div>
+        <form>
+            <div class="topic-edit-ipt common-bottom">
+                <div class="row">
+                    <div class="col-sm-4 name-description">
+                        <div class="form-group">
+                            <label>{{global.language?.playbooks?.topics?.TopicCreate?.topicName}}</label>
+                            <textarea
+                                style="resize: none;padding-top: 5px;padding-bottom: 5px;background: #fff;cursor: not-allowed;"
+                                type="text" class="topic-ipt form-control" maxlength="44" autocomplete="off"
+                                [(ngModel)]="topicTemplateList.topicName" [ngModelOptions]="{standalone: true}"
+                                placeholder="{{global.language.playbooks.topics.TopicCreate.topicName}}" warp="soft"
+                                disabled></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 name-description">
+                        <div class="form-group">
+                            <label>{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}</label>
+                            <textarea
+                                style="resize: none;padding-top: 5px;padding-bottom: 5px;background: #fff;cursor: not-allowed;"
+                                type="text" class="topic-ipt form-control" maxlength="70" autocomplete="off"
+                                [(ngModel)]="topicTemplateList.topicDescription" [ngModelOptions]="{standalone: true}"
+                                placeholder="{{global.language?.playbooks?.topics?.TopicCreate?.topicDescription}}"
+                                warp="soft" disabled></textarea>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label>{{global.language?.playbooks?.topics?.TopicCreate?.channel}}</label>
+                            <p-dropdown class="edit-topic-channel dplable" [options]="channel" placeholder="Select a Category"
+                                [(ngModel)]="topicTemplateList.channel" [ngModelOptions]="{standalone: true}"
+                                [disabled]='true'></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="topic-edit-tag common-bottom">
+                <div style="display: flex;
+    margin-bottom: 12px;">
+                    <h6 style="margin: 0;padding-right: 12px;" class="topic-subtitle">
+                        {{global.language?.playbooks?.topics?.TopicCreate?.tags}}</h6>
+                    <button tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.tooltip}}" placement="right"
+                        style="background: transparent;border: 0;margin-top: -4px;"><img
+                            src="../assets/img/microinteraction/helptext.svg"></button>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button *ngFor="let text2 of topicTemplateList.tags" class="tag-value">{{text2}}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="topic-edit-keyphrase common-bottom">
+                <div style="display: flex;
+    margin-bottom: 12px;">
+                    <h6 style="margin: 0;
+      padding-right: 12px;" class="topic-subtitle">
+                        {{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.title}}</h6>
+                    <button type="button"
+                        tooltip="{{global.language?.playbooks?.topics?.TopicCreate?.keyPhrases?.tooltip}}"
+                        placement="right" style="background: transparent;border: 0;margin-top: -4px;">
+                        <img src="../assets/img/microinteraction/helptext.svg">
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button *ngFor="let text1 of topicTemplateList.topicPhrases" class="keyphrase-value"
+                            style="color: #000;cursor: pointer;" disabled>{{text1}}</button>
+                    </div>
+                </div>
+                <br><br>
+                <div class="save-cancel common-bottom">
+                    <div class="copy-back">
+                        <button type="submit" class="btn-save"
+                            *ngIf="global.rolePermissions.playbooks.myPlaybooks.isViewEdit == true"
+                            style="width: 177px;" (click)="copyTemplate(topicTemplateList)"
+                            [disabled]="loading">{{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.saveCancel?.copy}}</button>
+                        <button type="button" class="btn-cancel" style="width: 101px;"
+                            (click)="backtoListTemplate()">{{global.language?.playbooks?.myPlaybooks?.playbookLibrary?.saveCancel?.back}}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- End of SP-419 -->

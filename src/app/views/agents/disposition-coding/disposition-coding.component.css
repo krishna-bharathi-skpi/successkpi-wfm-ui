@@ -1,0 +1,40 @@
+.user-name{
+    color: #0D4DCE !important;
+    cursor: pointer !important;
+}
+.user-name:hover{
+    color: #012169 !important;
+}
+
+.text-ell{
+    width: 94%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+table tr th {
+    border: 1px solid ;
+    padding: 4px 6px;
+}
+table tr{
+    border: 1px solid ;
+    padding: 4px 6px;
+}
+table tr td {
+    border: 1px solid;
+    padding: 4px 6px;
+}
+.divide-row{
+    border-bottom: 1px solid #c8c8c8;
+    display: block;
+    padding: 0.571em 0.857em;
+}
+.divide-row:last-child{
+    border-bottom: 0px;
+}
+
+.form-control:disabled{
+    background-color: #fff !important; 
+    opacity: 0.8 !important;
+}

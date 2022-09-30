@@ -1,0 +1,200 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="999999"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header">
+        <div class="col-md-6">
+            <h2 class="title" style="font-size:28px;">{{isAddMode ? 'Name Your Workplan' : 'Update Your Workplan' }} <span *ngIf="workgroupName"> for {{workgroupName}}</span></h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <button pRipple routerLink="/wfm/schedule/workplan/list" class="cust-btn-outlined">Cancel</button> 
+            <button pRipple (click)="submitWorkplan('continueLater');" class="cust-btn-outlined" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true">Save and Continue Later</button>
+            <button pRipple (click)="submitWorkplan('continue');" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true">Save and Continue</button>
+        </div>
+    </div>
+    <!-- End top header -->
+
+    <!-- Begin body content -->
+    <form name="workplanForm" [formGroup]="workplanForm" novalidate>
+        <div style="padding:0px 32px; min-height: 520px;">
+
+            <!-- Begin wfm config table -->
+            <!-- <div class="row" id="wfm_configs_table" *ngIf="wfmConfigs?.length > 0" style="padding-top: 15px;">
+                <div class="col-12 cust-table">
+                    <h5 id="wfm_config_header" *ngIf="isAddMode" style="font-weight: 600; padding-bottom: 5px;">{{wfmConfigs?.length > 1 ? 'Choose your Configuration' : 'Configuration'}}</h5>
+                    <h5 id="wfm_config_header" *ngIf="!isAddMode" style="font-weight: 600; padding-bottom: 5px;">Selected Configuration</h5>
+                    <table class="table wfm-table">
+                        <thead>
+                            <tr>
+                                <th *ngIf="wfmConfigs?.length > 1"></th>
+                                <th>Platform</th>
+                                <th>CX Center</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let config of wfmConfigs" [id]="'table_row_'+config.wfmConfigId">
+                                <td *ngIf="wfmConfigs?.length > 1">
+                                    <input type="radio" [id]="config.wfmConfigId" value="{{config.wfmConfigId}}" (change)="onChangeConfig(config)" name="configOptions" />
+                                </td>
+                                <td>{{config.platformName}}</td>
+                                <td>{{config.cxCenterName}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <!-- End wfm config table -->
+            <!-- <hr class="solid" *ngIf="wfmConfigs?.length > 0" /> -->
+
+            <div class="row">
+                <div class="col-12 section-header">
+                    <h5>{{isAddMode ? 'Name' : 'Update'}} Your Workplan</h5>
+                    <p>{{isAddMode ? 'First, name' : 'Update'}} your workplan.</p>
+                </div>
+            </div>
+            <!--/.row-->
+            <div class="row">
+                <div class="col-lg-3 col-md-5">
+                    <div class="form-group required">
+                        <label class="control-label">Name Your Workplan</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            formControlName="workplanName"
+                            placeholder="Workplan Name"
+                            [ngClass]="{'is-invalid': (isSubmitted || workplanForm.controls['workplanName'].touched) && workplanForm.controls['workplanName'].errors }"
+                        />
+                        <div *ngIf="isSubmitted && workplanForm.controls['workplanName'].invalid && workplanForm.controls['workplanName'].dirty || workplanForm.controls['workplanName'].errors">
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.pattern" class="errormsg-topic">Workplan name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-3 col-md-5">
+                    <div class="form-group required">
+                        <label class="control-label">Assign Workgroup</label>
+                        <p-multiSelect
+                                    [options]="workgroupNames"
+                                    [(ngModel)]="selectedWorkgroups"
+                                    optionLabel="workgroupName"
+                                    optionValue="workgroupId"
+                                    defaultLabel="Select Workgroup(s)"
+                                    selectedItemsLabel="{0} Workgroup(s) selected"
+                                    placeholder="Select Workgroup(s)"
+                                    styleClass="cust-multiselect-panel"
+                                    maxSelectedLabels="2"
+                                    [ngModelOptions]="{standalone: true}"
+                                ></p-multiSelect>
+                        <!-- <div *ngIf="isSubmitted && workplanForm.controls['workplanName'].invalid && workplanForm.controls['workplanName'].dirty || workplanForm.controls['workplanName'].errors">
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.pattern" class="errormsg-topic">Workplan name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                            </small>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-5">
+                    <div class="form-group">
+                        <label class="control-label">Description</label>
+                        <textarea
+                            id="workplanDescription"
+                            name="workplanDescription"
+                            formControlName="workplanDescription"
+                            [(ngModel)]="description"
+                            rows="4"
+                            maxlength="400"
+                            class="form-control"
+                            placeholder="Type your content here.."
+                            [ngClass]="{'is-invalid': (isSubmitted || workplanForm.controls['workplanDescription'].touched) && workplanForm.controls['workplanDescription'].errors}"
+                        ></textarea>
+                        <small class="form-text text-muted">characters remaining: <code>{{ (description) ? 400 - description.length : 400 - 0 }}</code>/<code>400</code></small>
+                        <div
+                            *ngIf="isSubmitted && workplanForm.controls['workplanDescription'].invalid && workplanForm.controls['workplanDescription'].dirty || workplanForm.controls['workplanDescription'].errors"
+                        >
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanDescription'].errors?.maxlength" class="errormsg-topic">Maximum 400 characters only allowed. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanDescription'].errors?.pattern" class="errormsg-topic">Description must contain only alphabets, numbers and the following special characters: comma, dot, hypen & underscore.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/.row-->
+            <!-- <hr class="solid" />
+            <div class="row">
+                <div class="col-12 section-header">
+                    <h5>{{isAddMode ? 'Set' : 'Update'}} Your First Shift</h5>
+                    <p>Description of Shift here. You can edit this later.</p>
+                </div>
+            </div> -->
+            <!--/.row-->
+            <!-- <div class="row">
+                <div class="col-lg-3 col-md-5">
+                    <div class="form-group required">
+                        <label class="control-label">Shift Name</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Shift Name"
+                        />
+                        <div *ngIf="isSubmitted && workplanForm.controls['workplanName'].invalid && workplanForm.controls['workplanName'].dirty || workplanForm.controls['workplanName'].errors">
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                            <small *ngIf="isSubmitted && workplanForm.controls['workplanName'].errors?.pattern" class="errormsg-topic">Workplan name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+        <div class="row action-footer">
+            <div class="col-12 text-right">
+                <button pRipple routerLink="/wfm/schedule/workplan/list" class="cust-btn-outlined">Cancel</button>
+                <button pRipple (click)="submitWorkplan('continueLater');" class="cust-btn-outlined" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true">Save and Continue Later</button>
+                <button pRipple (click)="submitWorkplan('continue');" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true">Save and Continue</button>
+            </div>
+        </div>
+    </form>
+    <!-- End body content -->
+
+    <!-- Begin workplan detail dialog -->
+    <p-dialog class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000">
+        <p-header>
+            Confirm
+        </p-header>
+
+        <!-- Begin confirmation content -->
+        <div *ngIf="workgroupsAssignedtoAnotherWorkplan.length">
+            <!-- Begin body content -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="dialog-body-content confirm-text" *ngIf="workgroupsAssignedtoAnotherWorkplan.length > 1" style="color:#D32F2F;">
+                        Some of the selected workgroups are assigned to another Workplan. Do you still want to continue?
+                    </div>
+                    <div class="dialog-body-content confirm-text" *ngIf="workgroupsAssignedtoAnotherWorkplan.length == 1" style="color:#D32F2F;">
+                         <span class="capitalize">{{ workgroupsAssignedtoAnotherWorkplan[0].workgroupName }}</span> is assigned to <span class="capitalize">{{ workgroupsAssignedtoAnotherWorkplan[0].workplanName }}</span>. Do you still want to continue?
+                    </div>
+                </div>
+            </div>
+            <!-- End body content -->
+
+            <!-- Begin action footer content -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="dialog-action-footer">
+                        <button type="button" (click)="closeDialog()" pRipple class="cust-btn-outlined" style="width: 200px;">Cancel</button>
+                        <button type="submit" (click)="continueToCreateWorkplan();" pRipple class="cust-btn" style="width: 200px;">Yes Continue</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End action footer content -->
+        </div>
+        <!-- End confirmation content -->
+    </p-dialog>
+    <!-- End workplan detail dialog -->
+
+</div>

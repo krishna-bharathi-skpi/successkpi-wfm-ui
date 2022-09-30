@@ -1,0 +1,288 @@
+<!-- <p>genesys-users works!</p> -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+
+<!-- <p>users works!</p> -->
+<div style="margin: 32px 32px;" *ngIf="userDetails == 'tableDatas'">
+    <div class="playbook-header" style="margin-bottom: 24px;">
+        <div class="page-title">
+          <h2>{{global.language?.settings?.users?.title}}</h2>
+        </div>
+    
+        <div style="display: flex;">
+          <div style="margin-top: -20px;margin-right: 16px;">
+            <i class="fa fa-search" aria-hidden="true" style="
+                          position: relative;
+                          left: 5px;
+                          opacity: 0.6;
+                          top: 29px;
+                         "></i>
+            <input type="text" class="inp-searchs form-control" [(ngModel)]="searchUserName" (ngModelChange)="searchUser()" placeholder="{{global.language?.settings?.users?.search}}">
+          </div>
+          <div *ngIf="global.rolePermissions.settings.users.isViewEdit == true">
+            <button type="button" class="btn-creates" (click)="addEditUser('','create')">{{global.language?.settings?.users?.add}}</button>
+          </div>
+          <div style="margin: 0 16px;">
+            <button type="button" class="btn-templates"  data-toggle="modal" data-target="#importModal" >Import users</button>
+          </div>
+        </div>
+    </div>
+<!-- import user popup when click import btn -->
+<div class="modal" id="importModal" data-backdrop="static">
+  <div class="modal-dialog" style="margin-top: 6%;">
+    <div class="modal-content import-popup">
+    
+      <!-- Modal Header -->
+      <div class="modal-header" style="border-bottom: 0;">
+        <h4 class="modal-title title-popup">Import users</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="CancelFile()">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body" style="padding: 0.5rem 41px 10px;">
+          <div style="color: #7c94ed;font-size: 13px;font-weight: 500;">Allow 200 maximum user</div>
+          <div class="form-group import-detail-box mb-0">
+            <img src="../../../../assets/img/microinteraction/upload_file.svg" style="padding-right: 14px;margin-top: -4px;">
+            <label for="upload-file" class="upload-id mb-0"> Import .csv file</label>
+            <input  #importfile id="upload-file" type="file" accept='.csv,text/csv' style="display: none;" (change)="handleFileSelect($event)">
+          </div>
+          <label class="mb-0 file-clr">{{fileName == null ? "" : fileName}}</label>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer footer-modal-btns" style="padding: 0px 41px 0;">
+          <div class="save-cancel" style="margin:0;">
+              <button type="button" data-dismiss="modal" class="btn-save" (click)="importUsers()">Import</button>
+              <button type="button" class="btn-cancel"  data-dismiss="modal" (click)="CancelFile()">Cancel</button>
+          </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    <div>
+        <p-table [value]="Users" [resizableColumns]="true" styleClass="p-datatable-gridlines" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pResizableColumn class="table-header-style">{{global.language?.settings?.users?.tableHeader?.name}}</th>
+                    <th pResizableColumn class="table-header-style">{{global.language?.settings?.users?.tableHeader?.email}}</th>
+                    <th pResizableColumn class="table-header-style">{{global.language?.settings?.users?.tableHeader?.role}}</th>
+                    <th pResizableColumn class="table-header-style">Data partition</th>
+                    <th pResizableColumn class="table-header-style" style="width: 280px;">Home dashboard report</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-user>
+                <tr class="row-data-user">
+                    <td class="user-name" (click)="addEditUser(user , 'edit')">{{user.customerName}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.roleName}}</td>
+                    <td>{{user.partitionName != undefined ? user.partitionName : 'All'}}</td>
+                    <td>{{user.homeDashboardId}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>
+
+<!-- Add user when add user button clicks -->
+<div style="margin: 32px 280px 50px 32px;"  *ngIf="userDetails == 'addUserData'">
+  <div>
+    <img src="../../../../assets/img/back.svg">
+    <ul class="breadcrumb">
+      <li><label class="bread-crumb-label1" (click)="breadCrumbBack()">All users</label></li>
+    </ul>
+  </div>
+  <div class="edit-header">
+    <div class="row" style="justify-content:space-between;margin-bottom: 18px !important;">
+      <div class="page-title col-sm-8">
+            <h2>{{global.language?.settings?.users?.addUser?.title}}</h2> 
+            <!-- <h2 *ngIf="creatEditType == 'edit'">Edit User</h2>  -->
+      </div>
+      <!-- <div class="col-sm-4"style="display: flex;justify-content: flex-end;">
+        <div *ngIf="creatEditType == 'edit'">
+           <button type="button" class="btn-templates" data-toggle="modal" data-target="#userModal" style="width: 104px;">{{global.language?.settings?.users?.editUser?.delete}}</button>
+         </div>
+      </div> -->
+    </div>
+  </div>
+  <form [formGroup]="createUser" >
+    <div class="add-user-details">
+      <div class="d-flex">
+          <div class="form-group" style="margin-bottom: 28px;margin-top: 24px;" [ngStyle]="{'cursor': isemailEnable == true ? 'not-allowed' : false}">
+              <label class="platform-label">{{global.language?.settings?.users?.addUser?.email}}</label>
+              <input type="text" class="form-control platform-ipt-box" [ngClass]="isemailEnable == true ? 'pointers-none' : false"  formControlName="email" [(ngModel)]="userCreateModel.Username" 
+              [ngClass]="{'is-invalid': (submittedCreateUser || createUser.controls['email'].touched) && createUser.controls['email'].errors}" placeholder="{{global.language?.settings?.users?.addUser?.email}}" autocomplete="off" [readonly]="isemailEnable">
+              <div *ngIf="(createUser.controls['email'].errors?.required && (submittedCreateUser ||  createUser.controls['email'].touched)) || createUser.controls['email'].errors?.email  && createUser.controls['email'].touched">
+                <div *ngIf="(createUser.controls['email'].errors?.required && (submittedCreateUser ||  createUser.controls['email'].touched) )"class="errormsg-topic">
+                  {{global.language?.settings?.users?.addUser?.emailErr}}</div>
+                <div *ngIf="createUser.controls['email'].errors?.email  && createUser.controls['email'].touched" class="errormsg-topic">{{global.language?.settings?.users?.addUser?.validEmail}} </div>
+              </div>
+          </div>
+
+          <div class="mt-4 ml-4" *ngIf="creatEditType == 'create' && issearchBtn">
+            <button type="button" class="btn-login" style="margin-top: 22px;outline: 0 !important;" [ngClass]="!createUser.controls['email'].valid ? 'savebtn-disable' : false" (click)="searchEmail()" [disabled]="!createUser.controls['email'].valid">
+                <i class="fa fa-search pr-2" aria-hidden="true"></i>Search
+            </button>
+          </div>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 28px;">
+          <label class="platform-label">{{global.language?.settings?.users?.addUser?.name}}</label>
+          <input type="text" id="customernameid" class="form-control platform-ipt-box" [(ngModel)]="userCreateModel.CustomerName" [ngModelOptions]="{standalone: true}"  (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+          placeholder="{{global.language?.settings?.users?.addUser?.name}}" autocomplete="off" disabled="true">
+      </div>
+      <div class="form-group" style="margin-bottom: 28px;" [ngStyle]="{'cursor': isPhEnable == true ? 'not-allowed' : false}">
+        <label class="platform-label">{{global.language?.settings?.users?.addUser?.phone}}</label>
+        <input type="text" class="form-control platform-ipt-box" (keypress)="keyPress($event)"  minlength="12" maxlength="12" formControlName="phone" [(ngModel)]="userCreateModel.phoneNumber"
+        [ngClass]="isPhEnable == true ? 'pointers-none' : false" placeholder="{{global.language?.settings.users.addUser.phone}}" autocomplete="off" [readonly]="isPhEnable">
+        <div *ngIf="(submittedCreateUser || validationCreateUser.phone.touched) && validationCreateUser.phone.errors" class="is-invalid  ">
+          <div class="errormsg-topic is-invalid" *ngIf="((submittedCreateUser || validationCreateUser.phone.touched) && validationCreateUser.phone.errors.required)==null?false:true">{{global.language?.settings?.users?.addUser?.PhErr}}
+          </div>
+        </div>  
+        <div class="errormsg-topic" *ngIf="((submittedCreateUser ||validationCreateUser.phone.dirty) && validationCreateUser.phone.invalid)">Invalid phone number format</div>
+      </div>
+      <div class="form-group platform-group" style="margin-bottom:28px">
+        <label class="users-label" style="margin-bottom: 4px;">{{global.language?.settings?.users?.addUser?.role}}</label>
+        <p-dropdown class="user-dropwn-setting"  [options]="roles" formControlName="role" 
+        [(ngModel)]="userCreateModel.Role"  placeholder="{{global.language?.settings?.users?.addUser?.select}}" [ngClass]="{'is-invalid': (submittedCreateUser || validationCreateUser.role.touched) && validationCreateUser.role.errors }">
+        </p-dropdown>
+          <div *ngIf="(submittedCreateUser || validationCreateUser.role.touched) && validationCreateUser.role.errors" class="errormsg-topic">
+              <div *ngIf="validationCreateUser.role.errors.required">Please select a role</div>
+          </div>
+      </div>
+      <div class="form-group platform-group" style="margin-bottom:28px">
+          <label class="users-label" style="margin-bottom: 4px;">Data partition</label>
+          <p-dropdown class="user-dropwn-setting"  [options]="patitionList" formControlName="partition" 
+          [(ngModel)]="userCreateModel.datapartition"  placeholder="select data partition" [ngClass]="{'is-invalid': (submittedCreateUser || validationCreateUser.partition.touched) && validationCreateUser.partition.errors }">
+          </p-dropdown>
+            <div *ngIf="(submittedCreateUser || validationCreateUser.partition.touched) && validationCreateUser.partition.errors" class="errormsg-topic">
+                <div *ngIf="validationCreateUser.partition.errors.required">Please select a data partition</div>
+            </div>
+      </div>
+    </div>
+    <div class="save-cancel common-bottom">
+     <div class="row">
+       <div class="col-sm-5" *ngIf="global.rolePermissions.settings.users.isViewEdit == true">
+           <div class="form-group">
+            <button type="button" class="btn-save"  (click)="saveUser()" [ngClass]="!createUser.valid ? 'savebtn-disable' : false" [disabled]="!createUser.valid">{{global.language?.settings?.users?.addUser?.save}}</button>
+            <!-- <button type="button" class="btn-save" (click)="updateUserdata()"  [ngClass]="!createUser.valid ? 'savebtn-disable' : false" *ngIf="creatEditType == 'edit'" [disabled]="!createUser.valid">Update</button> -->
+           </div>
+       </div>
+       <div class="col-sm-5">
+         <div class="form-group">
+           <button type="button" class="btn-cancel" (click)="createCancel()">{{global.language?.settings?.users?.addUser?.cancel}}</button>
+         </div>
+       </div>
+ 
+     </div>
+    </div>
+  </form>
+</div>
+
+<!-- Update User when edit click -->
+<div style="margin: 32px 320px 50px 32px;" *ngIf="userDetails == 'EdituserData'">
+  <form [formGroup]="updateUser">
+    <div>
+    <img src="../../../../assets/img/back.svg">
+    <ul class="breadcrumb">
+      <li><label class="bread-crumb-label1" (click)="breadCrumbBack()">All users</label></li>
+    </ul>
+    </div>
+    <div class="edit-header">
+        <div class="row" style="justify-content:space-between;margin-bottom: 18px !important;">
+          <div class="page-title col-sm-8">
+            <h2 class="platform-name-ellipsis">{{userUpdateModel.customerName}}</h2> 
+          </div>
+          <div class="col-sm-4"style="display: flex;justify-content: flex-end;" *ngIf="global.rolePermissions.settings.users.isViewEdit == true">
+            <div>
+               <button type="button" class="btn-templates" data-toggle="modal" data-target="#userModal" style="width: 104px;">{{global.language?.settings?.users?.editUser?.delete}}</button>
+             </div>
+           </div>
+        </div>
+    </div>
+    
+    <div style="max-width: 50%;">
+
+      <div class="form-group" style="margin: 24px 0;">
+        <label class="users-label">{{global.language?.settings?.users?.addUser?.email}}</label>
+        <input type="email" class="form-control platform-ipt-box disable-email"  [(ngModel)]="userUpdateModel.email" [ngModelOptions]="{standalone: true}" 
+         placeholder="{{global.language?.settings?.users?.addUser?.email}}" disabled>  
+      </div>
+      <div class="form-group" style="margin: 24px 0;">
+          <label class="users-label">{{global.language?.settings?.users?.addUser?.name}}</label>
+          <input type="text" id="customernameid" class="form-control platform-ipt-box" [(ngModel)]="userUpdateModel.customerName" [ngModelOptions]="{standalone: true}" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+            placeholder="{{global.language?.settings?.users?.addUser?.name}}" disabled> 
+      </div>
+      <div class="form-group" style="margin-bottom: 24px;">
+          <label class="users-label">{{global.language?.settings?.users?.addUser?.phone}}</label>
+          <input type="text" class="form-control platform-ipt-box" formControlName="phone" minlength="12" maxlength="12" [(ngModel)]="userUpdateModel.customerPhone" 
+          (keypress)="keyPress($event)" [ngClass]="{ 'is-invalid ': (submittedEditUser || validationUpdateUser.phone.touched) &&  validationUpdateUser.phone.errors }" placeholder="{{global.language?.settings?.users?.addUser?.phone}}"> 
+          <div *ngIf="(submittedEditUser || validationUpdateUser.phone.touched) && validationUpdateUser.phone.errors" class="is-invalid  ">
+            <div class="errormsg-topic is-invalid" *ngIf="((submittedEditUser ||validationUpdateUser.phone.touched) && validationUpdateUser.phone.errors.required)==null?false:true">
+              {{global.language?.settings?.users?.addUser?.PhErr}}
+            </div>     
+          </div>  
+          <div class="errormsg-topic" *ngIf="((submittedEditUser ||validationUpdateUser.phone.dirty) && validationUpdateUser.phone.invalid)">Invalid phone number format</div>
+      </div>
+      <div class="form-group platform-group" style="margin-bottom:32px">
+          <label class="users-label" style="margin-bottom: 4px;">{{global.language?.settings?.users?.addUser?.role}}</label>
+          <p-dropdown class="user-dropwn-setting" [options]="roles" 
+          [(ngModel)]="userUpdateModel.role" [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.settings?.users?.addUser?.select}}"></p-dropdown>
+      </div>
+      <div class="form-group platform-group" style="margin-bottom:28px">
+        <label class="users-label" style="margin-bottom: 4px;">Data partition</label>
+        <p-dropdown class="user-dropwn-setting"  [options]="patitionList"  
+        [(ngModel)]="userUpdateModel.datapartition"  [ngModelOptions]="{standalone: true}"placeholder="select data partition">
+        </p-dropdown>
+         
+      </div>
+
+      <div class="save-cancel common-bottom">
+        <div class="row" style="margin-bottom: inherit;">
+          <div class="col-sm-5" *ngIf="global.rolePermissions.settings.users.isViewEdit == true">
+              <div class="form-group">
+                <button type="button" class="btn-save" [ngClass]="!updateUser.valid ? 'savebtn-disable' : false" *ngIf="creatEditType == 'edit'" [disabled]="!updateUser.valid" (click)="updateUserdata()">{{global.language?.settings?.users?.addUser?.save}}</button>
+              </div>
+          </div>
+          <div class="col-sm-5">
+                <div class="form-group">
+                <button type="button" class="btn-cancel" (click)="createCancel()()">{{global.language?.settings?.users?.addUser?.cancel}}</button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Delete popup box -->
+<div class="modal" id="userModal" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content delete-popup">
+  
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 0;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="delete-popup-content" style="margin-left: -8%;">
+            <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+                margin-right: 20px;">
+            <h5>{{global.language?.settings?.users?.deleteUser?.title}}</h5>
+          </div>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer " style="border-top: 0px;">
+          <div style="margin-left: 8.6%;">
+            <button type="button" class="btn-pop-del" data-dismiss="modal" (click)="deleteUser()">{{global.language?.settings?.users?.deleteUser?.deleteBtn}}</button>
+            <button type="submit" class="btn-pop-cancel" data-dismiss="modal">{{global.language?.settings?.users?.deleteUser?.cancel}}</button>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+</div>
+

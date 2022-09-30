@@ -1,0 +1,310 @@
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<app-header class="navbar-expand-lg container-fluid navbar " [navbarBrandRouterLink]="['/home/command-center']"
+    [fixed]="true" [navbarBrandFull]="{src: defaultLogo, width: 100, height: 50, alt: 'SuccessKPI Logo'}"
+    [navbarBrandMinimized]="{src: defaultLogo, width: 100, height: 50, alt: 'SKPIs Logo'}" [sidebarToggler]="false"
+    [asideMenuToggler]="false">
+    <span class="small-nav">
+        <ul class="navbar-nav">
+            <li class="li-item" *ngIf="homePermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'home' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'home' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/home.svg">
+                    <a class="nav-link" [routerLink]="['/home/command-center']"
+                        [ngStyle]="{'font-weight':topnav == 'home' ?  '700': null,'font-size':topnav == 'home' ?  '15px': null}">{{ global.language?.Nav?.nav1 }}</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="homePermission && topnav == 'home' "></nav>
+            </li>
+            <li class="li-item" *ngIf="analyticsPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'analytics' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'analytics' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/analytics.svg">
+                    <a class="nav-link" [routerLink]="['/analytics/key-questions']"
+                        [ngStyle]="{'font-weight':topnav == 'analytics' ?  '700': null,'font-size':topnav == 'analytics' ?  '15px': null}">{{ global.language?.Nav?.nav2
+                        }}</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="analyticsPermission && topnav == 'analytics' ">
+                </nav>
+            </li>
+            <li class="li-item" *ngIf="evaluationPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'evaluation' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'evaluation' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/evaluations.svg">
+                    <a class="nav-link" [routerLink]="['/evaluations/evaluation-workspace-nacd']"
+                        [ngStyle]="{'font-weight':topnav == 'evaluation' ?  '700': null,'font-size':topnav == 'evaluation' ?  '15px': null}">{{ global.language?.Nav?.nav3
+                        }}</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="evaluationPermission && topnav == 'evaluation' ">
+                </nav>
+            </li>
+            <li class="li-item" *ngIf="playbooksPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'playbooks' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'playbooks' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/playbooks.svg">
+                    <a class="nav-link" [routerLink]="['/playbooks/my-playbooks']"
+                        [ngStyle]="{'font-weight':topnav == 'playbooks' ?  '700': null,'font-size':topnav == 'playbooks' ?  '15px': null}">{{ global.language?.Nav?.nav4
+                        }}</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="playbooksPermission && topnav == 'playbooks' ">
+                </nav>
+            </li>
+            <li class="li-item" *ngIf="workPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'wfm' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'wfm' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/workforce.svg">
+                    <a class="nav-link" [routerLink]="['/wfm/service_levels/list']"
+                        [ngStyle]="{'font-weight':topnav == 'wfm' ?  '700': null,'font-size':topnav == 'wfm' ?  '15px': null}">Workᴮᵉᵗᵃ</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="workPermission && topnav == 'wfm' "></nav>
+            </li>
+
+            <li class="li-item" *ngIf="agentsPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'agents' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'agents' ? 'none' : null}">
+                    <img src="../assets/img/top_navigation/evaluations.svg">
+                    <a class="nav-link" [routerLink]="['/agents/disposition-coding']"
+                        [ngStyle]="{'font-weight':topnav == 'agents' ?  '700': null,'font-size':topnav == 'agents' ?  '15px': null}">Agents</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="agentsPermission && topnav == 'agents' "></nav>
+            </li>
+            <li class="li-item" *ngIf="settingsPermission">
+                <nav class="li-navprops"
+                    [ngStyle]="{'padding': topnav == 'settings' ? '27px 0 24px 0' : '24px 0 24px 0','transform':topnav == 'settings' ? 'none' : null}">
+                    <img src="../../../assets/img/Icons_Settings/ic_settings.svg">
+                    <a class="nav-link" [routerLink]="['/settings/preferences']"
+                        [ngStyle]="{'font-weight':topnav == 'settings' ?  '700': null,'font-size':topnav == 'settings' ?  '15px': null}">{{global.language?.settings?.topNav}}</a>
+                </nav>
+                <nav style="border-bottom: 4px solid white;" *ngIf="settingsPermission && topnav == 'settings' "></nav>
+            </li>
+        </ul>
+    </span>
+    <!-- <span id="toggle-btn" class="toggle-btn" >
+        <a href="#" style="text-decoration: none;" (click)="scrollLeft()"> <i class="fa fa-chevron-left" aria-hidden="true"></i></a>&nbsp;&nbsp;&nbsp;
+        <a href="#" style="text-decoration: none;" (click)="scrollRight()"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+    </span> -->
+
+    <span class="navbar-text">
+        <ul class="nav" style="flex-wrap: nowrap;align-items: center;">
+            <li class="dropdown show">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" style="text-decoration: none;">
+                    <div class="rounded-img-letter" id="profileImage"></div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink" style="width: 145px;">
+                    <!-- <a class="dropdown-item" href="#" data-toggle="modal" data-target="#myModal1"
+                        (click)="changeLanguage('change')">{{global.language?.navdropdwn?.dropdwn3}}</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#myModal2" (click)="changePwd()"
+                        *ngIf="permissionsHeaders.settings.profile.isChangePwd == true">{{
+                        global.language?.settings?.dropdwn}}</a> -->
+                    <a class="dropdown-item" (click)="auditLogPreference()" *ngIf="permissionsHeaders.settings.profile.isView == true || permissionsHeaders.settings.profile.isChangePwd == true">Preferences</a>
+                    <a class="dropdown-item" [routerLink]="" (click)="logout()">
+                        {{ global.language?.navdropdwn?.dropdwn2 }}</a>
+                </div>
+            </li>
+            <li class="login-name" id="user" tooltip="{{userName}}" placement="top">{{userName}}</li>
+        </ul>
+    </span>
+</app-header>
+
+<p-sidebar   [(visible)]="visibleSidebar" styleClass="psidebar"  [dismissible]="false" appendTo="body" [blockScroll]="true"  position="right" [showCloseIcon]="false"
+ [baseZIndex]="10000">
+   <div class="d-flex justify-content-between">
+       <h3 class="mt-2 mb-3" style="font-weight:normal">Preference Details</h3>
+       <i class="fa fa-times cursor-pointer" *ngIf="!profileComponentChild?.loading && !isLoading"  aria-hidden="true" (click)="cancelPassword()"></i>
+   </div>
+ 
+   <p-toast position="top-center" key="tc" ></p-toast>
+   <div class="scroll-section" >
+   <p-tabView class="mt-4 tabView" *ngIf="isHideChangePassword && visibleSidebar" [activeIndex]="activeTabIndex" (onChange)="tabViewChange($event)">
+       <p-tabPanel header="Profile"  *ngIf="permissionsHeaders.settings.profile.isView == true" >
+           <app-profile [isEnableUsername]="isEnableUsername" (visibleProfile)="cancelPassword($event)"></app-profile>
+       </p-tabPanel>
+       <p-tabPanel header="Change Password"  *ngIf="isHideChangePassword && permissionsHeaders.settings.profile.isChangePwd == true" >
+           <div style="height: 500px;margin-top: 12px;">
+               <p style="font-size: 14px;font-weight: 500;padding-bottom: 10px;color: #012169">If you want to change password,Please fill out them</p>
+               <form [formGroup]="updatePass">
+                   <div style="padding: 12px 0px 50px 2px;" >
+                       <div class="form-group platform-group" style="margin-bottom: 20px;">
+                           <label class="platform-label">{{ global.language?.settings?.changePwd?.currentPwd}}</label>
+                           <input type="password" class="form-control platform-ipt-box" formControlName="oldPass"
+                               [(ngModel)]="oldpwd"
+                               [ngClass]="{ 'is-invalid ': (submittedPassword || validationPass.oldPass.touched) &&  validationPass.oldPass.errors }"
+                               placeholder="{{global.language?.settings?.changePwd?.currentPwd}}">
+                           <div *ngIf="(submittedPassword || validationPass.oldPass.touched) && validationPass.oldPass.errors"
+                               class="is-invalid  ">
+                               <div class="errormsg-topic is-invalid"
+                                   *ngIf="((submittedPassword || validationPass.oldPass.touched) && validationPass.oldPass.errors.required)==null?false:true">
+                                   {{ global.language?.settings?.changePwd?.crrntError}}
+                               </div>
+                           </div>
+                       </div>
+                       <div class="form-group platform-group" style="margin-bottom: 20px;">
+                           <label class="platform-label">{{ global.language?.settings?.changePwd?.newPwd}}</label>
+                           <input type="password" class="form-control platform-ipt-box" formControlName="newPass"
+                               [(ngModel)]="newpwd1"
+                               [ngClass]="{ 'is-invalid':(!updatePass.controls['newPass'].valid && ( submittedPassword || updatePass.controls['newPass'].touched )) && (submittedPassword && updatePass.controls['newPass'].errors?.required )}"
+                               placeholder="{{global.language?.settings?.changePwd?.newPwd}}">
+                           <div *ngIf="(!updatePass.controls['newPass'].valid &&( updatePass.controls['newPass'].touched || submittedPassword) )||(updatePass.controls['newPass'].errors?.required &&( submittedPassword || updatePass.controls['newPass'].touched) ) "
+                               class="errormsg-topic">
+                               <div
+                                   *ngIf="updatePass.controls['newPass'].errors?.required && ( submittedPassword || updatePass.controls['newPass'].touched)">
+                                   {{global.language?.settings?.changePwd?.newError}}</div>
+                               <div
+                                   *ngIf="(updatePass.controls['newPass'].errors?.minlength && (updatePass.controls['newPass'].touched || submittedPassword)) ">
+                                   {{global.language?.settings?.changePwd?.validPassErr}}
+                               </div>
+                           </div>
+                       </div>
+                       <div class="form-group platform-group" style="margin-bottom: 20px;">
+                           <label class="platform-label">{{global.language?.settings?.changePwd?.confirmPwd}}</label>
+                           <input type="password" class="form-control platform-ipt-box" formControlName="confirmPass"
+                               [(ngModel)]="newpwd"
+                               [ngClass]="{ 'is-invalid ': (submittedPassword || validationPass.confirmPass.touched) &&  validationPass.confirmPass.errors }"
+                               placeholder="{{global.language?.settings?.changePwd?.confirmPwd}}">
+                           <div *ngIf="(submittedPassword || validationPass.confirmPass.touched) && validationPass.confirmPass.errors"
+                               class="is-invalid  ">
+                               <div class="errormsg-topic is-invalid"
+                                   *ngIf="((submittedPassword || validationPass.confirmPass.touched) && validationPass.confirmPass.errors.required)==null?false:true">
+                                   {{global.language?.settings?.changePwd?.confirmError}}
+                               </div>
+                           </div>
+                           <p class="errormsg-topic is-invalid" *ngIf="passwordMatch==true">
+                               {{global.language?.settings?.changePwd?.matchError}}</p>
+                       </div>
+                   </div>
+ 
+                   <!-- Modal footer -->
+                   <div class="save-cancel" style="margin: 0 1%;">
+                       <button type="button" class="btn-save" [disabled]="isLoading"
+                           (click)="updatePassword()">{{global.language?.settings?.changePwd?.save}}</button>
+                       <button type="button" class="btn-cancel" data-dismiss="modal"
+                           (click)="cancelPassword()">{{global.language?.settings?.changePwd?.cancel}}</button>
+                   </div>
+               </form>
+           </div>
+ 
+       </p-tabPanel>
+   </p-tabView>
+   <div *ngIf="!isHideChangePassword && visibleSidebar" >
+    <app-profile [isEnableUsername]="isEnableUsername" (visibleProfile)="cancelPassword($event)"></app-profile>
+   </div>
+   </div>
+</p-sidebar>
+
+
+<!-- language Modal popup-->
+<!-- <div class="modal" id="myModal1" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content modal-language-popup">
+            <div class="modal-header" style="border-bottom: 0;">
+                <h4 class="modal-title title-popup">{{global.language?.navdropdwn?.Changelanguage?.title}}</h4>
+                <button type="button" class="close" data-dismiss="modal"
+                    (click)="changeLanguage('cancel')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.3rem 41px 95px;">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="card-number-characte">{{global.language?.navdropdwn?.Changelanguage?.label}}</label>
+                    <p-dropdown #selectedLang class="language-popup" [options]="global.getDropdwn" filter="true"
+                        [(ngModel)]="global.getLangValue" [ngModelOptions]="{standalone: true}"
+                        placeholder="{{global.language?.navdropdwn?.Changelanguage?.select}}"></p-dropdown>
+                </div>
+            </div>
+            <div class="modal-footer footer-modal-btns" style="padding: 0px 41px 0;">
+                <div class="save-cancel" style="margin:0;">
+                    <button type="button" data-dismiss="modal" class="btn-save"
+                        (click)="updateLanguage()">{{global.language?.navdropdwn?.Changelanguage?.apply}}</button>
+                    <button type="button" class="btn-cancel" data-dismiss="modal"
+                        (click)="changeLanguage('cancel')">{{global.language?.navdropdwn?.Changelanguage?.cancel}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Change Password Pop up -->
+<!-- <div class="modal" id="myModal2" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content modal-language-popup" style="height: 500px;">
+
+
+            <div class="modal-header" style="border-bottom: 0;">
+                <h4 class="modal-title title-popup" style="padding-left: 33px;">{{ global.language?.settings?.changePwd?.title}}</h4>
+                <button type="button" class="close" data-dismiss="modal" (click)="cancelPassword()">&times;</button>
+            </div>
+            <form [formGroup]="updatePass">
+
+                <div class="modal-body" style="padding: 10px 50px 0px;">
+
+                    <div class="form-group platform-group" style="margin-bottom: 20px;">
+                        <label class="platform-label">{{ global.language?.settings?.changePwd?.currentPwd}}</label>
+                        <input type="password" class="form-control platform-ipt-box" formControlName="oldPass"
+                            [(ngModel)]="oldpwd" style="width: 100%;"
+                            [ngClass]="{ 'is-invalid ': (submittedPassword || validationPass.oldPass.touched) &&  validationPass.oldPass.errors }"
+                            placeholder="{{global.language?.settings?.changePwd?.currentPwd}}">
+                        <div *ngIf="(submittedPassword || validationPass.oldPass.touched) && validationPass.oldPass.errors"
+                            class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="((submittedPassword || validationPass.oldPass.touched) && validationPass.oldPass.errors.required)==null?false:true">
+                                {{ global.language?.settings?.changePwd?.crrntError}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group platform-group" style="margin-bottom: 20px;">
+                        <label class="platform-label">{{ global.language?.settings?.changePwd?.newPwd}}</label>
+                        <input type="password" class="form-control platform-ipt-box" formControlName="newPass"
+                            [(ngModel)]="newpwd1" style="width: 100%;"
+                            [ngClass]="{ 'is-invalid':(!updatePass.controls['newPass'].valid && ( submittedPassword || updatePass.controls['newPass'].touched ))|| (updatePass.controls['newPass'].errors?.required && submittedPassword )}"
+                            placeholder="{{global.language?.settings?.changePwd?.newPwd}}">
+                        <div *ngIf="(!updatePass.controls['newPass'].valid &&( updatePass.controls['newPass'].touched || submittedPassword) )||(updatePass.controls['newPass'].errors?.required &&( submittedPassword || updatePass.controls['newPass'].touched) ) "
+                            class="errormsg-topic">
+                            <div
+                                *ngIf="updatePass.controls['newPass'].errors?.required && ( submittedPassword || updatePass.controls['newPass'].touched)">
+                                {{global.language?.settings?.changePwd?.newError}}</div>
+                            <div
+                                *ngIf="(updatePass.controls['newPass'].errors?.minlength && (updatePass.controls['newPass'].touched || submittedPassword)) ">
+                                {{global.language?.settings?.changePwd?.validPassErr}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group platform-group" style="margin-bottom: 20px;">
+                        <label class="platform-label">{{global.language?.settings?.changePwd?.confirmPwd}}</label>
+                        <input type="password" class="form-control platform-ipt-box" formControlName="confirmPass"
+                            [(ngModel)]="newpwd" style="width: 100%;"
+                            [ngClass]="{ 'is-invalid ': (submittedPassword || validationPass.confirmPass.touched) &&  validationPass.confirmPass.errors }"
+                            placeholder="{{global.language?.settings?.changePwd?.confirmPwd}}">
+                        <div *ngIf="(submittedPassword || validationPass.confirmPass.touched) && validationPass.confirmPass.errors"
+                            class="is-invalid  ">
+                            <div class="errormsg-topic is-invalid"
+                                *ngIf="((submittedPassword || validationPass.confirmPass.touched) && validationPass.confirmPass.errors.required)==null?false:true">
+                                {{global.language?.settings?.changePwd?.confirmError}}
+                            </div>
+                        </div>
+                        <p class="errormsg-topic is-invalid" *ngIf="passwordMatch==true">
+                            {{global.language?.settings?.changePwd?.matchError}}</p>
+                    </div>
+
+                </div>
+
+                <br>
+           
+                <div class="modal-footer footer-modal-btns" style="padding: 0px 50px 0;position: absolute;bottom: 0%;">
+                    <div class="save-cancel" style="margin:0;">
+                        <button type="button" class="btn-save" [disabled]="isLoading"
+                            (click)="updatePassword()">{{global.language?.settings?.changePwd?.save}}</button>
+                        <button type="button" class="btn-cancel" data-dismiss="modal"
+                            (click)="cancelPass()">{{global.language?.settings?.changePwd?.cancel}}</button>
+                    </div>
+                
+            </div>
+             
+            <br>
+
+            <div class="modal-footer footer-modal-btns" style="padding: 0px 50px 0;position: absolute;bottom: 0%;">
+                <div class="save-cancel" style="margin:0;">
+                    <button type="button"  class="btn-save" [disabled]="isLoading" (click)="updatePassword()">{{global.language?.settings?.changePwd?.save}}</button>
+                    <button type="button" class="btn-cancel" data-dismiss="modal" (click)="cancelPassword()">{{global.language?.settings?.changePwd?.cancel}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> -->

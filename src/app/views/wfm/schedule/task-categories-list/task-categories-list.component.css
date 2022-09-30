@@ -1,0 +1,65 @@
+.wfm h1,h2,h3,h4,h5,h6,li,p,a,button,label,textarea{
+    font-family: sans-serif;
+}
+  
+.wfm h1,h2,h3,h4,h5,h6, label{
+    color:#303030;
+    font-weight: 500;
+}
+
+.form-control{
+    background-color: #FFFFFF;
+    border: 1px solid #B3B6C7;
+    border-radius: 4px;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.1rem;
+    /* line-height: 2.375rem; */
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+a{
+    color:#007ad9 !important;
+    cursor: pointer;
+}
+
+a:hover{
+    color:#012169 !important;
+}
+
+/****** Dialog - Forecasting detail **********/
+.view-content div{
+    line-height: 2rem;
+}
+
+.view-content span{
+    font-size: 1em;
+}
+
+.view-content .text-key{
+    color:#575757;
+    padding-right: 10px;
+}
+
+.view-content .text-val{
+    color:#111111;
+    padding-right: 10px;
+    font-weight: 600;
+}
+
+.card-body{
+    padding-top: 0;
+    padding-bottom: 0;
+}

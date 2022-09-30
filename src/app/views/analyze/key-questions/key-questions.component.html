@@ -1,0 +1,308 @@
+<!-- <p>key-questions works!</p> -->
+<!-- Key Questions cards-->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<iframe width="100%" id="IsCustomerSpeaking" *ngIf="IsCustomerSpeaking" height="800px" frameBorder="0" [src]="CustomerSpeaking | safe" style="float: right;"></iframe>
+<iframe width="100%" id="IsTopicsTrending" *ngIf="IsTopicsTrending" height="800px" frameBorder="0" [src]="TopicsTrending | safe"></iframe>
+<iframe width="100%" id="IsTrendingPhrases" *ngIf="IsTrendingPhrases" height="800px" frameBorder="0" [src]="TrendingPhrases | safe"></iframe>
+<iframe width="100%" id="IsCallToActionPlaybook" *ngIf="IsCallToActionPlaybook" height="800px" frameBorder="0" [src]="CallToActionPlaybook | safe"></iframe>
+<iframe width="100%" id="IsInteractions" *ngIf="IsInteractions" height="800px" frameBorder="0" [src]="Interactions | safe"></iframe>
+<iframe width="100%" id="IsCustomersFeel" *ngIf="IsCustomersFeel" height="800px" frameBorder="0" [src]="CustomersFeel | safe"></iframe>
+<iframe width="100%" id="IsPeopleTalkingAbout" *ngIf="IsPeopleTalkingAbout" height="800px" frameBorder="0" [src]="PeopleTalkingAbout | safe"></iframe>
+<iframe width="100%" id="Queue" *ngIf="IsQueue" height="800px" frameBorder="0" [src]="Queue | safe"></iframe>
+<iframe width="100%" id="IVR" *ngIf="IsIVRContainment" height="800px" frameBorder="0" [src]="IVRContainment | safe"></iframe>
+<iframe width="100%" id="AgentDashboard" *ngIf="IsAgentDashboard" height="800px" frameBorder="0" [src]="AgentDashboard | safe"></iframe>
+<iframe width="100%" id="AgentScoring" *ngIf="IsAgentScoring" height="800px" frameBorder="0" [src]="AgentScoring | safe"></iframe>
+<iframe width="100%" id="AddtoEvaluation" *ngIf="IsAddtoEvaluationRoom" height="800px" frameBorder="0" [src]="AddtoEvaluationRoom | safe"></iframe>
+            
+<div style="margin: 0px 140px 0 32px;" *ngIf="IsActive">
+    <div class="analyze-card-header top-header">
+        <div class="header-title">
+            <h2 *ngIf="ListorEdit == 'list'">{{global.language?.analytics?.keyQuestions?.title}}</h2>
+            <h2 *ngIf="ListorEdit == 'edit'">{{global.language?.analytics?.keyQuestions?.EditQuestion?.title}}</h2>
+        </div>
+        <div>
+            <button type="button" class="btn-creates"  *ngIf="ListorEdit == 'list'" (click)="ListorEdit = 'edit'">
+              {{global.language?.analytics?.keyQuestions?.edit}}</button>
+            <button type="button" class="btn-creates" *ngIf="ListorEdit == 'edit'" (click)="ListorEdit = 'list'">
+              {{global.language?.analytics?.keyQuestions?.EditQuestion?.lockMode}}</button>
+        </div>
+    </div>
+   
+    <section style="margin: 10px 0px;"> 
+        <div class="row">
+            <div class="col-sm-6 col-lg-3"  ><!--*ngFor="let keyQuestionsCards of cards;let i=index"-->
+                <div class="card key-ques" >
+                  <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+
+                    <div class="card-header-key">
+                  
+                      <div class="title-keyques module line-clamp"(click)="ShowIframe('IsCustomerSpeaking',keyQuestionsModel.CustomerSpeaking.documentID)"> {{keyQuestionsModel.CustomerSpeaking.category}}</div> 
+                      <div class="rounded-img">{{keyQuestionsModel.CustomerSpeaking.Sno== null ? 1:keyQuestionsModel.CustomerSpeaking.Sno}}</div>
+                    </div>
+                   
+                    <div class="card-desc-keyques module line-clamp-desc "(click)="ShowIframe('IsCustomerSpeaking',keyQuestionsModel.CustomerSpeaking.documentID)">
+                      {{keyQuestionsModel.CustomerSpeaking.text}}
+                    </div>
+
+                   <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.CustomerSpeaking,CustomerSpeaking)" data-target="#myModal">
+                      <img src="../assets/img/microinteraction/edit.svg">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCard}}</div>
+                  </div>
+                
+                </div>
+            </div>
+            
+             <div class="col-sm-6 col-lg-3" >
+                    <div class="card key-ques" >
+                      <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                        <div class="card-header-key">
+                           <div class="title-keyques module line-clamp"(click)="ShowIframe('IsTopicsTrending',keyQuestionsModel.TopicsTrending.documentID)">{{keyQuestionsModel.TopicsTrending.category}}</div> 
+                          <div class="rounded-img">{{keyQuestionsModel.TopicsTrending.Sno== null ? 2:keyQuestionsModel.TopicsTrending.Sno}}</div>
+                        </div>
+                       
+                        <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsTopicsTrending',keyQuestionsModel.TopicsTrending.documentID)">
+                          {{keyQuestionsModel.TopicsTrending.text}}
+                        </div>
+                        <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.TopicsTrending,TopicsTrending)" data-target="#myModal">
+                            <img src="../assets/img/microinteraction/edit.svg">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCard}}</div>
+                      </div>
+                    
+                    </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3" >
+              <div class="card key-ques" >
+                <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                  <div class="card-header-key">
+                     <div class="title-keyques module line-clamp"(click)="ShowIframe('IsTrendingPhrases',keyQuestionsModel.TrendingPhrases.documentID)">{{keyQuestionsModel.TrendingPhrases.category}}
+                      </div> 
+                    <div class="rounded-img">{{keyQuestionsModel.TrendingPhrases.Sno== null ? 3:keyQuestionsModel.TrendingPhrases.Sno}}</div>
+                  </div>
+                 
+                  <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsTrendingPhrases',keyQuestionsModel.TrendingPhrases.documentID)">{{keyQuestionsModel.TrendingPhrases.text}}
+                  </div>
+                  <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.TrendingPhrases,TrendingPhrases)" data-target="#myModal">
+                      <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                </div>
+              
+              </div>
+          </div>
+            <div class="col-sm-6 col-lg-3" >
+                    <div class="card key-ques" >
+                      <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                        <div class="card-header-key">
+                           <div class="title-keyques module line-clamp"(click)="ShowIframe('IsCallToActionPlaybook',keyQuestionsModel.CallToActionPlaybook.documentID)">{{keyQuestionsModel.CallToActionPlaybook.category}}</div> 
+                          <div class="rounded-img">{{keyQuestionsModel.CallToActionPlaybook.Sno== null ? 4:keyQuestionsModel.CallToActionPlaybook.Sno}}</div>
+                        </div>
+                       
+                        <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsCallToActionPlaybook',keyQuestionsModel.CallToActionPlaybook.documentID)">
+                          {{keyQuestionsModel.CallToActionPlaybook.text}}
+                          </div>
+                        <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.CallToActionPlaybook,CallToActionPlaybook)" data-target="#myModal">
+                            <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                      </div>
+                    
+                    </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3" >
+                    <div class="card key-ques" >
+                      <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                        <div class="card-header-key">
+                           <div class="title-keyques module line-clamp"(click)="ShowIframe('IsInteractions',keyQuestionsModel.Interactions.documentID)">{{keyQuestionsModel.Interactions.category}}
+                            </div> 
+                          <div class="rounded-img">{{keyQuestionsModel.Interactions.Sno== null ? 5:keyQuestionsModel.Interactions.Sno}}</div>
+                        </div>
+                       
+                        <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsInteractions',keyQuestionsModel.Interactions.documentID)">
+                          {{keyQuestionsModel.Interactions.text}}
+                        </div>
+                        <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.Interactions,Interactions)" data-target="#myModal">
+                            <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                      </div>
+                    
+                    </div>
+            </div>
+            
+            <div class="col-sm-6 col-lg-3" >
+                    <div class="card key-ques" >
+                      <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                        <div class="card-header-key">
+                           <div class="title-keyques module line-clamp"(click)="ShowIframe('IsCustomersFeel',keyQuestionsModel.CustomersFeel.documentID)">{{keyQuestionsModel.CustomersFeel.category}}</div> 
+                          <div class="rounded-img">{{keyQuestionsModel.CustomersFeel.Sno== null ? 6:keyQuestionsModel.CustomersFeel.Sno}}</div>
+                        </div>
+                       
+                        <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsCustomersFeel',keyQuestionsModel.CustomersFeel.documentID)">
+                          {{keyQuestionsModel.CustomersFeel.text}}
+                        </div>
+                        <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.CustomersFeel,CustomersFeel)" data-target="#myModal">
+                            <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                      </div>
+                    
+                    </div>
+            </div>
+           
+            <div class="col-sm-6 col-lg-3" >
+                        <div class="card key-ques" >
+                          <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                            <div class="card-header-key">
+                               <div class="title-keyques module line-clamp"(click)="ShowIframe('IsPeopleTalkingAbout',keyQuestionsModel.PeopleTalkingAbout.documentID)">{{keyQuestionsModel.PeopleTalkingAbout.category}}</div> 
+                              <div class="rounded-img">{{keyQuestionsModel.PeopleTalkingAbout.Sno== null ? 7:keyQuestionsModel.PeopleTalkingAbout.Sno}}</div>
+                            </div>
+                           
+                            <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsPeopleTalkingAbout',keyQuestionsModel.PeopleTalkingAbout.documentID)">
+                              {{keyQuestionsModel.PeopleTalkingAbout.text}}
+                            </div>
+                            <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.PeopleTalkingAbout,PeopleTalkingAbout)" data-target="#myModal">
+                                <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                          </div>
+                        
+                        </div>
+            </div>
+    
+            <div class="col-sm-6 col-lg-3">
+                        <div class="card key-ques" >
+                          <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                            <div class="card-header-key">
+                               <div class="title-keyques module line-clamp" (click)="ShowIframe('IsQueue',keyQuestionsModel.Queue.documentID)">{{keyQuestionsModel.Queue.category}}</div> 
+                              <div class="rounded-img">{{keyQuestionsModel.Queue.Sno== null ? 8:keyQuestionsModel.Queue.Sno}}</div>
+                            </div>
+                           
+                            <div class="card-desc-keyques module line-clamp-desc" (click)="ShowIframe('IsQueue',keyQuestionsModel.Queue.documentID)">
+                              {{keyQuestionsModel.Queue.text}}
+                            </div>
+                            <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.Queue,Queue)" data-target="#myModal">
+                                <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                          </div>
+                        
+                        </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card key-ques" >
+                  <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                    <div class="card-header-key">
+                       <div class="title-keyques module line-clamp" (click)="ShowIframe('IsIVRContainment',keyQuestionsModel.IVRContainment.documentID)">{{keyQuestionsModel.IVRContainment.category}}
+                        </div> 
+                      <div class="rounded-img">{{keyQuestionsModel.IVRContainment.Sno== null ? 9:keyQuestionsModel.IVRContainment.Sno}}</div>
+                    </div>
+                   
+                    <div class="card-desc-keyques module line-clamp-desc" (click)="ShowIframe('IsIVRContainment',keyQuestionsModel.IVRContainment.documentID)">{{keyQuestionsModel.IVRContainment.text}}
+                    </div>
+                    <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.IVRContainment,IVRContainment)" data-target="#myModal">
+                        <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                  </div>
+                
+                </div>
+            </div> 
+            
+            <div class="col-sm-6 col-lg-3">
+                    <div class="card key-ques" >
+                      <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                        <div class="card-header-key">
+                           <div class="title-keyques module line-clamp" (click)="ShowIframe('IsAgentScoring',keyQuestionsModel.AgentScoring.documentID)">{{keyQuestionsModel.AgentScoring.category}}</div> 
+                          <div class="rounded-img">{{keyQuestionsModel.AgentScoring.Sno== null ? 10:keyQuestionsModel.AgentScoring.Sno}}</div>
+                        </div>
+                       
+                        <div class="card-desc-keyques module line-clamp-desc" (click)="ShowIframe('IsAgentScoring',keyQuestionsModel.AgentScoring.documentID)">
+                          {{keyQuestionsModel.AgentScoring.text}}
+                        </div>
+                        <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.AgentScoring,AgentScoring)" data-target="#myModal">
+                            <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                      </div>
+                    
+                    </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3" >
+                        <div class="card key-ques" >
+                          <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                            <div class="card-header-key">
+                               <div class="title-keyques module line-clamp"(click)="ShowIframe('IsAgentDashboard',keyQuestionsModel.AgentDashboard.documentID)">{{keyQuestionsModel.AgentDashboard.category}}</div> 
+                              <div class="rounded-img">{{keyQuestionsModel.AgentDashboard.Sno== null ? 11:keyQuestionsModel.AgentDashboard.Sno}}</div>
+                            </div>
+                           
+                            <div class="card-desc-keyques module line-clamp-desc"(click)="ShowIframe('IsAgentDashboard',keyQuestionsModel.AgentDashboard.documentID)">
+                              {{keyQuestionsModel.AgentDashboard.text}}
+                            </div>
+                            <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.AgentDashboard,AgentDashboard)" data-target="#myModal">
+                                <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                          </div>
+                        
+                        </div>
+            </div>
+    
+            <div class="col-sm-6 col-lg-3" >
+              <div class="card key-ques" >
+                <div  [ngClass]="{'card-body': ListorEdit == 'list' }">
+                  <div class="card-header-key">
+                               <div class="title-keyques module line-clamp" (click)="ShowIframe('IsAddtoEvaluationRoom',keyQuestionsModel.AddtoEvaluationRoom.documentID)">{{keyQuestionsModel.AddtoEvaluationRoom.category}}</div> 
+                              <div class="rounded-img">{{keyQuestionsModel.AddtoEvaluationRoom.Sno== null ? 12:keyQuestionsModel.AddtoEvaluationRoom.Sno}}</div>
+                            </div>
+                           
+                            <div class="card-desc-keyques module line-clamp-desc" (click)="ShowIframe('IsAddtoEvaluationRoom',keyQuestionsModel.AddtoEvaluationRoom.documentID)">
+                              {{keyQuestionsModel.AddtoEvaluationRoom.text}}
+                            </div>
+                            <div *ngIf="ListorEdit == 'edit'" class="edit-keyques-icon" data-toggle="modal" (click)="editCard(keyQuestionsModel.AddtoEvaluationRoom,AddtoEvaluationRoom)" data-target="#myModal">
+                                <img src="../assets/img/microinteraction/edit.svg">{{global.language.analytics.keyQuestions.EditQuestion.EditCard}}</div>
+                          </div>
+
+                        </div>
+            </div>
+
+ 
+
+     </div>
+    </section>
+    
+    <!--*************************************************** Pop up for EditCard*************************************************** -->
+    <div class="modal" id="myModal" data-backdrop="static">
+        <div class="modal-dialog">
+          <div class="modal-content modal-keyques-popup">
+          
+            <!-- Modal Header -->
+            <div class="modal-header" style="border-bottom: 0;">
+              <h4 class="modal-title">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.title}}</h4>
+              <button type="button" class="close" data-dismiss="modal"(click)="cancel()">&times;</button>
+            </div>
+            
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="card-number-characte">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.cardNo}}</label>
+                    <input type="text" maxlength="2" [(ngModel)]="allcards.Sno" class="form-control modal-ipt-num"  >
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="card-number-characte" tooltip="Max 30 characters" placement="right">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.category}}</label>
+                    <input type="text" maxlength="30" [(ngModel)]="allcards.category" class="form-control modal-ipt-category"  placeholder="{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.placeholderCategory}}">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="card-number-characte">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.question}}</label>
+                    <input type="text" [(ngModel)]="allcards.text" class="form-control modal-ipt-questions"  placeholder="{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.palceholderQuestion}}">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="card-number-characte">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.report}}</label>
+                    <input type="text" id="documentnameid" [(ngModel)]="allcards.documentID" class="form-control modal-ipt-questions" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"  placeholder="{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.placeholderReport}}">
+                </div>
+            </div>
+            
+            <!-- Modal footer -->
+            <div class="modal-footer footer-modal-btns">
+                <div class="save-cancel" style="margin:0;">
+                    <button type="button"(click)="saveKeyQuestions()" *ngIf = "global.rolePermissions.analytics.keyQuestion.isViewEdit == true" data-dismiss="modal" class="btn-save">{{global.language?.analytics?.keyQuestions.EditQuestion?.EditCardPopup?.saveCancel?.save}}</button>
+                    <button type="button" class="btn-cancel" data-dismiss="modal"(click)="cancel()">{{global.language?.analytics?.keyQuestions?.EditQuestion?.EditCardPopup?.saveCancel?.cancel}}</button>
+                   </div>
+            </div>
+            
+          </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+    

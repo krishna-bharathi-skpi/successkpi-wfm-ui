@@ -1,0 +1,363 @@
+<!-- <p>new-interactions works!</p> -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<div class="top-header">
+    <div class="col">
+        <h2 class="header-title">Smart Selections</h2>
+    </div>
+</div>
+
+<div class="interactions-sort mb-3">
+    <div class="sort-right" style="width: 100%;" [ngStyle]="{'height': isInteractionGrid ? '474px' : '70px'}">
+        <div class="evaluate-sub-title w-100 mb-1">
+            <h3 >Select interactions</h3>
+            <!-- <div class="col-sm-3 pl-0 pr-0" style="margin-right: 9px;margin-top: -4px;">
+                <img src="../assets/img/refresh.svg" style="position: absolute;
+            z-index: 99;
+            top: 10px;
+            left: 10%;">
+                <button type="button" class="btn-sort-interaction" (click)="reloadInteractions()">Reload Conversations</button>
+            </div> -->
+            <div class="d-flex">
+                <div class="d-flex mt-1 mr-2" style="height: 25px;border-right: 1px solid #cdd0d3;">
+                    <span class="pr-2" style="font-size: 14px;font-weight: 500;">Audio Player</span>
+                    <span class="pr-2">
+                        <p-inputSwitch class="ipt-switch-platform smart-selection-toggle" [(ngModel)]="isAudioPlayerShow"
+                            (onChange)="onChangeAudioLoader(isAudioPlayerShow)" [ngModelOptions]="{standalone: true}">
+                        </p-inputSwitch>
+                    </span>
+                </div>
+                <div class="d-flex mt-1 mr-2" style="height: 25px;">
+                    <span class="pr-2" style="font-size: 14px;font-weight: 500;">Interaction Grid</span>
+                    <span>
+                        <p-inputSwitch class="ipt-switch-platform smart-selection-toggle" [(ngModel)]="isInteractionGrid"
+                            [ngModelOptions]="{standalone: true}">
+                        </p-inputSwitch>
+                    </span>
+                </div>
+            <div class="mr-3" >
+                <button type="button" class="btn-sort-interaction pl-3 pr-3" (click)="reloadInteractions()" tooltip="Refresh your display and reset your entire selection" placement="top"><i class="fa fa-repeat mr-2" style="font-size: 15px;" aria-hidden="true"></i> Refresh Session</button>
+            </div>
+            <div class="mr-3" >
+                <button type="button" class="btn-sort-interaction pl-3 pr-3" (click)="ReloadData()" tooltip="Pull and display the latest data" placement="top"><i class="fa fa-refresh mr-2" style="font-size: 15px;" aria-hidden="true"></i> Refresh Data</button>
+            </div>
+            </div>
+        </div>
+
+        <div class="table-view" [ngStyle]="{'display': isInteractionGrid ? 'block' : 'none'}">
+            <div id="dossierContainer1" style="width: 100%; height: 100%;"  ></div>
+
+            <div style="text-align: center;height: 100%;align-items: center;display: grid;" *ngIf="isloadSpinner">
+                <p-progressSpinner></p-progressSpinner>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="interactions-sort mb-3" style="height: 84px;">
+    <div class="d-flex w-100" style="padding: 6px;">
+        <div class="evaluate-sub-title mr-2" style="padding: 0% 10px;align-items: center;">
+            <h3>Selected interactions</h3>
+        </div>
+        <div class="coaching-selected-container" style="width: 80%;overflow-x: hidden;overflow-y: scroll;" *ngIf="selectedConvId.length > 0">
+            <button class="user-tags mod-tag" *ngFor="let item of selectedConvId">  
+                {{item}}
+                <i class="fa fa-times-circle time-size pl-1" aria-hidden="true" (click)="deleteSelectedObj(item)"></i>
+            </button>
+        </div>
+        <div *ngIf="selectedConvId.length == 0" style="padding: 0% 25%;width: 80%;align-items: center;display: grid;">No selected interaction!</div>
+    </div>
+   
+</div>
+
+<div class="interaction-players-data mb-3 mt-3" >
+    <div class="player-left" style="margin-right: 24px;height: 636px;" [ngStyle]="{'display': isAudioPlayerShow ? 'block' : 'none'}">
+        <div class="player-title">Interaction Player :
+            <span style="font-weight: bold; font-size:14px"> {{currentContact}}</span>
+            <!-- More Selection -->
+            <span>
+                <div class="dropdown show" style="position: relative">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownPlayerLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"
+                        style="text-decoration: none; position: absolute; right: 0px; top: -30px;">
+                       
+                        <div class="rounded-img-letter" id="playerSettings" style="color:#333; background-color: transparent;text-align: right; font-size:20px">
+                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownPlayerLink" style="width: 180px; padding: 10px; right: 0 !important; box-shadow: 5px 10px 8px #888888;">
+                        <h5 style="text-decoration: underline;">Display Settings</h5>
+                        <div *ngFor="let category of playerDisplayCategories" class="p-field-checkbox">
+                            <p-checkbox name="group2" value="category" [value]="category"  [(ngModel)]="playerSelectedCategories" [inputId]="category.key" (onChange)="checkPlayerValue(category.key ,playerSelectedCategories, $event)"></p-checkbox>
+                            <label [for]="category.key">{{category.name}}</label>
+                        </div>    
+                    </div>
+                </div>
+            </span>
+            <!-- More Selection -->
+        </div>
+            <div style="position: relative;">
+                <div class="row" style="text-align: center">
+                    <div class="col-md-12">
+                        <!-- <div class="noAudioNoNACD"  *ngIf="isAudioSpinner">
+                            <p-progressSpinner></p-progressSpinner>
+                        </div> -->
+                        <div *ngIf=" transcriptTab[0]?.from_user_emailid!=undefined" class="noAudioNoNACD">
+                            <h4 style="color: #D10606;">No Audio Data Available</h4>
+                            <p class="noAudioNoNACD-sub">Audio Data is only
+                                associated with voice based conversations selected from the grid</p>
+                        </div>
+                        <div id="audio-spectrum" *ngIf="transcriptTab[0]?.from_user_emailid==undefined">
+                        </div>
+                    </div>
+                </div>
+                <div style="background-color: #e4e7ea80;" *ngIf="transcriptTab[0]?.from_user_emailid==undefined">
+                    <div id="wave-timeline"></div>
+                    <div id="controls">
+                    <span id="refresh-btn" class="plspan"><i class="fa fa-refresh" aria-hidden="true"
+                        data-toggle="tooltip" (click)="refreshBtn()" title="Refresh"></i></span>
+                    <span id="play-btn" class="plspan" value="play"><i class="fa fa-play" aria-hidden="true"
+                            data-toggle="tooltip" (click)="playandpause()" title="Play/Pause"></i></span>
+                    <span id="previous-btn" class="plspan"><i class="fa fa-rotate-left" aria-hidden="true"
+                            data-toggle="tooltip" (click)="skipBackward()" title="Backward"></i></span>
+                    <span id="next-btn" class="plspan"><i class="fa fa-rotate-right" aria-hidden="true"
+                            data-toggle="tooltip" (click)="skipForward()" title="Forward"></i></span>
+        
+                    <span id="mute" class="plspan" style="margin-left: 0px;">
+                        <i class="fa fa-volume-up"  (click)="volumeChange();" aria-hidden="true" data-toggle="tooltip" title="Mute/Unmute"></i>
+                        <span class="plspan showSlider">
+                            <input id="volumeSlider" class="volume-slider" type="range" name="volume-slider" min="0" max="100" value="50" [disabled]="disableMute" />
+                        </span>
+                    </span>
+                    
+                    <span id="waveform-time-indicator">
+                        <!-- <span class="currentTime">00:00 /</span>
+                        <span class="remainingTime"> 00:00</span>
+                        <span class="playbackRate"> 1x</span> -->
+                        <div class="timecode">
+                            <span id="currentTime">00:00:00</span>
+                            <span> / </span>
+                            <span id="totalDuration">00:00:00</span>
+                            <!-- <span class="playbackRate" (click)=" doublePlaybackSpeed(playbackIndex)">{{ playbackSpeed[playbackIndex] + "x" }}</span> -->
+                            <!-- <span class="playbackRateContainer"> 
+                                <div class="playbackRateDiv">
+                                    <span class="playbackHeader">Playback speed</span>
+                                    <button class="btn btn-info play-halfx" data-action="play-halfx">0.5x</button>
+                                    <button class="btn btn-info play-1x" data-action="play-1x">0.8x</button>
+                                    <button class="btn btn-info play-1and5x" data-action="play-1x">1.0x</button>
+                                    <button class="btn btn-info play-1and5x" data-action="play-1x">1.2x</button>
+                                    <button class="btn btn-info play-2x" data-action="play-2x">1.5x</button>
+                                    <button class="btn btn-info play-2and5x" data-action="play-1x">2.0x</button>
+                                </div>
+                            </span>  -->
+
+                            <div class="dropup show" style="display:inline-block">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownplaybackRate" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                   
+                                    <div id="playerSettings" style="color: #9dafcb;">
+                                        <span class="playbackRate">{{ playbackIndex + "x" }}</span>
+                                    </div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownplaybackRate">
+                                    <span class="playbackRateContainer" style="position:relative"> 
+                                        <div class="playbackRateDiv">
+                                            <span class="playbackHeader">Playback speed</span>
+                                            <div *ngFor="let speed of playbackSpeed; let i = index">
+                                                <a class="btn btn-info play-btnx" [(ngModel)]="playRateSpeedSelected" ngDefaultControl value="speed"
+                                                [ngClass]="{active: selectedIndex == i}"
+                                                (click)="checkPlayerSpeed(speed, i, $event)">{{ speed + "x" }}</a>
+                                            </div>  
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </span> 
+        
+                    </div>
+                </div>
+    
+            </div>
+
+        <p-tabMenu [model]="items1" [activeItem]="activeTab">
+        </p-tabMenu>
+        <div class="overflow-eval-workspace evalDetailsBottom" [style.height]="isTopics ? '250px' : '300px'" *ngIf="tabMenuName==='Topics'">
+            <!-- <p>Topics Data Process</p> -->
+            <div *ngIf="getTopicReport?.length>0">
+                <div class="row hover-topic" *ngFor="let topic of getTopicReport; let i=index"  style="cursor: pointer;padding: 0 15px;">
+                   
+                    <div class="" *ngFor="let topicTime of topic.children;let i=index;" style="display: flex;width: 100%;">
+                
+                        <div class="hover-topic-report1 mb-1 col-md-2" style="width: auto;cursor: pointer;" (click)="trancriptSF(topicTime.element.name)"> [{{topicTime.element.name | timeConvert}}]</div>
+                        <div class="hover-topic-report2 mb-1 col-md-10"  *ngIf = "i == 0"  >{{topic.element.name}}</div>
+                        
+                    </div>
+                    <br />
+                    <br />
+                </div>
+            </div>
+
+            <div *ngIf="getTopicReport?.length==0 || currentContact == '' ">
+                <br />
+                Topics not found!
+            </div>
+        </div>
+
+        <div class="overflow-eval-workspace evalDetailsBottom" [style.height]="isTopics ? '250px' : '300px'" *ngIf="tabMenuName==='Transcript'">
+            <!-- <p>Transcript Data Process</p> -->
+            <div *ngIf="currentContact != '' ">
+                <div *ngFor="let tcItem of transcriptTab; let i=index">
+                    <div *ngIf="tcItem?.from_user_emailid==undefined" class="row conv hover-conversation">
+                        <div class="col-md-4 hover-data1" style="left: 12px; " (click)="trancriptSF(tcItem.start_time)">
+                            <label *ngIf="tcItem.channel =='Agent' || tcItem.channel =='AGENT'" class="col-form-label">
+                                <img src="../../../../assets/img/Evaluation Workspace/icon_user_transcripts.svg" style="background-color: #30BCED;
+                                border-radius: 100%;
+                                width: 25px;
+                                height: 25px;
+                                padding: 3px;
+                                cursor: pointer;">
+                                <span
+                                    style="cursor: pointer;margin-left: 8px;">[{{tcItem.start_time|timeConvert}}]</span></label>
+                            <label *ngIf="tcItem.channel =='Customer' || tcItem.channel =='CUSTOMER'" class="col-form-label">
+                                <img src="../../../../assets/img/Evaluation Workspace/icon_user_transcripts.svg" style="  background-color: #98DFAF;
+                                border-radius: 100%;
+                                width: 25px;
+                                height: 25px;
+                                padding: 3px;
+                                cursor: pointer;">
+                                <span
+                                    style="cursor: pointer;margin-left: 8px;"><b>[{{tcItem.start_time | timeConvert}}]</b></span></label>
+                            <label *ngIf="tcItem.channel =='Workflow' || tcItem.channel =='WORKFLOW'" class="col-form-label">
+                                <img src="../../../../assets/img/Evaluation Workspace/icon_user_transcripts.svg" style="background-color: #3A3E50;
+                                border-radius: 100%;
+                                width: 25px;
+                                height: 25px;
+                                padding: 3px;
+                                cursor: pointer;">
+                                <span
+                                    style="cursor: pointer;margin-left: 8px;">[{{tcItem.start_time|timeConvert}}]</span></label>
+                        </div>
+                        <div class="col-md-8 hover-data2" style="right: 50px;">
+                            <label *ngIf="tcItem.channel =='Agent' || tcItem.channel =='AGENT'" class="col-form-label"><span>{{tcItem.text}}</span></label>
+                            <label *ngIf="tcItem.channel =='Customer' || tcItem.channel =='CUSTOMER'" class="col-form-label"><span><b>{{tcItem.text}}</b></span></label>
+                            <label *ngIf="tcItem.channel =='Workflow' || tcItem.channel =='WORKFLOW'" class="col-form-label"><span>{{tcItem.text}}</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div *ngIf="transcriptTab[0]?.from_user_emailid!=undefined" class="row conv hover-conversation">
+                        <p-accordion>
+                            <p-accordionTab header="&nbsp;({{tcItem.from_username}} - {{tcItem.channel}})&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{tcItem.start_time}}" *ngFor="let tcItem of transcriptTab; let i=index">
+                                <label class="col-form-label"><b>From :&nbsp;</b><span>{{tcItem.from_user_emailid}}&nbsp;({{tcItem.from_username}})</span></label><br>
+                                <label class="col-form-label"><b>To :&nbsp;</b><span>{{tcItem.to_user_emailid}}&nbsp;({{tcItem.to_username}})</span></label><br>
+                                <label class="col-form-label"><b>Date Time :&nbsp;</b><span>{{tcItem.start_time}}</span></label><br>
+                                <label class="col-form-label"><b>Subject :&nbsp;</b><span>{{tcItem.subject}}</span></label><br>
+                                <label class="col-form-label"><b>Text :&nbsp;</b><span>{{tcItem.text}}</span></label><br>
+
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="currentContact == '' || transcriptTab?.length == 0">
+                <br />
+                Transcript not found!
+            </div>
+        </div>
+      
+    </div>
+
+    <div class="player-right" [ngStyle]="{'width': !isAudioPlayerShow ? '100%' : '50%'}">
+        <div class="score-card mb-2" style="padding: 6px 18px;">
+            <div class="conv-label">Conversation ID : <span style="color: #8AAEF5;">{{currentContact}}</span></div>
+        </div>
+        <div class="score-card" style="padding: 20px 18px; height: 30%;">
+            <div class="player-title mb-2">Handling details:</div>
+            <div class="eval-container-center" style="height: 120px;overflow-y: scroll;">
+                <p-table class="handle-details" [value]="handleDetails" [resizableColumns]="true" styleClass="p-datatable-gridlines">
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th pResizableColumn class="table-header-style thead-dark">Handle Time</th>
+                                  <th pResizableColumn class="table-header-style thead-dark">Call Duration </th>
+                                  <th pResizableColumn class="table-header-style thead-dark">Talk Duration </th>
+                                  <th pResizableColumn class="table-header-style thead-dark">Wait Duration</th>
+                                  <th pResizableColumn class="table-header-style thead-dark">ACW Duration</th>
+                                  <th pResizableColumn class="table-header-style thead-dark">Hold Duration</th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-handle >
+                              <tr class="row-data-user" >
+                                  <td class="table-data-style t-data">{{handle.handleTime != undefined ? handle.handleTime : "N/A"}}</td>
+                                  <td class="table-data-style t-data">{{handle.callDuration != undefined ? handle.callDuration : "N/A"}}</td>
+                                  <td class="table-data-style t-data">{{handle.talkTime != undefined ? handle.talkTime : "N/A"}}</td>
+                                  <td class="table-data-style t-data">{{handle.waitTime != undefined ? handle.waitTime : "N/A"}}</td>
+                                  <td class="table-data-style t-data">{{handle.acwTime != undefined ? handle.acwTime : "N/A"}}</td>
+                                  <td class="table-data-style t-data">{{handle.holdTime != undefined ? handle.holdTime : "N/A"}}</td>
+                              </tr>
+                          </ng-template>
+                          <!-- <ng-template pTemplate="body"  *ngIf="handleDetails.length == 0">
+                            <tr class="row-data-user">
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                            </tr>
+                        </ng-template> -->
+                         
+                 </p-table>
+            </div>
+        </div>
+
+        <div class="score-card mt-2 mb-2" style="padding: 20px 18px; height: 39%;">
+            <div class="player-title mb-2">This interaction is already added to below rooms:</div>
+            <div class="eval-container-center" style="height: 175px; overflow-y: scroll;">
+                <p-table class="interacting-table" [value]="interactionDetails" [resizableColumns]="true" styleClass="p-datatable-gridlines">
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th pResizableColumn class="table-header-style thead-blue">Evaluation Rooms</th>
+                                  <th pResizableColumn class="table-header-style thead-blue">Evaluator Username </th>
+                                  <th pResizableColumn class="table-header-style thead-blue">Evaluation Status </th>
+                                  <th pResizableColumn class="table-header-style thead-blue">Agent Name </th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-handle>
+                              <tr class="row-data-user">
+                                  <td class="table-data-style">{{handle.eval_room != undefined ? handle.eval_room : 'N/A'}}</td>
+                                  <td class="table-data-style">{{handle.eval_user != undefined ? handle.eval_user : 'N/A'}}</td>
+                                  <td class="table-data-style">{{handle.eval_status != undefined ? handle.eval_status : 'N/A'}}</td>
+                                  <td class="table-data-style">{{handle.agent != undefined ? handle.agent : 'N/A'}}</td>
+                              </tr>
+                          </ng-template>
+                 </p-table>
+            </div>
+        </div>
+
+        <div class="score-card" style="padding: 20px 18px;height: 22%;">
+            <div class="player-title mb-2">Send to Evaluation Workspace:</div>
+            <!-- <div class="mb-1 conv-label">Conversation ID : <span style="color: #8AAEF5;">{{currentContact}}</span></div> -->
+            <div class="d-flex-content">
+                <div class="form-group" style="width: 35%;">
+                    <label class="interaction-label">Select Evaluation Form</label>
+                    <p-dropdown class="dropdown-interaction dplable" [options]="EvalformDDL" [(ngModel)] ="evaluationModel"  [ngModelOptions]="{standalone: true}" filter="true" placeholder="Select a form">
+                    </p-dropdown>
+                </div>
+                <div class="form-group" style="width: 35%;">
+                    <label class="interaction-label">Select Evaluator</label>
+                    <p-dropdown class="dropdown-interaction dplable"  [options]="usersDDL" [(ngModel)] ="evaluatorModel"  [ngModelOptions]="{standalone: true}" filter="true" placeholder="Select a evaluator">
+                    </p-dropdown>
+                </div>
+                <div class="form-group" style="width: 20%;">
+                    <label class="interaction-label"></label>&nbsp;
+                    <button type="button" class="btn-sort-interaction" [ngClass]="disableSend == true ? 'savebtn-disable' : false" (click)="sendWorkspace()" [disabled]="disableSend">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

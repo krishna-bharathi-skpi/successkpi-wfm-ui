@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="13px" height="14px" viewBox="0 0 13 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>calendar</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-130.000000, -646.000000)">
+            <g id="calendar" transform="translate(126.000000, 643.000000)">
+                <g>
+                    <rect id="Rectangle" fill-opacity="0" fill="#FFFFFF" x="0" y="0" width="20" height="20"></rect>
+                    <g transform="translate(4.000000, 3.000000)" fill="#0D4DCE" fill-rule="nonzero" id="Shape">
+                        <path d="M10.9375,1.75 L9.625,1.75 L9.625,0.328125 C9.625,0.14765625 9.47734375,0 9.296875,0 L8.203125,0 C8.02265625,0 7.875,0.14765625 7.875,0.328125 L7.875,1.75 L4.375,1.75 L4.375,0.328125 C4.375,0.14765625 4.22734375,0 4.046875,0 L2.953125,0 C2.77265625,0 2.625,0.14765625 2.625,0.328125 L2.625,1.75 L1.3125,1.75 C0.587890625,1.75 0,2.33789062 0,3.0625 L0,12.6875 C0,13.4121094 0.587890625,14 1.3125,14 L10.9375,14 C11.6621094,14 12.25,13.4121094 12.25,12.6875 L12.25,3.0625 C12.25,2.33789062 11.6621094,1.75 10.9375,1.75 Z M10.7734375,12.6875 L1.4765625,12.6875 C1.38632813,12.6875 1.3125,12.6136719 1.3125,12.5234375 L1.3125,4.375 L10.9375,4.375 L10.9375,12.5234375 C10.9375,12.6136719 10.8636719,12.6875 10.7734375,12.6875 Z"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,101 @@
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+
+<div class="login-page" *ngIf="isloginPage">
+  <div class="left-side-component">
+    <form [formGroup]="loginForm">
+      <div style="margin-bottom:16%">
+        <img src="../assets/img/logo_login_register.png" style="width: 170px;">
+      </div>
+      <div class="login-title">
+        <h4>See what’s happening! Log in:</h4>
+      </div>
+      <div class="login-forms">
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="black-txt">Email</label>
+          <input type="email" class="login-ipt form-control" [(ngModel)]="username" formControlName="email"
+            placeholder="Email" tabindex="1" autocomplete="off" required
+            [ngClass]="{ 'is-invalid':(!loginForm.controls['email'].valid &&loginForm.controls['email'].touched )||(loginForm.controls['email'].errors?.required && issubmit )}">
+          <div
+            *ngIf="(!loginForm.controls['email'].valid &&loginForm.controls['email'].touched )||(loginForm.controls['email'].errors?.required &&( issubmit || loginForm.controls['email'].touched) ) "
+            class="errormsg-topic">
+            <!-- (registerForm.controls['email'].errors?.required && (isSubmit ||  registerForm.controls['email'].touched))
+               || registerForm.controls['email'].errors?.email  && registerForm.controls['email'].touched" -->
+            <div
+              *ngIf="loginForm.controls['email'].errors?.required && ( issubmit || loginForm.controls['email'].touched)">
+              Please enter a email</div>
+            <div *ngIf="(loginForm.controls['email'].errors?.email && loginForm.controls['email'].touched) ">
+              Please enter a valid email
+            </div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between;">
+            <label class="black-txt">Password</label> <label class="blue-txt" routerLink="/reset-password">Forgot
+              Password?</label>
+          </div>
+          <input type="password" class="login-ipt form-control" (keyup.enter)="login()" [(ngModel)]="password"
+            formControlName="password" tabindex="2" placeholder="Password" autocomplete="off" required
+            [ngClass]="{ 'is-invalid':(loginForm.controls['password'].errors?.required && (issubmit || loginForm.controls['password'].touched))}">
+          <div
+            *ngIf="loginForm.controls['password'].errors?.required && (issubmit || loginForm.controls['password'].touched)"
+            class="errormsg-topic">Please enter a password</div>
+
+        </div>
+        <div class="login-btn">
+          <button type="button" [disabled]="loading" class="btn-login" tabindex="3" (click)="login()">Log in</button>
+        </div>
+        <div class="login-footer-text">
+          <p>Don’t have an account? <span>Please contact your SuccessKPI Account representative.</span></p>
+          <p>To Login with your <span><a routerLink="/sso/azure-login">Company’s SSO</a></span></p>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="right-side-component">
+    <img src="../assets/img/login_register_assets/login_register_assets/img_login1.png" style="height: 100%;
+        width: 100%;">
+  </div>
+</div>
+
+<!-- <div style="display: none;" *ngIf="isMstrActive">
+  <iframe frameBorder="0"
+      src="https://insight-usw2.successkpi.com/Analytics/servlet/mstrWeb?evt=3008&src=mstrWeb.3008">
+  </iframe>
+</div> -->
+
+
+<!-- <div class="login-page">
+  <div class="left-side-component">
+    <div style="margin-bottom:16%">
+      <img src="../assets/img/skpi-black.png" style="width: 150px;">
+    </div>
+    <div class="login-title">
+      <h4>See what’s happening! Log in:</h4>
+    </div>
+    <div class="login-forms">
+      <div class="form-group" style="margin-bottom: 24px;">
+         <label class="black-txt">Email</label>
+         <input type="email" class="login-ipt form-control" placeholder="Email" autocomplete="off" required>
+      </div>
+      <div class="form-group" style="margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between;">
+          <label class="black-txt">Password</label> <label class="blue-txt">Forgot Password?</label>
+        </div>
+        <input type="email" class="login-ipt form-control" placeholder="Password" autocomplete="current-password" required>
+      </div>
+      <div class="login-btn">
+        <button type="button" class="btn-login">Log in</button>
+      </div>
+      <div class="login-footer-text">
+        <p>Don’t have an account? <span><a routerLink="/register" >Get started.</a></span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-side-component">
+     <img src="../assets/img/login_register_assets/login_register_assets/img_login1.png" style="height: 100%;
+     width: 100%;">
+  </div>
+</div> -->

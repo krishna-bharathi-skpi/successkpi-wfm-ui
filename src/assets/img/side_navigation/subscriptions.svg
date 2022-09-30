@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>subscriptions</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-225.000000, -464.000000)" fill="#FFFFFF">
+            <g id="subscriptions" transform="translate(222.000000, 462.000000)">
+                <g id="checkbox">
+                    <g>
+                        <rect id="Rectangle" fill-opacity="0" x="0" y="0" width="20" height="20"></rect>
+                        <g transform="translate(3.000000, 2.000000)" fill-rule="nonzero" id="Shape">
+                            <path d="M12.5,0 L1.5,0 C0.6715625,0 0,0.6715625 0,1.5 L0,12.5 C0,13.3284375 0.6715625,14 1.5,14 L12.5,14 C13.3284375,14 14,13.3284375 14,12.5 L14,1.5 C14,0.6715625 13.3284375,0 12.5,0 Z M12.5,12.5 L1.5,12.5 L1.5,1.5 L12.5,1.5 L12.5,12.5 Z M11.37925,4.946125 L5.98584375,10.29625 C5.8388125,10.4420937 5.601375,10.4411563 5.45553125,10.294125 L2.618625,7.43425 C2.47278125,7.28721875 2.47371875,7.04978125 2.62078125,6.90390625 L3.33075,6.19965625 C3.47778125,6.0538125 3.71521875,6.05475 3.8610625,6.2018125 L5.7295625,8.08546875 L10.1468125,3.70371875 C10.2938438,3.557875 10.5312812,3.5588125 10.677125,3.70584375 L11.381375,4.41578125 C11.5272187,4.56284375 11.5262813,4.80028125 11.37925,4.946125 Z"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,19 @@
+[{
+    "label": "English",
+    "value": "english",
+    "mstrWebCode": 1033,
+    "mstrLoginCode": "en_us"
+},
+{
+    "label": "Spanish",
+    "value": "spanish",
+    "mstrWebCode": 2058,
+    "mstrLoginCode": "es_us"
+},
+{
+    "label": "Portuguese",
+    "value": "portuguese",
+    "mstrWebCode": 1046,
+    "mstrLoginCode": "pt_br"
+}
+]

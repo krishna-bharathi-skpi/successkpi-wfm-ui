@@ -1,0 +1,12 @@
+.loginbtn-disable{
+    background-color: #aaadb3;
+    cursor: not-allowed;
+    border: 0;
+}
+
+.disabel-link{
+    pointer-events: none;
+    background-color: #aaadb3;
+    cursor: not-allowed;
+    border: 0;
+}

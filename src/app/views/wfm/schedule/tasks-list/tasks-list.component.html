@@ -1,0 +1,697 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="999999"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header">
+        <div class="col-md-6">
+            <h2 class="title">Tasks</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <button type="button" (click)="showModalDialog('task')" class="cust-btn">Create a Task</button>
+            <!-- <button type="button" class="cust-btn" [disabled]="!selectedTasks || !selectedTasks.length" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true">Add to Workgroup</button> -->
+        </div>
+    </div>
+    <!-- End top header -->
+
+    <!-- Begin content header -->
+    <!-- <div class="row content-header">
+        <div class="col-12">
+            <h4>Manage Your Tasks</h4>
+            <span>Select, Add or Remove your full list of tasks below</span>
+        </div>
+    </div> -->
+    <!-- End content header -->
+
+    <div class="row custom-row">
+        <div class="col-md-6">
+            <!-- <button
+                type="button"
+                class="cust-btn-x-sm cust-btn-danger"
+                (click)="manageSelectedTasks('delete')"
+                [disabled]="!selectedTasks || !selectedTasks.length"
+                *ngIf="global.rolePermissions.work.schedule.isViewEdit == true"
+            >
+                <i class="fa fa-trash-o"></i> {{global.language?.wfm?.deleteBtn}}
+            </button> -->
+        </div>
+        <div class="col-md-3 text-right">
+            <button type="button" (click)="clearFilters(dt)" class="cust-btn-x-sm"><i class="fa fa-filter"></i> {{global.language?.wfm?.clearFilters}}</button>
+        </div>
+        <div class="col-md-3">
+            <div class="has-search">
+                <span class="fa fa-search form-control-feedback"></span>
+                <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" placeholder="Search for Tasks" />
+                <span class="text-muted" style="position: absolute;">To search date, the format should be MM/DD/YYYY</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding: 32px;">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-lg-12 cust-table">
+                <!-- Begin PrimeNG datatable -->
+                <p-table
+                    #dt
+                    dataKey="taskId"
+                    [value]="tasks"
+                    [lazy]="true" (onLazyLoad)="loadTasks($event)"
+                    styleClass="p-datatable-customers"
+                    [rowHover]="true"
+                    [showCurrentPageReport]="true"
+                    [filterDelay]="1200"
+                    [globalFilterFields]="['name', 'category', 'status']"
+                    [(selection)]="selectedTasks"
+                    [loading]="loading"
+                >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th style="width: 3rem;">
+                                <p-tableHeaderCheckbox id="frcst_select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="taskName">Task Name<p-sortIcon field="taskName"></p-sortIcon></th>
+                            <th pSortableColumn="categoryName" *ngIf="col.categoryName?.length">Category<p-sortIcon field="categoryName"></p-sortIcon></th>
+                            <th pSortableColumn="taskLength" *ngIf="col.taskLength?.length">Duration<p-sortIcon field="taskLength"></p-sortIcon></th>
+                            <th pSortableColumn="isPaid" *ngIf="col.isPaid?.length">Is Paid<p-sortIcon field="isPaid"></p-sortIcon></th>
+                            <th pSortableColumn="updatedTimestamp" *ngIf="col.updatedTimestamp?.length">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                            <th pSortableColumn="updatedBy" *ngIf="col.updatedBy?.length">Updated By <p-sortIcon field="updatedBy"> </p-sortIcon></th>
+                            <th class="text-center" style="width: 3rem;">
+                                <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                    <div>
+                                        <ul class="list-group">
+                                            <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                                <div class="row">
+                                                    <div class="col-9" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }">{{col.header}}</div>
+                                                    <div class="col-2" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-left: 5px;"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </p-overlayPanel>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <input
+                                    pInputText
+                                    type="text"
+                                    (input)="dt.filter($event.target.value, 'taskName', 'contains')"
+                                    placeholder="Search"
+                                    class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                                />
+                            </th>
+                            <th *ngIf="col.categoryName">
+                                <input
+                                    pInputText
+                                    type="text"
+                                    (input)="dt.filter($event.target.value, 'categoryName', 'contains')"
+                                    placeholder="Search"
+                                    class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                                />
+                            </th>
+                            <th *ngIf="col.taskLength">
+                                <input
+                                    pInputText
+                                    type="text"
+                                    (input)="dt.filter($event.target.value, 'taskLength', 'contains')"
+                                    placeholder="Search"
+                                    class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                                />
+                            </th>
+                            <th *ngIf="col.isPaid">
+                                <input
+                                    pInputText
+                                    type="text"
+                                    (input)="dt.filter($event.target.value, 'isPaid', 'contains')"
+                                    placeholder="Search"
+                                    class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                                />
+                            </th>
+                            <th *ngIf="col.updatedTimestamp">
+                                <p-calendar
+                                    (onSelect)="onDateSelect($event,'updatedTimestamp')"
+                                    (onClearClick)="dt.filter('', 'updatedTimestamp', 'equals')"
+                                    [showButtonBar]="true"
+                                    styleClass="p-column-filter"
+                                    placeholder="Search"
+                                    [readonlyInput]="true"
+                                    dateFormat="mm/dd/yy"
+                                    appendTo="body"
+                                    [baseZIndex]="1022"
+                                ></p-calendar>
+                            </th>
+                            <th *ngIf="col.updatedBy">
+                                <input
+                                    pInputText
+                                    type="text"
+                                    (input)="dt.filter($event.target.value, 'updatedBy', 'startsWith')"
+                                    placeholder="Search"
+                                    class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                                />
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-task let-i="rowIndex">
+                        <tr [pSelectableRow]="task">
+                            <td [style.background-color]="task.colorCode">
+                                <p-tableCheckbox [value]="task" class="cust-chkbox"></p-tableCheckbox>
+                            </td>
+                            <td style="text-transform: capitalize;">
+                                {{task.taskName}}
+                                <!-- <a (click)="manageTask(task,'edit');" tooltip="Click here to edit your Task" class="col-link">{{task.taskName}}</a> -->
+                            </td>
+                            <td *ngIf="col.categoryName?.length">
+                                {{task.categoryName}}
+                            </td>
+                            <td *ngIf="col.taskLength?.length">
+                                {{task.taskLength}}
+                            </td>
+                            <td *ngIf="col.isPaid?.length">
+                                {{task.isPaid}}
+                            </td>
+                            <td *ngIf="col.updatedTimestamp?.length">
+                                {{task.updatedTimestamp}}
+                            </td>
+                            <td *ngIf="col.updatedBy?.length">
+                                {{task.updatedBy}}
+                            </td>
+                            <td class="text-center" style="width: 3rem;">
+                                <i (click)="opOption.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                <p-overlayPanel #opOption appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                    <div>
+                                        <ul class="list-group">
+                                            <li class="list-group-item" (click)="manageTask(task,'view');" (click)="opOption.hide();"><i class="icon-eye icons"></i>View</li>
+                                            <!-- <li class="list-group-item" (click)="manageTask(task,'edit');" (click)="opOption.hide();"><i class="fa fa-pencil"></i>Edit</li>
+                                            <li class="list-group-item" (click)="manageTask(task,'delete')" (click)="opOption.hide();" style="color: #FC5130 !important"><i class="fa fa-trash-o" style="color: #FC5130 !important"></i>Delete</li> -->
+                                          </ul>
+                                    </div>
+                                </p-overlayPanel>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <!-- End PrimeNG datatable -->
+                <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords"></p-paginator>
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
+        <!-- End body content -->
+    </div>
+
+    <!-- Begin task detail dialog -->
+    <p-dialog class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000">
+        <p-header>
+            {{ isViewDetail ? 'Task Details' : isDeleteConfirm || isDeleteAllConfirm ? 'Confirm' : (isAddNewTaskEnabled ? 'Create a Task' : (isUpdateTaskEnabled ? 'Update Your Task' : (isAddNewCategoryEnabled ? 'Create a Category' : (isAddNewCategoryColorEnabled ? 'Create a Category Color' : '')))) }}
+        </p-header>
+
+        <!-- Begin workgroup detail content -->
+        <div *ngIf="task && isViewDetail">
+            <div class="row" style="padding-top: 15px; padding-bottom: 15px;">
+                <div class="col-lg-6">
+                    <div class="card-body">
+                        <div class="view-content">
+                            <div><span class="text-key">Name: </span><span class="text-val capitalize">{{task.taskName}}</span></div>
+                            <div><span class="text-key">Category: </span><span class="text-val capitalize">{{task.categoryName}}</span></div>
+                            <!-- <div><span class="text-key">Category Color: </span><span class="text-val capitalize">{{task.colorName}}</span></div> -->
+                            <div><span class="text-key">Category Color Code: </span><span class="text-val capitalize">{{task.colorCode}}</span></div>
+                            <div><span class="text-key">Duration: </span><span class="text-val">{{task.taskLength }}</span></div>
+                            <div><span class="text-key">Is Interaction Available: </span><span class="text-val">--</span></div>
+                            <div><span class="text-key">Paid Time: </span><span class="text-val">--</span></div>
+                        </div>
+                    </div>
+                </div>
+                <!--/.col-->
+                <div class="col-lg-6">
+                    <div class="card-body">
+                        <div class="view-content">
+                            <div><span class="text-key">Is Paid: </span><span class="text-val">{{task.isPaid}}</span></div>
+                            <div><span class="text-key">Created On: </span><span class="text-val">{{task.createdTimestamp}}</span></div>
+                            <div><span class="text-key">Created By: </span><span class="text-val" style="text-transform: lowercase;">{{task.createdBy}}</span></div>
+                            <div><span class="text-key">Updated On: </span><span class="text-val">{{task.updatedTimestamp}}</span></div>
+                            <div><span class="text-key">Updated By: </span><span class="text-val" style="text-transform: lowercase;">{{task.updatedBy}}</span></div>
+                        </div>
+                    </div>
+                </div>
+                <!--/.col-->
+            </div>
+            
+            <div class="row" *ngIf="task.taskDescription" style="padding-bottom: 15px;">
+                <div class="col-12">
+                    <div class="card-body">
+                        <div>
+                            <span class="text-key">Description: </span>
+                            <div class="desc"><span class="capitalize">{{task.taskDescription}}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End workgroup detail content -->
+
+        <!-- Begin add new task input fields -->
+        <div *ngIf="isAddNewTaskEnabled || isUpdateTaskEnabled" class="row">
+            <div class="col-lg-12">
+                <form name="taskForm" [formGroup]="taskForm" novalidate>
+                    <div class="card-body mt-15">
+                        <!-- Begin fields of Name & Description -->
+                        <div class="row">
+                            <!-- <div class="col-12 mb-20" (click)="hideCustomDropdown()">
+                                <h6>First, name your task. Other descriptive language.</h6>
+                            </div> -->
+                            <div class="col-lg-7" (click)="hideCustomDropdown()">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group required">
+                                            <label class="control-label">Name Your Task</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                formControlName="taskName"
+                                                placeholder="Task Name"
+                                                [ngClass]="{'is-invalid': (isTaskSubmitted || taskForm.controls['taskName'].touched) && taskForm.controls['taskName'].errors}"
+                                            />
+                                            <div *ngIf="isTaskSubmitted && taskForm.controls['taskName'].invalid && taskForm.controls['taskName'].dirty || taskForm.controls['taskName'].errors">
+                                                <small *ngIf="isTaskSubmitted && taskForm.controls['taskName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                                                <small *ngIf="isTaskSubmitted && taskForm.controls['taskName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                                                <small *ngIf="isTaskSubmitted && taskForm.controls['taskName'].errors?.pattern" class="errormsg-topic">Task name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Description</label>
+                                            <textarea
+                                                id="taskDescription"
+                                                name="taskDescription"
+                                                formControlName="taskDescription"
+                                                [(ngModel)]="task_description"
+                                                rows="4"
+                                                maxlength="400"
+                                                class="form-control"
+                                                placeholder="Type your content here.."
+                                                [ngClass]="{'is-invalid': (isTaskSubmitted || taskForm.controls['taskDescription'].touched) && taskForm.controls['taskDescription'].errors}"
+                                                wrap="hard"
+                                            ></textarea>
+                                            <small class="form-text text-muted">characters remaining: <code>{{ (task_description) ? 400 - task_description.length : 400 - 0 }}</code>/<code>400</code></small>
+                                            <div
+                                                *ngIf="isTaskSubmitted && taskForm.controls['taskDescription'].invalid && taskForm.controls['taskDescription'].dirty || taskForm.controls['taskDescription'].errors"
+                                            >
+                                                <small *ngIf="isTaskSubmitted && taskForm.controls['taskDescription'].errors?.maxlength" class="errormsg-topic">Maximum 400 characters only allowed. </small>
+                                                <small *ngIf="isTaskSubmitted && taskForm.controls['taskDescription'].errors?.pattern" class="errormsg-topic">Description must contain only alphabets, numbers and the following special characters: comma, dot, hypen & underscore.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12" style="padding-bottom:10px;">
+                                        <div class="row">
+                                            <div class="col-6 form-group required">
+                                                <div style="float: left; padding-right: 10px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isPaid">
+                                                        <input type="checkbox" formControlName="isPaid" class="switch-input" id="isPaid" />
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Paid Time</label>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="col-6 form-group required" *ngIf="selectedTaskCategory">
+                                                <div style="float: left; padding-right: 10px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isSchedulable">
+                                                        <input type="checkbox" class="switch-input" id="isSchedulable" formControlName="isSchedulable"/>
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Is Schedulable</label>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="row">
+                                            <!-- <div class="col-12 form-group required" *ngIf="selectedTaskCategory">
+                                                <div style="float: left; padding-right: 10px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isAdherenceRelated">
+                                                        <input type="checkbox" class="switch-input" id="isAdherenceRelated" formControlName="isAdherenceRelated" />
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Is Adherence Related</label>
+                                                </div>
+                                            </div> -->
+                                            <div class="col-12 form-group required" *ngIf="selectedTaskCategory">
+                                                <div style="float: left; padding-right: 10px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isAvailableInteraction">
+                                                        <input type="checkbox" class="switch-input" id="isAvailableInteraction" formControlName="isAvailableInteraction"/>
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Is Interaction Available</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="control-label">Task Duration</label>
+                                    </div>
+                                    <div class="col-12 form-group" (click)="hideCustomDropdown()">
+                                        <div class="row">
+                                            <div class="col-6" style="padding-right:3px;">
+                                                <p-dropdown
+                                                    [(ngModel)]="taskDurationHour"
+                                                    [options]="taskDurationHours"
+                                                    dataKey="value"
+                                                    optionValue="value"
+                                                    optionLabel="label"
+                                                    [filter]="false"
+                                                    filterBy="label"
+                                                    [showClear]="false"
+                                                    class="cust-p-dropdown"
+                                                    placeholder="hh"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    appendTo="body"
+                                                    [ngClass]="{'is-invalid': (isTaskSubmitted && !taskDurationHour && !taskDurationMinute)}"
+                                                >
+                                                </p-dropdown>
+                                            </div>
+                                            <div class="col-6" style="padding-left:3px;">
+                                                <p-dropdown
+                                                    [(ngModel)]="taskDurationMinute"
+                                                    [options]="taskDurationMinutes"
+                                                    dataKey="value"
+                                                    optionValue="value"
+                                                    optionLabel="label"
+                                                    [filter]="false"
+                                                    filterBy="label"
+                                                    [showClear]="false"
+                                                    class="cust-p-dropdown"
+                                                    placeholder="mm"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    appendTo="body"
+                                                    [ngClass]="{'is-invalid': (isTaskSubmitted && !taskDurationHour && !taskDurationMinute)}"
+                                                >
+                                                </p-dropdown>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="isTaskSubmitted && !taskDurationHour && !taskDurationMinute">
+                                            <small class="errormsg-topic">Select task duration </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group required category-container">
+                                            <label class="control-label" (click)="hideCustomDropdown()">Task Category</label>
+                                            <div (click)="showCustomDrodownOptions('category');" class="input-box vertical-align" [ngClass]="{'active-input-box': isCategoryListEnabled == true, 'is-invalid': (isTaskSubmitted && !selectedTaskCategory)}">
+                                                {{(selectedTaskCategory ? selectedTaskCategory.categoryName : 'Select Category')}}
+                                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                                            </div>
+                                            <div class="category-list" id="category_listbox" style="display:none;">
+                                                <div class="list-group-container">
+                                                    <ul class="list-group" style="line-height: 15px;">
+                                                        <li *ngFor="let category of categories" class="list-group-item" [id]="'category_'+category.categoryId">
+                                                            <div class="row" (click)="onChangeCategory(category)">
+                                                                <div class="col-7 cust-listitem-option">{{category.categoryName}}</div>
+                                                                <div class="col-5 cust-listitem-option">
+                                                                    <div [ngStyle]="{'background-color':category.catagoryColorCode}" class="cust-listitem-color"></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <!-- <div (click)="showModalDialog('category')" style="padding: 7px 12px; padding-top:15px;" class="list-group-item vertical-align">
+                                                    <i class="icon-plus icons font-1xl list-child-icon"></i>Add a Category
+                                                </div> -->
+                                                <div (click)="showModalDialog('category_color')" style="padding: 7px 12px; padding-top:15px;" class="list-group-item vertical-align">
+                                                    <i class="icon-plus icons font-1xl list-child-icon"></i>Pick Your Own Color
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isTaskSubmitted && !selectedTaskCategory && !isCategoryListEnabled">
+                                                <small class="errormsg-topic">Select task category</small>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End fields of Name & Description -->
+                    </div>
+                    <!--/.row-->
+                    <p-footer>
+                        <div class="dialog-action-footer" (click)="hideCustomDropdown()">
+                            <button type="button" (click)="closeModalDialog('task');" pRipple class="cust-btn-outlined" style="width: 280px;">Cancel and Return to Task List</button>&nbsp;
+                            <button type="submit" (click)="createNewTask();" pRipple class="cust-btn" style="width: 200px;">Save</button>
+                        </div>
+                    </p-footer>
+                </form>
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
+        <!-- End add new task input fields -->
+
+         <!-- Begin create new category input fields -->
+         <div *ngIf="isAddNewCategoryEnabled" class="row">
+            <div class="col-lg-12">
+                <form name="taskCategoryForm" [formGroup]="taskCategoryForm" novalidate>
+                    <div class="card-body" style="padding-top:15px;">
+                        <!-- Begin fields of Name & Description -->
+                        <div class="row">
+                            <!-- <div class="col-12 mb-20" (click)="hideCustomDropdown();">
+                                <h6>Name your category. Other descriptive language.</h6>
+                            </div> -->
+                            <div class="col-lg-6">
+                                <div class="row">
+                                    <div class="col-12" (click)="hideCustomDropdown('categoryColor')">
+                                        <!-- <div class="form-group required">
+                                            <label class="control-label">Name Your Category</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                formControlName="categoryName"
+                                                placeholder="Category Name"
+                                                [ngClass]="{'is-invalid': (isCategoryFormSubmitted || taskCategoryForm.controls['categoryName'].touched) && taskCategoryForm.controls['categoryName'].errors}"
+                                                value = "{{selectedTaskCategory ? selectedTaskCategory.categoryName : ''}}"
+                                                />
+                                            <div *ngIf="isCategoryFormSubmitted && taskCategoryForm.controls['categoryName'].invalid && taskCategoryForm.controls['categoryName'].dirty || taskCategoryForm.controls['categoryName'].errors">
+                                                <small *ngIf="isCategoryFormSubmitted && taskCategoryForm.controls['categoryName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                                                <small *ngIf="isCategoryFormSubmitted && taskCategoryForm.controls['categoryName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                                                <small *ngIf="isCategoryFormSubmitted && taskCategoryForm.controls['categoryName'].errors?.pattern" class="errormsg-topic">
+                                                    Category name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                                                </small>
+                                            </div>
+                                        </div> -->
+                                        <div class="form-group required category-container">
+                                            <label class="control-label">Task Category</label>
+                                            <div (click)="showCustomDrodownOptions('task_category');" class="input-box vertical-align" [ngClass]="{'active-input-box': isTaskCategoryListEnabled == true, 'is-invalid': (isCategoryFormSubmitted && !selectedTaskCategory2)}">
+                                                {{(selectedTaskCategory2 ? selectedTaskCategory2.categoryName : 'Select Category')}}
+                                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                                            </div>
+                                            <div class="category-list" id="task_category_listbox" style="display:none;">
+                                                <div class="list-group-container">
+                                                    <ul class="list-group" style="line-height: 15px;">
+                                                        <li *ngFor="let category of categories" class="list-group-item" [id]="'task_category_'+category.categoryId">
+                                                            <div class="row" (click)="onChangeTaskCategory(category)">
+                                                                <div class="col-7 cust-listitem-option">{{category.categoryName}}</div>
+                                                                <div class="col-5 cust-listitem-option">
+                                                                    <div [ngStyle]="{'background-color':category.catagoryColorCode}" class="cust-listitem-color"></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isCategoryFormSubmitted && !selectedTaskCategory2 && !isTaskCategoryListEnabled">
+                                                <small class="errormsg-topic">Select task category</small>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="col-12" (click)="hideCustomDropdown('taskCategory')">
+                                        <div class="form-group required category-container">
+                                            <label class="control-label">Category Color</label>
+                                            <div (click)="showCustomDrodownOptions('category_color');" class="input-box vertical-align" [ngClass]="{'active-input-box': isCategoryColorListEnabled == true, 'is-invalid': (isCategoryFormSubmitted && !selectedCategoryColor)}">
+                                                {{(selectedCategoryColor ? selectedCategoryColor.value : 'Select Color')}}
+                                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                                            </div>
+                                            <div class="category-list" id="category_color_listbox" style="display:none;">
+                                                <div class="list-group-container">
+                                                    <ul class="list-group" style="line-height: 15px;">
+                                                        <li *ngFor="let color of colors" class="list-group-item" [id]="color.value">
+                                                            <div class="row" (click)="onChangeCategoryColor(color)">
+                                                                <div class="col-7 cust-listitem-option">{{color.label}}</div>
+                                                                <div class="col-5 cust-listitem-option">
+                                                                    <div [ngStyle]="{'background-color':color.color}" class="cust-listitem-color"></div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div (click)="showModalDialog('category_color')" style="padding: 7px 12px; padding-top:15px;" class="list-group-item vertical-align">
+                                                    <i class="icon-plus icons font-1xl list-child-icon"></i>Pick Your Own Color
+                                                </div>
+                                            </div>
+                                            <div *ngIf="isCategoryFormSubmitted && !selectedCategoryColor && !isCategoryColorListEnabled">
+                                                <small class="errormsg-topic">Select category color</small>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" (click)="hideCustomDropdown();" style="padding-top:29px;">
+                                <div class="row">
+                                    <div class="col-12" (click)="hideCustomDropdown()" style="padding-bottom:10px;">
+                                        <div class="form-group required">
+                                            <!-- <label class="control-label">Is Schedulable</label> -->
+                                            <div class="col-12">
+                                                <div style="float: left; padding-right: 10px; margin-left: -15px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isSchedulable">
+                                                        <input type="checkbox" formControlName="isSchedulable" class="switch-input" id="isSchedulable" />
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Is available for Interactions</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="col-12" (click)="hideCustomDropdown()" style="padding-bottom:10px;">
+                                        <div class="form-group required">
+                                            <div class="col-12">
+                                                <div style="float: left; padding-right: 10px; margin-left: -15px;">
+                                                    <label class="switch switch-label switch-pill switch-primary" for="isAdherenceRelated">
+                                                        <input type="checkbox" formControlName="isAdherenceRelated" class="switch-input" id="isAdherenceRelated" />
+                                                        <span class="switch-slider" data-checked="&#x2713;" data-unchecked="&#x2715;"></span>
+                                                    </label>
+                                                </div>
+                                                <div style="float: left;">
+                                                    <label>Is Adherence Related</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End fields of Name & Description -->
+                    </div>
+                    <!--/.row-->
+                    <p-footer>
+                        <div class="dialog-action-footer">
+                            <button type="button" (click)="closeModalDialog('category');" pRipple class="cust-btn-outlined" style="width:auto;">Cancel and Return to Create a Task</button>&nbsp;
+                            <button type="submit" (click)="createNewTaskCategory();" pRipple class="cust-btn" style="width: 200px;">Save</button>
+                        </div>
+                    </p-footer>
+                </form>
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
+        <!-- End create new category input fields -->
+
+        <!-- Begin create category color input fields -->
+        <div *ngIf="isAddNewCategoryColorEnabled" class="row">
+            <div class="col-lg-12">
+                <!-- <form name="categoryColorForm" [formGroup]="categoryColorForm" novalidate> -->
+                    <div class="card-body">
+                        <!-- Begin fields of Name & Description -->
+                        <div class="row">
+                            <div class="col-9 mb-20">
+                                <div class="form-group required category-container">
+                                    <label class="control-label">Task Category</label>
+                                    <div class="input-box vertical-align">
+                                        {{(selectedTaskCategory ? selectedTaskCategory.categoryName : 'Select Category')}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p-colorPicker [(ngModel)]="selectedCategoryColor" [inline]="true"></p-colorPicker>
+                                        <!-- <p-colorPicker [(ngModel)]="selectedCategoryColor" [inline]="true" formControlName="categoryColor"></p-colorPicker> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-12 mb-20">
+                                        <div style="width:150px;height:25px;border-radius:4px;" [style.backgroundColor]="selectedCategoryColor"></div>
+                                    </div>
+                                    <!-- <div class="col-12">
+                                        <div class="form-group required">
+                                            <label class="control-label">Name Your Color</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                placeholder="Color Name"
+                                                [(ngModel)]="colorName"
+                                                [ngClass]="{'is-invalid': (isCategoryColorFormSubmitted && !colorName )}"
+                                            />
+                                            <div *ngIf="isCategoryColorFormSubmitted && !colorName">
+                                                <small class="errormsg-topic">This field is required. </small>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End fields of Name & Description -->
+                    </div>
+                    <!--/.row-->
+                    <p-footer>
+                        <div class="dialog-action-footer">
+                            <button type="button" (click)="closeModalDialog('category');" pRipple class="cust-btn-outlined" style="width:auto;">Cancel and Return to Create a Task</button>&nbsp;
+                            <!-- <button type="button" (click)="closeModalDialog('category_color');" pRipple class="cust-btn-outlined" style="width:auto;">Cancel and Return to Create a Category</button>&nbsp; -->
+                            <button type="submit" (click)="createNewCategoryColor();" pRipple class="cust-btn" style="width: 200px;">Save</button>
+                        </div>
+                    </p-footer>
+                <!-- </form> -->
+            </div>
+            <!--/.col-->
+        </div>
+        <!--/.row-->
+        <!-- End create new category input fields -->
+
+        <!-- Begin delete confirmation content -->
+        <div *ngIf="isDeleteConfirm || isDeleteAllConfirm">
+            <!-- Begin body content -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="dialog-body-content confirm-text" *ngIf="isDeleteConfirm">
+                        Do you really want to delete the record: {{taskName}}?
+                    </div>
+                    <div class="dialog-body-content confirm-text" *ngIf="isDeleteAllConfirm">
+                        Do you really want to delete {{selectedTasks.length > 1 ? 'these ' + selectedTasks.length + ' records?' : 'this record?'}}
+                    </div>
+                </div>
+            </div>
+            <!-- End body content -->
+
+            <!-- Begin action footer content -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="dialog-action-footer">
+                        <button type="button" (click)="closeDialog()" pRipple class="cust-btn-outlined" style="width: 200px;">Cancel</button>
+                        <button type="submit" (click)="deleteRecord()" *ngIf="isDeleteConfirm" pRipple class="cust-btn" style="width: 200px;">Delete</button>
+                        <button type="submit" (click)="deleteAllRecords()" *ngIf="isDeleteAllConfirm" pRipple class="cust-btn" style="width: 200px;">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End action footer content -->
+        </div>
+        <!-- End delete confirmation content -->
+    </p-dialog>
+    <!-- End task detail dialog -->
+</div>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="8px" viewBox="0 0 14 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>show_less</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-1090.000000, -649.000000)">
+            <g id="show_less" transform="translate(1087.000000, 643.000000)">
+                <g id="Group-3">
+                    <rect id="Rectangle" fill-opacity="0" fill="#FFFFFF" x="0" y="0" width="20" height="20"></rect>
+                    <g id="accordian_close" transform="translate(3.000000, 6.000000)" fill="#0D4DCE" fill-rule="nonzero">
+                        <path d="M0.129310811,7.26149099 L0.753603604,7.88578378 C0.90136036,8.03354054 1.14093694,8.03354054 1.28872523,7.88578378 L7,2.18806757 L12.7113063,7.88575225 C12.8590631,8.03350901 13.0986396,8.03350901 13.2464279,7.88575225 L13.8707207,7.26145946 C14.0184696,7.1137027 14.0184696,6.87412613 13.8707207,6.72633784 L7.26754505,0.123225225 C7.11978829,-0.0245315315 6.88021171,-0.0245315315 6.73242342,0.123225225 L0.129310811,6.72636937 C-0.0184774775,6.87415766 -0.0184774775,7.11373423 0.129310811,7.26149099 Z" id="Path"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

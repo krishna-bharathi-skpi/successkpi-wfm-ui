@@ -1,0 +1,709 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="999999"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header" style="justify-content:left;">
+        <div class="col-md-6">
+            <h2 class="title capitalize">{{ workplanName ? workplanName : 'Workplan Test'}}</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <!-- <button type="button" (click)="saveWorkplan();" class="cust-btn-outlined">Save As Template</button> -->
+            <button type="button" (click)="saveWorkplan();" class="cust-btn">Save Workplan</button>
+        </div>
+    </div>
+    <!-- End top header -->
+
+    <!-- Begin content header -->
+    <div class="row content-header">
+        <div class="col-12">
+            <h4>Organize Tasks on Your Workplan</h4>
+            <span>Right click on your timeline to access tasks</span>
+            <!-- <span>{{global.language?.wfm?.forecast?.list?.subTitle}}</span> -->
+        </div>
+    </div>
+    <!-- End content header -->
+
+    <!-- Begin filter options -->
+    <div class="row custom-row">
+        <div class="col-md-12">
+            <button pRipple class="filter-btn" (click)="onChangeTab('tabular')"
+                [ngClass]="{'filter-btn-active': model.tab =='tabular'}">TABULAR VIEW</button>
+            <button pRipple class="filter-btn" (click)="onChangeTab('workgroup')"
+                [ngClass]="{'filter-btn-active': model.tab =='workgroup'}">WORKGROUPS</button>
+        </div>
+    </div>
+    <!-- End filter options -->
+
+
+<div style="padding: 32px;">
+    <!-- Begin tab-tabular view -->
+    <div class="row" *ngIf="model.tab =='tabular'">
+        <div class="col-9">
+            <!-- <div class="row mb-20">
+                <div class="col-7"></div>
+                <div class="col-5 vertical-align text-right">
+                    <div class="days-label">Selected Days </div>
+                    <div>
+                        <a *ngFor="let day of days" (click)="selectDay(day);" class="days center-align" [ngClass]="{'days-sel' : day.selected == true}">{{day.label}}</a>
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="row mb-20 vertical-align">
+                <div class="col-8 text-right">
+                    <button type="button" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true" (click)="showDialog();" class="cust-btn-x-sm">Add a Shift</button>
+                    <button type="button" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true" class="cust-btn-x-sm" ><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit Shift</button>
+                </div>
+                <div class="col-4">
+                    <div class="has-search">
+                        <span class="fa fa-search form-control-feedback"></span>
+                        <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" placeholder="Search for a tasks" />
+                    </div>
+                </div>
+            </div> -->
+            <!-- <div class="row">
+                <div class="col-12 cust-table">
+                    <p-table
+                        #dt
+                        dataKey="taskId"
+                        [value]="tasks"
+                        [lazy]="true" (onLazyLoad)="loadTasks($event)"
+                        styleClass="p-datatable-customers"
+                        [rowHover]="true"
+                        [showCurrentPageReport]="true"
+                        [filterDelay]="1200"
+                        [globalFilterFields]="['name', 'category', 'status']"
+                        [(selection)]="selectedTasks"
+                        [loading]="loading"
+                    >
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th style="width: 3rem;">
+                                    <p-tableHeaderCheckbox id="select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                                </th>
+                                <th pSortableColumn="taskName">Task Name<p-sortIcon field="taskName"></p-sortIcon></th>
+                                <th pSortableColumn="categoryName">Category<p-sortIcon field="categoryName"></p-sortIcon></th>
+                                <th pSortableColumn="taskLength">Length<p-sortIcon field="taskLength"></p-sortIcon></th>
+                                <th pSortableColumn="isPaid">Is Paid<p-sortIcon field="isPaid"></p-sortIcon></th>
+                                <th pSortableColumn="updatedTimestamp">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                                <th class="text-center" style="width: 3rem;">
+                                    <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                    <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                        <div>
+                                            <ul class="list-group">
+                                                <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                                    <div class="row">
+                                                        <div class="col-9" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }">{{col.header}}</div>
+                                                        <div class="col-2" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-left: 5px;"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </p-overlayPanel>
+                                </th>
+                            </tr>
+                            
+                        </ng-template>
+                        <ng-template pTemplate="body" let-task let-i="rowIndex">
+                            <tr [pSelectableRow]="task">
+                                <td [style.background-color]="task.colorCode">
+                                    <p-tableCheckbox [value]="task" class="cust-chkbox"></p-tableCheckbox>
+                                </td>
+                                <td style="text-transform: capitalize;">
+                                    <a (click)="manageTask(task,'edit');" tooltip="Click here to edit your Task" class="col-link">{{task.taskName}}</a>
+                                </td>
+                                <td>
+                                    {{task.categoryName}}
+                                </td>
+                                <td>
+                                    {{task.taskLength}}
+                                </td>
+                                <td>
+                                    {{task.isPaid}}
+                                </td>
+                                <td>
+                                    {{task.updatedTimestamp}}
+                                </td>
+                                <td class="text-center" style="width: 3rem;">
+                                    <i (click)="opOption.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                    <p-overlayPanel #opOption appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                        <div>
+                                            <ul class="list-group">
+                                                <li class="list-group-item" (click)="manageTask(task,'view');" (click)="opOption.hide();"><i class="icon-eye icons"></i>View</li>
+                                                <li class="list-group-item" (click)="manageTask(task,'edit');" (click)="opOption.hide();"><i class="fa fa-pencil"></i>Edit</li>
+                                                <li class="list-group-item" (click)="manageTask(task,'delete')" (click)="opOption.hide();" style="color: #FC5130 !important"><i class="fa fa-trash-o" style="color: #FC5130 !important"></i>Delete</li>
+                                              </ul>
+                                        </div>
+                                    </p-overlayPanel>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div> -->
+            <p-accordion styleClass="filter-accordion">
+                <p-accordionTab *ngFor="let shift of shift.shifts" header="{{shift.shiftName}}" [selected]="true">
+                    <div class="row mb-20 vertical-align">
+                        <div class="col-6" style="font-size:1rem;">
+                            {{shift.startTime}} to {{shift.endTime}}
+                            <a (click)="getShiftDetail(shift)" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true" class="btn-icon"><i class="fa fa-pencil" style="color: #1E50C6;"></i></a>
+                            <a (click)="confirmShiftDelete(shift)" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true" class="btn-icon"><i class="fa fa-trash-o" style="color: #959595;"></i></a>
+                        </div>
+                        <div class="col-6 text-right">
+                            <div style="display:inline-block">
+                                <a *ngFor="let day of shift.custDays" class="days center-align" [ngClass]="{'days-sel' : day.selected == true}">{{day.label}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none;">
+                        <div class="col-4">
+                            <div class="has-search">
+                                <span class="fa fa-search form-control-feedback"></span>
+                                <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" placeholder="Search for a tasks" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 cust-table">
+                            <p-table
+                                #dt
+                                dataKey="taskId"
+                                [value]="shift.tasks"
+                                [lazy]="true"
+                                styleClass="p-datatable-customers"
+                                [rowHover]="true"
+                                [showCurrentPageReport]="true"
+                                [filterDelay]="1200"
+                                [globalFilterFields]="['name', 'category', 'status']"
+                                [(selection)]="shift.selectedTasks"
+                                [loading]="loading"
+                            >
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th style="width: 3rem;">
+                                            <p-tableHeaderCheckbox id="frcst_select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                                        </th>
+                                        <th pSortableColumn="taskName">Task Name<p-sortIcon field="taskName"></p-sortIcon></th>
+                                        <th pSortableColumn="taskLength">Length<p-sortIcon field="taskLength"></p-sortIcon></th>
+                                        <th pSortableColumn="updatedTimestamp">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                                        <th pSortableColumn="updatedBy">Updated By <p-sortIcon field="updatedBy"> </p-sortIcon></th>
+                                        <th class="text-center" style="width: 3rem;">
+                                            <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                            <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                                <div>
+                                                    <ul class="list-group">
+                                                        <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                                            <div class="row">
+                                                                <div class="col-9" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }">{{col.header}}</div>
+                                                                <div class="col-2" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-left: 5px;"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </p-overlayPanel>
+                                        </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-task let-i="rowIndex">
+                                    <tr>
+                                        <td [style.background-color]="task.colorCode">
+                                            <p-tableCheckbox [value]="task" class="cust-chkbox"></p-tableCheckbox>
+                                        </td>
+                                        <td style="text-transform: capitalize;">
+                                            <a (click)="manageTask(task,'edit');" tooltip="Click here to edit your Task" class="col-link">{{task.taskName}}</a>
+                                        </td>
+                                        <td>
+                                            {{task.taskLength}}
+                                        </td>
+                                        <td>
+                                            {{task.updatedTimestamp}}
+                                        </td>
+                                        <td>
+                                            {{task.updatedBy}}
+                                        </td>
+                                        <td class="text-center" style="width: 3rem;">
+                                            <i (click)="opOption.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                            <p-overlayPanel #opOption appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                                <div>
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item" (click)="manageTask(task,'view');" (click)="opOption.hide();"><i class="icon-eye icons"></i>View</li>
+                                                        <li class="list-group-item" (click)="manageTask(task,'edit');" (click)="opOption.hide();"><i class="fa fa-pencil"></i>Edit</li>
+                                                        <li class="list-group-item" (click)="manageTask(task,'delete')" (click)="opOption.hide();" style="color: #FC5130 !important"><i class="fa fa-trash-o" style="color: #FC5130 !important"></i>Delete</li>
+                                                      </ul>
+                                                </div>
+                                            </p-overlayPanel>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                            <!-- <p-paginator #p (onPageChange)="taskPaginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords"></p-paginator> -->
+                        </div>
+                        <!-- <div class="col-12 content-center" style="font-size: 18px; color: #303030; padding: 45px;">
+                            <a (click)="enableShift(shift)">Please click here to add a task to {{shift.shiftName}}</a>
+                        </div> -->
+                    </div>
+                </p-accordionTab>
+            </p-accordion>
+            <div class="col-12 text-right" style="padding-top:15px;">
+                <button type="button" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true" (click)="showShiftModalDialog();" class="cust-btn-outlined">Add a Shift</button>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="row filter-content">
+                <div class="col-12">
+                    <div class="cust-accordion" id="filterAccordion">
+                        <div class="item">
+                            <div class="item-header" id="headingTwo">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo" style="font-size:14px; font-weight:700;">
+                                        Add Tasks
+                                        <i class="fa fa-angle-down"></i>
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#filterAccordion">
+                                <div class="body">
+                                    <div class="col-12">
+                                        <div class="form-group required">
+                                            <label class="control-label">Search a Task</label>
+                                            <div class="has-search">
+                                                <span class="fa fa-search form-control-feedback"></span>
+                                                <input type="text" class="form-control" placeholder="Search Tasks" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <p-accordion styleClass="filter-accordion sidebar-task-accordion">
+                                            <p-accordionTab *ngFor="let options of sidebarTasks" header="{{options.category}}" [selected]="true">
+                                               <div class="row" *ngFor="let task of options.tasks" style="padding: 6px 25px; padding-right: 5px;">
+                                                    <div class="col-12" class="taskbar-option vertical-align">
+                                                       <div>
+                                                            <div [style.background-color]="task.colorCode" class="taskbar-option-color"></div>
+                                                            <div>{{task.taskName}}</div>
+                                                        </div>
+                                                        <div style="float:right; margin-top:-22px;">
+                                                            <button (click)="addTaskToShift(task)" tooltip="Click here to add a task" class="cust-btn-sm task-add-btn"><i class="fa fa-plus"></i></button>
+                                                        </div>
+                                                    </div>
+                                               </div>
+                                            </p-accordionTab>
+                                        </p-accordion>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End tab-tabular view -->
+
+    <div class="row" *ngIf="model.tab =='workgroup'">
+        <div class="col-lg-12 cust-table">
+            <p-table
+                #dt
+                dataKey="workgroupId"
+                [value]="workgroups"
+                [lazy]="true" (onLazyLoad)="loadWorkGroups($event)"
+                styleClass="p-datatable-customers"
+                [rowHover]="true"
+                [showCurrentPageReport]="true"
+                [filterDelay]="1200"
+                [globalFilterFields]="['workgroup', 'startDate', 'endDate', 'status', 'updatedTimestamp', 'updatedBy']"
+                [(selection)]="selectedWorkgroups"
+                [loading]="loading"
+            >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <!-- <th style="width: 3rem;">
+                            <p-tableHeaderCheckbox id="select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                        </th> -->
+                        <th pSortableColumn="workgroupName">Workgroups<p-sortIcon field="workgroupName"> </p-sortIcon></th>
+                        <th pSortableColumn="severeAdherenceThreshold">Adherence Threshold<p-sortIcon field="severeAdherenceThreshold"></p-sortIcon></th>
+                        <th pSortableColumn="adherenceTarget">Adherence Target <p-sortIcon field="adherenceTarget"> </p-sortIcon></th>
+                        <th pSortableColumn="adherenceExceptionThreshold">Exception Threshold <p-sortIcon field="adherenceExceptionThreshold"> </p-sortIcon></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-workgroup let-i="rowIndex">
+                    <tr [pSelectableRow]="workgroup">
+                        <!-- <td>
+                            <p-tableCheckbox [value]="workgroup" class="cust-chkbox"></p-tableCheckbox>
+                        </td> -->
+                        <td style="text-transform: capitalize;">
+                            <a (click)="manageWorkgroup(workgroup,'edit');" tooltip="Click here to edit your Workgroup" class="col-link">{{workgroup.workgroupName}}</a>
+                        </td>
+                        <td>
+                            {{workgroup.severeAdherenceThreshold}}
+                        </td>
+                        <td>
+                            {{workgroup.adherenceTarget}}
+                        </td>
+                        <td>
+                            {{workgroup.adherenceExceptionThreshold}}
+                        </td>
+                        <!-- <td class="text-center">
+                            <i (click)="opOptions.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                            <p-overlayPanel #opOptions appendTo="body" styleClass="cust-overlay-panel" [dismissable]="true" [style]="{width: 'auto'}">
+                                <div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item" (click)="manageWorkgroup(workgroup,'view');" (click)="opOptions.hide();"><i class="icon-eye icons"></i>View</li>
+                                        <li class="list-group-item" (click)="manageWorkgroup(workgroup,'edit');" (click)="opOptions.hide();"><i class="fa fa-pencil"></i>Edit</li>
+                                    </ul>
+                                </div>
+                            </p-overlayPanel>
+                        </td> -->
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords"></p-paginator>
+        </div>
+    </div>
+
+    <!-- Begin tab-workgroup view -->
+    <!-- <div class="row" *ngIf="model.tab =='workgroup'">
+        <div class="col-9 mb-35" style="padding:0 2rem;">
+            <p-accordion styleClass="filter-accordion">
+                <p-accordionTab *ngFor="let shift of shifts" header="{{shift.shiftName}}" [selected]="true">
+                    <div class="row">
+                        <div class="col-lg-12 cust-table">
+                            <p-table
+                                #dt
+                                dataKey="workgroupId"
+                                [value]="shift.workgroups"
+                                [lazy]="true" (onLazyLoad)="loadWorkGroups($event)"
+                                styleClass="p-datatable-customers"
+                                [rowHover]="true"
+                                [showCurrentPageReport]="true"
+                                [filterDelay]="1200"
+                                [globalFilterFields]="['workgroup', 'startDate', 'endDate', 'status', 'updatedTimestamp', 'updatedBy']"
+                                [(selection)]="shift.selectedWorkgroups"
+                                [loading]="loading"
+                            >
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th style="width: 3rem;">
+                                            <p-tableHeaderCheckbox id="frcst_select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                                        </th>
+                                        <th pSortableColumn="workgroupName">Workgroups<p-sortIcon field="workgroupName"> </p-sortIcon></th>
+                                        <th pSortableColumn="severeAdherenceThreshold">Adherence Threshold<p-sortIcon field="severeAdherenceThreshold"></p-sortIcon></th>
+                                        <th pSortableColumn="adherenceTarget">Adherence Target <p-sortIcon field="adherenceTarget"> </p-sortIcon></th>
+                                        <th pSortableColumn="adherenceExceptionThreshold">Exception Threshold <p-sortIcon field="adherenceExceptionThreshold"> </p-sortIcon></th>
+                                    </tr>
+                                </ng-template>
+
+                                <ng-template pTemplate="body" let-workgroup let-i="rowIndex">
+                                    <tr [pSelectableRow]="workgroup">
+                                        <td>
+                                            <p-tableCheckbox [value]="workgroup" class="cust-chkbox"></p-tableCheckbox>
+                                        </td>
+                                        <td style="text-transform: capitalize;">
+                                            <a (click)="manageWorkgroup(workgroup,'edit');" tooltip="Click here to edit your Workgroup" class="col-link">{{workgroup.workgroupName}}</a>
+                                        </td>
+                                        <td>
+                                            {{workgroup.severeAdherenceThreshold}}
+                                        </td>
+                                        <td>
+                                            {{workgroup.adherenceTarget}}
+                                        </td>
+                                        <td>
+                                            {{workgroup.adherenceExceptionThreshold}}
+                                        </td>
+                                        <td class="text-center">
+                                            <i (click)="opOptions.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                                            <p-overlayPanel #opOptions appendTo="body" styleClass="cust-overlay-panel" [dismissable]="true" [style]="{width: 'auto'}">
+                                                <div>
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item" (click)="manageWorkgroup(workgroup,'view');" (click)="opOptions.hide();"><i class="icon-eye icons"></i>View</li>
+                                                        <li class="list-group-item" (click)="manageWorkgroup(workgroup,'edit');" (click)="opOptions.hide();"><i class="fa fa-pencil"></i>Edit</li>
+                                                    </ul>
+                                                </div>
+                                            </p-overlayPanel>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="emptymessage">
+                                    <tr>
+                                        <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                            <p-paginator #p (onPageChange)="workgroupPaginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords"></p-paginator>
+                        </div>
+                    </div>
+                </p-accordionTab>
+            </p-accordion>
+        </div>
+    </div> -->
+    <!-- End tab-workgroup view -->
+</div>
+
+<!-- Begin shift dialog -->
+<p-dialog class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000" [contentStyle]="{'overflow':'visible'}">
+    <p-header *ngIf="!confirmDeleteShift">
+       {{(isShiftAddMode) ? 'Add a Shift' : 'Update a Shift'}}
+    </p-header>
+    <p-header *ngIf="confirmDeleteShift">
+        Confirm
+     </p-header>
+    <!-- Begin shift input fields -->
+    <div class="row" *ngIf="!confirmDeleteShift">
+        <div class="col-lg-12">
+            <form name="shiftForm" [formGroup]="shiftForm" novalidate>
+                <div class="card-body" style="padding-top:15px;">
+                    <!-- Begin fields of Shift -->
+                    <div class="row">
+                        <div class="col-12 mb-20">
+                            <h6>Add information about your shift and add it to the workplan.</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group required">
+                                <label class="control-label">Shift Name</label>
+                                <input type="text" class="form-control" formControlName="shiftName"
+                                    placeholder="Name of Shift"
+                                    [ngClass]="{'is-invalid': (isShiftSubmitted || shiftForm.controls['shiftName'].touched) && shiftForm.controls['shiftName'].errors}" />
+                                <div
+                                    *ngIf="isShiftSubmitted && shiftForm.controls['shiftName'].invalid && shiftForm.controls['shiftName'].dirty || shiftForm.controls['shiftName'].errors">
+                                    <small *ngIf="isShiftSubmitted && shiftForm.controls['shiftName'].errors?.required"
+                                        class="errormsg-topic">This field is required. </small>
+                                    <small *ngIf="isShiftSubmitted && shiftForm.controls['shiftName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                                    <small *ngIf="isShiftSubmitted && shiftForm.controls['shiftName'].errors?.pattern" class="errormsg-topic">Shift name must contain only alphabets, numbers and the following special characters: hypen & underscore.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label class="control-label">Description</label>
+                                <textarea
+                                    id="shiftDescription"
+                                    name="shiftDescription"
+                                    formControlName="shiftDescription"
+                                    [(ngModel)]="shift_description"
+                                    rows="1"
+                                    maxlength="400"
+                                    class="form-control"
+                                    placeholder="Type your content here.."
+                                    [ngClass]="{'is-invalid': (isShiftSubmitted || shiftForm.controls['shiftDescription'].touched) && shiftForm.controls['shiftDescription'].errors}"
+                                ></textarea>
+                                <small class="form-text text-muted">characters remaining: <code>{{ (shift_description) ? 400 - shift_description.length : 400 - 0 }}</code>/<code>400</code></small>
+                                <div
+                                    *ngIf="isShiftSubmitted && shiftForm.controls['shiftDescription'].invalid && shiftForm.controls['shiftDescription'].dirty || shiftForm.controls['shiftDescription'].errors"
+                                >
+                                    <small *ngIf="isShiftSubmitted && shiftForm.controls['shiftDescription'].errors?.maxlength" class="errormsg-topic">Maximum 400 characters only allowed. </small>
+                                    <small *ngIf="isShiftSubmitted && shiftForm.controls['shiftDescription'].errors?.pattern" class="errormsg-topic">Description must contain only alphabets, numbers and the following special characters: comma, dot, hypen & underscore.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group required">
+                                <label class="control-label">Shift Starts</label>
+                                <div class="row">
+                                    <div class="col-4" style="padding-right:3px;">
+                                        <p-dropdown
+                                            [(ngModel)]="shiftStartHour"
+                                            [options]="shiftStartHours"
+                                            dataKey="value"
+                                            optionValue="value"
+                                            optionLabel="label"
+                                            [filter]="false"
+                                            filterBy="label"
+                                            [showClear]="false"
+                                            class="cust-p-dropdown time-p-dropdown"
+                                            placeholder="hh"
+                                            [ngModelOptions]="{standalone: true}"
+                                            (onChange)="onChangeTime()"
+                                            [ngClass]="{'is-invalid': (isShiftSubmitted && !shiftStartHour && !shiftStartMinute)}"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-4" style="padding-left:5px; padding-right:5px;">
+                                        <p-dropdown
+                                            [(ngModel)]="shiftStartMinute"
+                                            [options]="shiftStartMinutes"
+                                            dataKey="value"
+                                            optionValue="value"
+                                            optionLabel="label"
+                                            [filter]="false"
+                                            filterBy="label"
+                                            [showClear]="false"
+                                            class="cust-p-dropdown time-p-dropdown"
+                                            placeholder="mm"
+                                            [ngModelOptions]="{standalone: true}"
+                                            (onChange)="onChangeTime()"
+                                            [ngClass]="{'is-invalid': (isShiftSubmitted && !shiftStartHour && !shiftStartMinute)}"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-4" style="padding-left:3px;">
+                                        <p-dropdown
+                                            [(ngModel)]="timeMode"
+                                            [options]="timeModes"
+                                            dataKey="value"
+                                            optionValue="value"
+                                            optionLabel="value"
+                                            [filter]="false"
+                                            filterBy="label"
+                                            [showClear]="false"
+                                            class="cust-p-dropdown time-p-dropdown"
+                                            placeholder=""
+                                            [ngModelOptions]="{standalone: true}"
+                                            (onChange)="onChangeTime()"
+                                            [ngClass]="{'is-invalid': (isShiftSubmitted && !shiftStartHour && !shiftStartMinute)}"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div *ngIf="isShiftSubmitted && !shiftStartHour && !shiftStartMinute">
+                                    <small class="errormsg-topic">Select shift start time </small>
+                                </div>
+                                <div *ngIf="isShiftSubmitted && shiftStartHour && shiftStartMinute && !timeMode">
+                                    <small class="errormsg-topic">Select AM/PM </small>
+                                </div>
+                                <!-- <input type="text" class="form-control" formControlName="startTime" placeholder=""
+                                    [ngClass]="{'is-invalid': (isShiftSubmitted || shiftForm.controls['startTime'].touched) && shiftForm.controls['startTime'].errors}" />
+                                <div
+                                    *ngIf="isShiftSubmitted && shiftForm.controls['startTime'].invalid && shiftForm.controls['startTime'].dirty || shiftForm.controls['startTime'].errors">
+                                    <small
+                                        *ngIf="isShiftSubmitted && shiftForm.controls['startTime'].errors?.required"
+                                        class="errormsg-topic">This field is required. </small>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group required">
+                                <label class="control-label">Shift Duration</label>
+                                <!-- <input type="text" class="form-control" formControlName="shiftLength" placeholder=""
+                                    [ngClass]="{'is-invalid': (isShiftSubmitted || shiftForm.controls['shiftLength'].touched) && shiftForm.controls['shiftLength'].errors}" />
+                                <div
+                                    *ngIf="isShiftSubmitted && shiftForm.controls['shiftLength'].invalid && shiftForm.controls['shiftLength'].dirty || shiftForm.controls['shiftLength'].errors">
+                                    <small
+                                        *ngIf="isShiftSubmitted && shiftForm.controls['shiftLength'].errors?.required"
+                                        class="errormsg-topic">This field is required. </small>
+                                </div> -->
+                                <div class="row">
+                                    <div class="col-6" style="padding-right:3px;">
+                                        <p-dropdown
+                                            [(ngModel)]="shiftDurationHour"
+                                            [options]="shiftDurationHours"
+                                            dataKey="value"
+                                            optionValue="value"
+                                            optionLabel="label"
+                                            [filter]="false"
+                                            filterBy="label"
+                                            [showClear]="false"
+                                            class="cust-p-dropdown"
+                                            placeholder="hh"
+                                            [ngModelOptions]="{standalone: true}"
+                                            (onChange)="onChangeTime()"
+                                            [ngClass]="{'is-invalid': (isShiftSubmitted && !shiftDurationHour && !shiftDurationMinute)}"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                    <div class="col-6" style="padding-left:3px;">
+                                        <p-dropdown
+                                            [(ngModel)]="shiftDurationMinute"
+                                            [options]="shiftDurationMinutes"
+                                            dataKey="value"
+                                            optionValue="value"
+                                            optionLabel="label"
+                                            [filter]="false"
+                                            filterBy="label"
+                                            [showClear]="false"
+                                            class="cust-p-dropdown"
+                                            placeholder="mm"
+                                            [ngModelOptions]="{standalone: true}"
+                                            (onChange)="onChangeTime()"
+                                            [ngClass]="{'is-invalid': (isShiftSubmitted && !shiftDurationHour && !shiftDurationMinute)}"
+                                        >
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div *ngIf="isShiftSubmitted && !shiftDurationHour && !shiftDurationMinute">
+                                    <small class="errormsg-topic">Select shift duration </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3" *ngIf="shiftEndTime">
+                            <div class="form-group required">
+                                <div class="control-label" style="margin-bottom:6px;">Shift End Time </div>
+                                <input type="text" class="form-control" [(ngModel)]="shiftEndTime"
+                                    placeholder="Shift End Time"
+                                    class="form-control input-disabled" [ngModelOptions]="{standalone: true}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group required">
+                                <div class="control-label" style="margin-bottom:12px;">Assigned Days </div>
+                                <div class="col-12" style="padding-left:0px;">
+                                    <a *ngFor="let day of days" (click)="selectDay(day);" class="days center-align" [ngClass]="{'days-sel' : day.selected == true}">{{day.label}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End fields of shift -->
+                </div>
+                <!--/.row-->
+                <p-footer>
+                    <div class="dialog-action-footer">
+                        <button (click)="resetShiftFields();" class="cust-btn-outlined" style="width: 150px;">Cancel</button>&nbsp;
+                        <button (click)="addShift();" class="cust-btn" style="width: 150px;">Save</button>
+                    </div>
+                </p-footer>
+            </form>
+        </div>
+        <!--/.col-->
+    </div>
+    <!-- End shift input fields -->
+
+    <!-- Begin delete confirmation content -->
+    <div *ngIf="confirmDeleteShift">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-body-content confirm-text">
+                    Do you really want to delete this shift {{shift.shitName}}?
+                </div>
+            </div>
+        </div>
+        <!-- End body content -->
+
+        <!-- Begin action footer content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-action-footer">
+                    <button type="button" (click)="cancelDeleteShift()" pRipple class="cust-btn-outlined" style="width: 200px;">Cancel</button>
+                    <button type="submit" (click)="deleteShift()" pRipple class="cust-btn" style="width: 200px;">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- End action footer content -->
+    </div>
+    <!-- End delete confirmation content -->
+
+</p-dialog>
+<!-- End shift dialog -->
+
+</div>

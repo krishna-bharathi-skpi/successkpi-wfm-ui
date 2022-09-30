@@ -1,0 +1,312 @@
+<!-- <p>ai-ml-scoring works!</p> -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<div style="margin: 0px 60px 0 32px;" *ngIf="pageView == 'list'">
+  <div class="top-header" style="justify-content: space-between;">
+        <h2 class="header-title">AI/ML Scoring</h2>
+
+    <div style="display: flex;">
+      <!-- <div style="margin-top: -20px;margin-right: 16px;">
+        <i class="fa fa-search" aria-hidden="true" style="
+                      position: relative;
+                      left: 5px;
+                      opacity: 0.6;
+                      top: 29px;
+                     "></i>
+        <input type="text" class="inp-searchs form-control" placeholder="Find your model name">
+      </div> -->
+      <div *ngIf="global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true">
+        <span id="modalopen" data-toggle="modal" data-target="#myModal"></span>
+        <button type="button" class="btn-creates" (click)="openModal('create','')">Create new model</button>
+      </div>
+    </div>
+  </div>
+  <section style="margin: 24px 0;">
+    <div class="row" *ngIf="modelList.length > 0">
+      <div class="col-sm-6 col-lg-4 evaluation-cards" *ngFor="let item of modelList">
+        <div class="card ">
+          <div class="card-body ">
+            <div class="row">
+              <div class="card-title col-sm-10 module line-clamp" (click)="modelDataSets(item)">{{item.modelName}}</div>
+              <div class="col-sm-2" style="text-align: right;">
+                <i class="fa fa-meetup" aria-hidden="true" style="font-size: 24px;color: #9d9595;"></i>
+              </div>
+            </div>
+
+            <div class="card-desc module line-clamp-desc" (click)="modelDataSets(item)">{{item.evaluationForm}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="modelList.length == 0">
+      No Model available !
+    </div>
+  </section>
+</div>
+
+<!-- main page - list of model  -->
+<div style="margin: 32px 32px;" *ngIf="pageView == 'editModel'">
+    <div class="edit-header border-0">
+      <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb" >
+          <li><label class="bread-crumb-label1" (click)="breadcrumbBack()">All Models</label></li>
+        </ul>
+      </div>
+      <div class="d-flex justify-content-between" style="margin-bottom: 2%">
+        <div class="text-ellipsis-card" style="width: 33%;">
+          <div class="page-title">
+            <h2 style="color: grey;font-weight: 400;" class="text-truncate">{{ModelNameTxt}}</h2>
+          </div>
+        </div>
+        <div class="text-ellipsis-card" style="width: 50%;">
+          <div class="page-title">
+            <h2 style="color: #6891eb;font-weight: 400;" class="text-truncate">{{evalFromTxt}}</h2>
+          </div>
+        </div>
+        <div class="text-ellipsis-card" *ngIf="global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true" style="width: 15%;">
+          <span id="modalopen" data-toggle="modal" data-target="#myModal"></span>
+          <button type="button" class="btn-creates" (click)="openModal('generate',modelObj)">Generate new model</button>
+        </div>
+      </div>
+      <!-- <div class="d-flex justify-content-end" style="margin-bottom: 2%">
+        
+      </div> -->
+    </div>
+    <div>
+        <p-table [value]="dataTableModel" [resizableColumns]="true" styleClass="p-datatable-gridlines" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pResizableColumn class="table-header-style">Model version</th>
+                    <!-- <th pResizableColumn class="table-header-style">Evaluation form</th> -->
+                    <th pResizableColumn class="table-header-style">Created at</th>
+                    <th pResizableColumn class="table-header-style">Last trained</th>
+                    <th pResizableColumn class="table-header-style">Date range for training data</th>
+                    <th pResizableColumn class="table-header-style">Active Model</th>
+                    <th pResizableColumn class="table-header-style">Question Type</th>
+                    <th pResizableColumn class="table-header-style">Accuracy</th>
+                    <th pResizableColumn class="table-header-style">Confusion Matrix</th>
+                    <!-- <th pResizableColumn class="table-header-style">Trained result</th> -->
+                    <th pResizableColumn class="table-header-style">Status</th>
+                    <th pResizableColumn class="table-header-style" style="width: 7%;">Active</th>
+                    <th pResizableColumn class="table-header-style" style="width: 7%;" *ngIf="global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true">Action</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-model  let-rowIndex="rowIndex">
+                <tr class="row-data-user">
+                    <td class="user-name"><span id="modalopen" data-toggle="modal" data-target="#myModal"></span> <span (click)="openModal('edit',model)">V_{{rowIndex + 1}}</span></td>
+                    <!-- <td>{{model.evaluationForm != undefined ? model.evaluationForm : 'N/A' }}</td> -->
+                    <td>{{model.createdTimestamp | date: 'MM/dd/yyyy hh:mm'}}</td>
+                    <td>{{model.lastTrainingDate != "" ? (model.lastTrainingDate | date: 'MM/dd/yyyy hh:mm'): 'N/A'}}</td>
+                    <td>{{model.startDate}} - {{model.endDate}}</td>
+                    <td>
+                      <span *ngIf="model.predictionEnabled == true">
+                       
+                          <span class="" style="color: #012169;font-weight:700;padding: 0 8px;">Active</span>
+                      </span>
+                      <span *ngIf="model.predictionEnabled == false">
+                        <button type="button" style="outline: 0px;" class="add-btn">
+                          <span class="btn-txt-add" (click)="makeActiveVersion(model.modelId,model.evaluationId,model)">Activate</span>
+                        </button>
+                      </span>
+                    </td>
+                    <td class="p-0">
+                      <div *ngIf="model.modelDetails.length > 0 && model.modelDetails != undefined">
+                        <div class="divide-row" *ngFor="let item of model.modelDetails">
+                          {{item.questionType != undefined ? item.questionType : 'N/A' }}
+                        </div>
+                      </div>
+                     
+                      <div *ngIf="model.modelDetails.length == 0 || model.modelDetails == undefined" style=" padding: 0.571em 0.857em;">
+                        N/A
+                      </div>
+                    </td>
+                    <td class="p-0"> <!--{{model.accuracy != undefined ? model.accuracy : 'N/A'}} -->
+                      <div *ngIf="model.modelDetails.length > 0  && model.modelDetails != undefined">
+                        <div class="divide-row" *ngFor="let item of model.modelDetails">
+                          {{item.accuracy != undefined ? (item.accuracy | number) : 'N/A' }}
+                        </div>
+                      </div>
+                     
+                      <div *ngIf="model.modelDetails.length == 0 || model.modelDetails == undefined" style=" padding: 0.571em 0.857em;">
+                        N/A
+                      </div>
+                    </td>
+                    <td class="p-0">
+                      <div *ngIf="model.modelDetails.length > 0  && model.modelDetails != undefined">
+                        <div class="divide-row" *ngFor="let item of model.modelDetails">
+                          <button type="button" style="outline: 0px;" class="add-btn">
+                            <span class="btn-txt-add" (click)="showMetrix($event, op, item.confusionMatrix)">Show</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div *ngIf="model.modelDetails.length == 0 || model.modelDetails == undefined" style=" padding: 0.571em 0.857em;">
+                        N/A
+                      </div>
+                      
+                      <!-- <button type="button" style="outline: 0px;" class="add-btn">
+                          <span class="btn-txt-add" (click)="showMetrix($event, op, model.confusionMatrix)">Show</span>
+                      </button> -->
+                    </td>
+                    <!-- <td>
+                        <button type="button" style="outline: 0px;" class="add-btn">
+                            <span class="btn-txt-add" (click)="modelResult()">Result</span>
+                        </button>
+                    </td> -->
+                    <td>{{model.modelStatus != undefined ? model.modelStatus : 'N/A'}}</td>
+                    <td>{{model.predictionEnabled == true ? 'On' : 'Off'}}</td>
+                    <td class="text-center" *ngIf="global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true">
+                        <span (click)="deleteModel()"><img src="../assets/img/microinteraction/delete.svg"></span>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '300px'}">
+          <table style="margin: 0 auto;"> 
+            <tbody>
+            <tr>
+              <td colspan="6" class="text-center">Actual</td>
+            </tr> 
+            <tr>
+              <td rowspan="6" style="transform: rotate(-90deg );">Predicted</td>
+            </tr>
+            <tr> 
+              <th></th>
+              <th>YES</th> 
+              <th>NO</th> 
+            </tr> 
+            <tr> 
+              <th rowspan="2">YES</th> 
+              <td>{{confusionMatrix?.YES?.YES != undefined ? confusionMatrix?.YES?.YES : 'N/A'}}</td> 
+              <td>{{confusionMatrix?.YES?.NO != undefined ? confusionMatrix?.YES?.NO : 'N/A'}}</td> 
+            </tr> 
+            <tr> 
+            </tr> 
+            <tr> 
+              <th rowspan="2">NO</th> 
+              <td>{{confusionMatrix?.NO?.YES != undefined ? confusionMatrix?.NO?.YES : 'N/A'}}</td>
+              <td>{{confusionMatrix?.NO?.NO != undefined ? confusionMatrix?.NO?.NO : 'N/A'}}</td> 
+            </tr> 
+            <tr> 
+            </tr> 
+            </tbody>
+          </table>
+        </p-overlayPanel>
+    </div>
+</div>
+
+
+<!-- Create/Edit Modal  -->
+<div class="modal fade" id="myModal"  data-backdrop="static">
+    <div class="modal-dialog " role="document" style="margin-top: 5%;">
+      <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" *ngIf="createEdit == 'create'">Create Model</h5>
+            <h5 class="modal-title text-ell" *ngIf="createEdit == 'edit'">Edit Model <span *ngIf="aiMl_model.modelName != '' ">- {{aiMl_model.modelName}}</span></h5>
+            <h5 class="modal-title text-ell" *ngIf="createEdit == 'generate'"><span *ngIf="aiMl_model.modelName != '' ">{{aiMl_model.modelName}}</span></h5>
+          <button type="button" class="close pr-3" data-dismiss="modal" #closebutton  aria-label="Close" (click)="cancel">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body pb-0">
+            <form class="pt-3 pb-2 pl-4 pr-4" [formGroup]="modelForm">
+                <div class="form-group">
+                    <label class="platform-label">Model name</label>
+                    <input type="text" id="aimlnameid" class="form-control platform-ipt-box w-100" placeholder="Model name" formControlName="modelName" [(ngModel)]="aiMl_model.modelName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                    [ngClass]="{'is-invalid': (submitted || f.modelName.touched) && f.modelName.errors }"  autocomplete="off"  [ngStyle]="{'cursor': isModelnameEnable == true ? 'not-allowed' : 'auto'}">
+                    <div *ngIf="(submitted || f.modelName.touched) && f.modelName.errors" class="errormsg-topic">
+                      <div *ngIf="f.modelName.errors.required">Please enter model name</div>
+                    </div>
+                </div>
+    
+                <div class="form-group">
+                    <label class="platform-label">Evaluation form</label>
+                    <p-dropdown class="choose-platform dplable" [options]="EvalformDDL" formControlName="evaluationForm" [(ngModel)]="aiMl_model.evaluationId" filter="true" 
+                    [ngClass]="{'is-invalid': ((submitted || f.evaluationForm.touched) && f.evaluationForm.errors || isformExit) }" placeholder="Select a evaluation form" [disabled]="isEvalFormDDL">
+                    </p-dropdown>
+                    <div *ngIf="(submitted || f.evaluationForm.touched) && f.evaluationForm.errors" class="errormsg-topic">
+                      <div *ngIf="f.evaluationForm.errors.required">Please select evaluation form</div>
+                    </div>
+                    <div  class="errormsg-topic"  *ngIf="isformExit == true">This evaluation form already exist in other AI/ML model</div>
+                </div>
+                <p class="platform-label" style="font-size: 15px;font-weight: 500;">Date Range for Training data</p>
+                <div class="row">
+                  <div class="col-sm-6">
+                      <div class="form-group">
+                          <label class="platform-label">From</label>
+                          <div>
+                              <img src="../assets/img/microinteraction/calendar.svg" class="calendar-img">
+                              <p-calendar class="interaction-calendar calendar-resize-workspace disableDateMIN_MAX" [(ngModel)]="fromDate" [ngModelOptions]="{standalone: true}" 
+                              placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true"
+                              yearRange="2000:2050"></p-calendar>
+                          </div>
+                      </div>
+  
+                  </div>
+                  <div class="col-sm-6">
+                      <div class="form-group">
+                          <label class="platform-label">To</label>
+                          <div>
+                              <img src="../assets/img/microinteraction/calendar.svg" class="calendar-img">
+                              <p-calendar class="interaction-calendar calendar-resize-workspace disableDateMIN_MAX" [(ngModel)]="toDate" [ngModelOptions]="{standalone: true}" 
+                              placeholder="MM/DD/YYYY" [monthNavigator]="true" [yearNavigator]="true"
+                              yearRange="2000:2050"></p-calendar>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+                <div class="form-group" style="vertical-align: middle;display: flex;">
+                    <label class="platform-label mr-3">Active :</label>
+                    <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="aiMl_model.predictionEnabled" [ngModelOptions]="{standalone: true}">
+                    </p-inputSwitch>
+                    <label class="platform-label">{{aiMl_model.predictionEnabled == true ? 'On' : 'Off'}}</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer pt-3 pb-3 justify-content-end">
+            <div class="save-cancel" style="margin:0;">
+                <button type="button" class="btn-cancel mr-3" data-dismiss="modal" (click)="cancel">Cancel</button>
+                <button type="button" class="btn-save mr-0" *ngIf="createEdit == 'create'&& global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true" (click)="saveModel('create')">Save</button>
+                <button type="button" class="btn-save mr-0" *ngIf="createEdit == 'generate'&& global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true" (click)="saveModel('generate')">Save</button>
+                <button type="button" class="btn-save mr-0" *ngIf="createEdit == 'edit'&& global.rolePermissions.evaluate.ai_ml_Scoring.isViewEdit == true" (click)="updateModel()">Update</button>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!-- Delete confirm box in themes -->
+<div class="modal" id="deleteModal" data-backdrop="static">
+    <div class="modal-dialog">
+      <div class="modal-content delete-popup">
+  
+        <!-- Modal Header -->
+        <div class="modal-header" style="border-bottom: 0;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <div class="delete-popup-content">
+            <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+                margin-right: 20px;">
+            <h5>Are you sure you want to delete this AI/ML model?</h5>
+          </div>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer " style="border-top: 0px;">
+          <div style="margin-left: 3.6%;">
+            <button type="button" class="btn-pop-del" data-dismiss="modal">Delete model</button>
+            <button type="button" class="btn-pop-cancel" data-dismiss="modal">Cancel</button>
+            
+          </div>
+        </div>
+  
+      </div>
+    </div>
+</div>

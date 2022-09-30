@@ -1,0 +1,10 @@
+<!-- <p>my-reports works!</p> -->
+<!-- <div class="top-header">
+    <div class="col">
+        <h2 class="header-title">My Reports</h2>
+    </div>
+</div> -->
+<div [hidden]="Subscription">
+    <iframe width="100%" id="IsDashboard" height="800px" frameBorder="0"
+        [src]="[myReports['Mstr_new_my-reports']] | safe"></iframe>
+</div>

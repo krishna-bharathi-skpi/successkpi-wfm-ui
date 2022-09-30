@@ -1,0 +1,248 @@
+<!-- <p>help works!</p> -->
+<div class="help-full-section">
+    <div class="help-left">
+        <div class="page-title"> 
+            <h2>Playbooks help</h2>
+        </div>
+        <div class="help-content">
+            <p>Welcome to Playbook Builder™ the highlight of SuccessKPI.  The Playbooks area of the SuccessKPI platform is designed to give you a powerful tool to automate quality management, analytics, performance improvement and performance management.
+                <br><br>
+                From Playbook Builder™, you can navigate back to Home, Analytics, Evaluations, and Settings with the top menu. To work within the Playbooks area, use the side navigation for My Playbooks, Topics, Themes, Actions, Redactions, Custom phrases, and this Help tab. You can collapse the side navigation with the side arrow at the top of the gray panel.  
+            </p>
+        </div>
+        <div style="margin-bottom: 24px;">
+          <div class="help-title">My Playbooks</div>
+          <div class="help-content" style="margin: 16px 0;">
+              <p>Playbooks allow you to put a powerful combination of AI and ML to work for you through an easy to use and business-user-friendly interface.  You can create two types of playbooks:</p>
+              <div class="help-list" style="margin-left: 5%;">
+                <ul style="padding-left: 15px;">
+                    <li><span style="font-weight: 600;">Passive Plays:  </span>&nbsp;You can have passive plays which look for topics, sentiment, and themes. The data then appears in the enterprise data warehouse and analytics layer.</li>
+                    <li><span style="font-weight: 600;">Action Playbooks:</span>&nbsp;And you can create powerful action-oriented playbooks that take actions such as send emails or SMS messages or kick off powerful actions through RESTful web services.</li>
+                    
+                </ul>  
+            </div>
+             <p>Within action playbooks, you can establish sets of conditions that take place in your company’s customer interactions and the actions to take when these conditions occur.   You can:</p>
+             <div class="help-list" style="margin-left: 5%;">
+                <ul style="padding-left: 15px;">
+                    <li>Select key input areas (Topics, Themes, Sentiment, and Metrics)</li>
+                    <li>Develop logic (Any, All, customer Visual Basic based logic) and,</li>
+                    <li>Choose the actions (Email, SMS, REST, Lambda, or Evaluate).</li>
+                    
+                </ul>  
+            </div>
+            <p>Playbooks are the building blocks that help you put analysis into action. Playbooks are probably best understood after building up all of the elements first. Please read through the input areas on Topics, Themes, Actions, Redactions, and Custom phrases, and then we will bring it all together and build a playbook together!</p>
+          </div>
+          <!-- <div class="help-eg">
+              <h4>Example scenario</h4>
+          </div>
+          <div class="help-playbook-condition">
+              <h4>Conditions (when these occur)</h4>
+              <div style="display: flex;">
+                  <div class="help-num-div">1</div>
+                  <div class=".help-playbook-condition-content">
+                      <p>Caller Sentiment is Negative</p>
+                  </div>
+              </div>
+              <div style="display: flex;">
+                    <div class="help-num-div">2 </div>
+                    <div class=".help-playbook-condition-content">
+                        <p>AHT is less than 2 minutes</p>
+                    </div>
+              </div>
+              <div style="display: flex;">
+                    <div class="help-num-div">3</div>
+                    <div class=".help-playbook-condition-content">
+                        <p>Cancellation Topic was detected</p>
+                    </div>
+              </div>
+          </div> -->
+
+          <div>
+                <div class="help-title">Topics</div>
+                <div class="help-content" style="margin: 16px 0;">
+                        <p>Topics are specific groups of key phrases you want the platform to look for in the recorded text and speech conversations. To set up a topic, you can take one from the library or simply click on Create a Topic. There you enter the Topic details editor which allows you to create the topic name, to give it a Description and to select what channel you want the AI engines to listen on 
+                            (Agent, Customer, All).  The second step is to identify any Tags that you want to use to join or combine this topic with other topics in analysis or search at a later time.  Now you are ready to build your topic up by adding keywords or key phrases.  As an example, if you are building a Topic around “Politeness” you may want to add “Excuse me”, “Sir,” or “Thank you”.  For a “Cancellation” topic you might want to add: “I want to cancel”, “Please close my account,” or “Cancel subscription.”  The great thing is the SuccessKPI machine learning engines will go to work for you looking for these key phrases and find adjacent and related key phrases.</p>
+                </div>
+                <!-- <div class="help-eg">
+                        <h4>Build Playbooks around:</h4>
+                </div> -->
+                <!-- <div class="help-list">
+                    <ul style="padding-left: 15px;width: 200px;">
+                        <li>Topics</li>
+                        <li>Theme Scores</li>
+                        <li>Sentiment</li>
+                        <li>Conversation Metadata and Metrics</li> 
+                    </ul>
+                    <ul>
+                            <li>Entity</li>
+                            <li>Entity Sentiment </li>
+                            <li>Conversation Sentiment </li>
+        
+                    </ul>
+                </div> -->
+          </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <div class="help-title">Themes</div>
+            <div class="help-content" style="margin: 16px 0;">
+                <p> 
+                    The tiles and cards in the themes section work very similar to Topics.  Themes allow you to take multiple topics and combine them with a scored weighting system.  Again, you can take the themes from the library or create them on your own.  To create a theme select Create a Theme.  Then create a theme name and description and begin selecting topics and setting scores.  Ultimately you can combine as many topics and create your own weighting system. Later in playbooks and in the analytics tab you can use these scores and weights to drive complex conditions.  For each topic you choose you can create a score that you want the theme to be incremented by when this topic occurs.
+                </p>
+            </div>
+            <!-- <div class="help-eg">
+                <h4>Example </h4>
+                <p>For the Topic “Cancellation,” — enter Keyphrases such as: </p>
+                <ul style="padding-left: 15px;">
+                    <li>I want to cancel</li>
+                    <li>Please close my account</li>
+                    <li>Cancel services</li>
+                </ul>
+                <p>SuccessKPI’s AI engines will look for these Keyphrases when inspecting conversations. </p>
+            </div> -->
+        </div>
+        
+        
+
+        <div style="margin-bottom: 24px;">
+            <div class="help-title">Actions</div>
+            <div class="help-content" style="margin: 16px 0;">
+                <p> Actions are power packed.   In this area of Playbook we are just creating the actions that will be used later in our playbooks and building up an inventory of actions which can be used by any playbook or by multiple playbooks.  Create actions will be triggered by particular logic condition that you set up in playbooks. Action types include:</p>      
+            </div>
+            <div class="help-eg" style="margin-left: 5%;">
+                <ul style="padding-left: 15px;">
+                    <li>Send an email (with Smart variables)</li>
+                    <li>Send an SMS message</li>
+                    <li>Send CX interactions to evaluation for coaching and quality management</li>
+                    <li>Invoke an HTTPS REST: kick off a web service like creating a ticket in Salesforce</li>
+                    <li>Invoke an AWS Lambda function</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <div class="help-title">Redactions</div> 
+            <div class="help-content" style="margin: 16px 0;">
+                <p> Redaction service carries an additional per minute fee and applies to all calls in your system.  When turned on, the system carefully looks for Name, Email, Social Security number, credit card number and phone number and over-writes these data elements with PII or PHI in the transcription stream. </p>      
+            </div>
+            <div class="help-eg" style="margin-left: 5%;">
+                    <ul style="padding-left: 15px;width: 275px;">
+                        <li>Email addresses</li>
+                        <li> Telephone numbers</li>
+                        <li>Social security numbers</li>
+                        <li> Credit card numbers</li>
+                    </ul>
+             </div>
+        </div>
+
+        <div>
+            <div class="help-title">Custom phrases</div> 
+            <div class="help-content" style="margin: 16px 0;">
+                 <p> In many cases certain keywords such as brand names or proper names are misunderstood by the speech engines.  Custom phrases allows you to take certain homonyms, synonyms and proper names and ensure they are pronounced correctly by the system based on your business requirements. As an example: Suppose you want Duke, Duke University, or Duke Blue Devils and the Blue Devils to all be understood as one concept, you could have all of those aggregated in one key word.  Or maybe you want to tell the platform that “Jannsen” might sound like JAN-sun and Yon-sun or Yan-sen. And get it to put all such pronunciations under the word Jannsen.</p>      
+                 <p>You could also have words that occur in your conversations which have a double meaning, but only one practical meaning in the lexicon of your business:</p>
+                 <div class="help-list" style="margin-left: 5%;">
+                    <ul style="padding-left: 15px;">
+                        <li>Tell the platform that what sounds like “genesis” is actually Genesys the company and not the book of the bible.</li>
+                    </ul>  
+                </div>
+                <p>Maybe business has complex vocabularies such as drug names or medical keywords and phrases:</p>
+                <div class="help-list" style="margin-left: 5%;">
+                    <ul style="padding-left: 15px;">
+                        <li>Tell the platform how to understand “Rosuvastatin” and you want to allow for multiple pronunciations—even mispronunciations.</li>
+                    </ul>  
+                </div>
+            </div>
+            <!-- <div class="help-eg">
+                    <h4>Examples </h4>
+                    <div class="custom-list">
+                    <p>You want UNC, Chapel Hill and UNC Chapel Hill to all be understood as one concept:
+                    </p>
+                    <ul style="padding-left: 15px;"> 
+                        <li>Group similar keywords/items together to be used in the word cloud and other analytics </li>
+                    </ul>
+                    </div>
+                    <div class="custom-list">
+                        <p>You want UNC, Chapel Hill and UNC Chapel Hill to all be understood as one concept:
+                        </p>
+                        <ul  style="padding-left: 15px;">
+                            <li>Tell the platform that “Jannsen” might sound like JAN-sun and Yon-sun or Jan-sen</li>
+                        </ul>
+                    </div>
+                    <div class="custom-list">
+                        <p>Words that occur in your conversations usually have a double meaning, but only one practical meaning in the lexicon of your business:</p>
+                        <ul  style="padding-left: 15px;">
+                            <li>Tell the platform that what sounds like “genesis” is actually Genesys the company</li>
+                        </ul>
+                    </div>
+                    <div class="custom-list"> 
+                        <p>Your business has complex vocabularies such as drug names or medical keywords  and phrases:</p>
+                        <ul  style="padding-left: 15px;">
+                            <li>Tell the platform how to understand “Rosuvastatin”</li>
+                        </ul>
+                    </div>
+            </div> -->
+        </div>
+        
+        <div style="margin-bottom: 24px;">
+            <div class="help-title">My Playbooks:</div> 
+            <div class="help-content" style="margin: 16px 0;">
+                <p> Let’s pull it all together in examine a playbook example!  </p>   
+                <p>You can take playbooks out of the library (by clicking on Playbook templates) or you can create one from scratch by clicking on “Create a playbook.”</p> 
+                <p>Let’s say you wanted to write a playbook that both sent a call to an evaluation room and logged a case in SFDC every time a call came in with negative sentiment, that contained the topic “cancellation” and had a theme of “negative agent behavior.”  </p>  
+                <p>Assuming you are creating this playbook from scratch, first click on “Create Playbook.”</p>
+            </div>
+            <div class="help-eg" style="margin-left: 8%;">
+                    <ol style="padding-left: 15px;">
+                        <li>
+                             Give the Playbook a name and a brief description.
+                            <ul style="list-style-type: square;">
+                                <li>In this case we might call the play, “Agent Performance Escalation” and describe in the description field that we are looking for “cancellation calls with poor agent behavior and negative sentiment”</li>
+                            </ul>
+                        </li>
+                        <li> 
+                            Add conditions.   You can add as many as you like and come back and add conditions later as well.  First select a category (Topic, Theme, Sentiment or Metric (coming soon!).  
+                            <ul style="list-style-type: square;">
+                                <li>For Topic, select the name of the topic you created in the Topics page, and then pick equals or not equals to set this topic into a condition status</li>
+                                <li>For Theme, select the theme, pick greater than or less than, and then pick a score as threshold for which the theme is to be considered “flagged”</li>
+                                <li>For Sentiment, pick equals or not equals and then whether you want to flag for positive, negative, or neutral.</li>
+                                <li>
+                                    In this example, we would set:
+                                    <ul style="list-style-type: square;">
+                                        <li>Topic Equals: “Cancellation”</li>
+                                        <li>Sentiment Equals: “Negative” and</li>
+                                        <li>Theme, “Negative Agent Behavior”, Greater than, 150 assuming that score makes sense in context of this theme.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            Choose Logic.  Now select whether you want to have the action(s) to occur when ALL of these conditions are true, ANY of these conditions or true or if you want to build custom logic.
+                            <ul style="list-style-type: square;">
+                                <li>If you use custom logic you will get a field in which to enter your sequence by referring to the conditions by their number above</li>
+                                <li>Example:  1 and 2 or 3 would be ((1AND2)OR3)</li>
+                                <li>In this example we would set this equal to “All conditions occur”</li>
+                            </ul>
+                        </li>
+                        <li> Select Actions.  Finally, you select the Action(s) you want to take. The Actions must be defined in the Action tab on the left. Once created, actions can be used and reused across playbooks. You can take multiple actions in one play.  Actions of course can contain variables.
+                            <ul style="list-style-type: square;">
+                                <li>In this example, we could set two actions perhaps: 1) Email to supervisor with Subject: Negative Cancellation call and 2) Send to Evaluation Room for later review.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>That’s it!  We have built our first playbook.  Calls coming in after subsequently that meet these criteria will send an email and push a call to the evaluation room and the related data and logs will also be pushed to the analytics layer for further dashboards and visualizations to be developed based on this data</p>
+             </div>
+        </div>
+
+
+    </div>
+
+    <div class="help-right">
+        <div class="tutorial-title" style="margin-top:100px">
+            <h3>Video tutorial</h3>
+            <p>How to use Playbooks</p>
+        </div>
+        <div class="tutorial">
+                 <iframe width="425px" height="239px" src="https://www.youtube.com/embed/BIQWlGsYQts" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>

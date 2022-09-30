@@ -1,0 +1,535 @@
+<!-- <p>themes works!</p> -->
+<!-- Toast Message -->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+
+<!-- themes -->
+<div style="margin: 0px 200px 0 32px; " *ngIf="createOrEdit_theme =='list';">
+  <div class="top-header" style="justify-content: space-between;">
+    <h2 class="header-title">{{global.language?.playbooks?.themes?.title}}</h2>
+      <div style="display: flex;">
+        <div class="ipt-theme">
+          <i class="fa fa-search" aria-hidden="true" style="
+                      position: relative;
+                      left: 5px;
+                      opacity: 0.6;
+                      top: 29px;
+                     "></i>
+          <input type="text" [(ngModel)]="searchThemeName" (ngModelChange)="searchTheme()"
+            class="inp-searchs form-control" placeholder="{{global.language?.playbooks?.themes?.search}}">
+        </div>
+        <div class="" *ngIf = "global.rolePermissions.playbooks.themes.isViewEdit == true">
+          <!--btn-create-->
+          <!--(click)="createOrEdit_theme='create'"-->
+          <button type="button" class="create-theme"
+            (click)="createNewTheme()">{{global.language?.playbooks?.themes?.create }}</button>
+        </div>
+      </div>
+      <!-- <div class="col-lg-8"> 
+                  <form>
+                      <div class="row" >
+                          <div class="col-sm-2"></div>
+                          <div class="col-sm-7">
+                              <i class="fa fa-search" aria-hidden="true" style="z-index: 99999;
+                              position: absolute;
+                              left: 22px;
+                              opacity: 0.6;
+                              top: 10px;"></i>
+                          <input type="text" class="inp-search form-control" placeholder="Find a Theme...">
+                          </div>
+                          
+                          <div class="col-sm-3 " style="text-align: right; padding-left: 0;">
+                              <button type="button" class="btn-create">Create a Theme</button>
+                          </div>
+                      </div>
+                  </form> 
+                </div> -->
+  </div>
+
+  <!-- Card section -->
+  <section style="margin: 10px 0;">
+    <div class="row" *ngIf = "global.rolePermissions.playbooks.themes.isViewEdit == true || global.rolePermissions.playbooks.themes.isView == true">
+      <div *ngFor="let themeCard of cards " class="col-sm-6 col-lg-4 theme-cards">
+        <div class="card ">
+          <!-- <div class="tiles-topics">
+                      <img src="../assets/img/TilePatterns/Pattern_Themes.png">
+                  </div> -->
+          <div class="card-body theme-cards-body">
+            <div class="row">
+              <div class="card-title col-sm-7 module line-clamp" (click)="editTheme(themeCard)">
+                {{themeCard.strategyName}}</div>
+              <div class="col-sm-5" style="padding-left: 0;display: flex;justify-content: flex-end;">
+                <span class="on-off-toggle"
+                  style="position: inherit;top:0;">{{themeCard.active == true ? global.language?.playbooks?.myPlaybooks?.on : global.language?.playbooks?.myPlaybooks?.off}}</span>
+                <p-inputSwitch [(ngModel)]="themeCard.active" (onChange)="toggleTheme(themeCard)"></p-inputSwitch>
+              </div>
+            </div>
+
+            <div class="card-desc module line-clamp-desc" (click)="editTheme(themeCard)">
+              {{themeCard.strategyDescription}}</div>
+          </div>
+
+        </div>
+      </div>
+      <!--  -->
+      <!-- <div class="col-sm-6 col-lg-4 topic-cards">
+              <div class="card " >
+                <div class="card-body ">
+                  <div class="row" >
+                    <div class="card-title col-sm-9">Agent Performance</div>
+                    <div class="col-sm-2" style="text-align: right;">
+                     <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+                    </div>
+                  </div>  
+                  
+                  <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+                </div>
+              
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 topic-cards">
+              <div class="card " >
+                <div class="card-body ">
+                  <div class="row" >
+                    <div class="card-title col-sm-9">Agent Performance</div>
+                    <div class="col-sm-2" style="text-align: right;">
+                     <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+                    </div>
+                  </div>  
+                  
+                  <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+                </div>
+              
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 topic-cards">
+              <div class="card " >
+                <div class="card-body ">
+                  <div class="row" >
+                    <div class="card-title col-sm-9">Agent Performance</div>
+                    <div class="col-sm-2" style="text-align: right;">
+                     <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+                    </div>
+                  </div>  
+                  
+                  <div class="card-desc">Description of the topic could be as long as two lines but no longer.</div>
+                </div>
+              
+              </div>
+            </div> -->
+    </div>
+  </section>
+</div>
+
+<!-- Edit Theme -->
+<form [formGroup]="themeEditForm" (ngSubmit)="onSubmitEditTheme()" *ngIf="createOrEdit_theme =='edit';">
+  <div style="margin: 36px 176px 0 32px;min-height: 100vh;">
+    <div class="edit-header">
+      <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb">
+          <li><label class="bread-crumb-label1"
+              (click)="createCancel()">{{global.language?.playbooks?.themes?.Themecreate?.breadcrumb}}</label></li>
+        </ul>
+      </div>
+      <div class="row" style="margin-bottom: 2%">
+        <div class="col-sm-10">
+          <div class="page-title">
+            <h2>{{themeModel.strategyName}}</h2>
+          </div>
+        </div>
+        <div class="col-sm-2" style="padding-left: 0;" *ngIf = "global.rolePermissions.playbooks.themes.isViewEdit == true">
+          <button type="button" data-toggle="modal" data-target="#myModal" class="form-control btn-delete"
+            style="float:right;width: 123px;">{{global.language?.playbooks?.themes?.EditTheme?.deleteBtn}}</button>
+        </div>
+      </div>
+    </div>
+    <div class="edit-theme-ipt">
+      <h5>{{global.language?.playbooks?.themes?.Themecreate?.themeDesc}}</h5>
+      <!-- <form> -->
+      <div class="row" style="margin-top: 30px;">
+
+        <div class="col-sm-6 ">
+          <div class="row">
+
+            <div class="col-sm-12" style="margin-bottom: 4px;">
+              <span class="label-name">{{global.language?.playbooks?.themes?.Themecreate?.themeName}}</span>
+              <span class="label-char" style="float: right;">44
+                {{global.language?.playbooks?.themes?.Themecreate?.characters}}</span>
+            </div>
+
+            <div class="col-sm-12">
+              <div class="form-group">
+                <input type="text" id="themenameid" class="form-control ipt-edit" maxlength="44" autocomplete="off"
+                  [(ngModel)]="themeModel.strategyName"  formControlName="editThemeName"
+                  placeholder="{{global.language?.playbooks?.themes?.Themecreate?.themeName}}" style="height: 56px;" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)" 
+                  [ngClass]="{ 'is-invalid ': (submittedThemeEdit || validationThemeEdit.editThemeName.touched) && validationThemeEdit.editThemeName.errors }">
+                <div
+                  *ngIf="(submittedThemeEdit || validationThemeEdit.editThemeName.touched) && validationThemeEdit.editThemeName.errors "
+                  class="is-invalid  ">
+                  <div class="errormsg-topic is-invalid"
+                    *ngIf="(submittedThemeEdit ||validationThemeEdit.editThemeName.touched) && validationThemeEdit.editThemeName.errors.required">
+                    {{global.language?.playbooks?.themes?.Themecreate?.themeError}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 ">
+          <div class="row">
+            <div class="col-sm-12" style="margin-bottom: 4px;">
+              <span class="label-name">{{global.language?.playbooks?.themes?.Themecreate?.themeDescription}}</span>
+              <span class="label-char" style="float: right;">70
+                {{global.language?.playbooks?.themes?.Themecreate?.characters}}</span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" class="form-control ipt-edit" maxlength="70" autocomplete="off"  
+                [ngModelOptions]="{standalone: true}" [(ngModel)]="themeModel.strategyDescription" name="name" 
+                placeholder="{{global.language?.playbooks?.themes?.Themecreate?.themeDescription}}"
+                style="height: 56px;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- </form> -->
+
+    </div>
+    <div class="edit-theme-topic">
+      <h5 style="margin: 32px 0;">
+        {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicDes}}
+      </h5>
+      <div class="row">
+        <div style="padding-left: 16px;">
+          <!--class="col-sm-6"-->
+          <div>
+            <!-- edit theme topic  & score heading -->
+            <!-- <div  class=""> -->
+            <div style="display: flex;margin-bottom: 16px;">
+              <div>
+                <h6 style="margin: 0;" class="topic-subtitle">
+                  {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicTitle}}</h6>
+              </div>
+              <div style="margin-left: 25%;margin-right: 6%;white-space: nowrap;">
+                <h6 style="margin: 0;" class="topic-subtitle">
+                  {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.defaultScore}}</h6>
+              </div>
+              <div style="display: flex;">
+                <h6 style="margin: 0;padding-right: 12px;" class="topic-subtitle">
+                  {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.score}}</h6>
+                <img src="../assets/img/microinteraction/helptext.svg"
+                  tooltip="{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.tooltip}}" placement="right">
+              </div>
+            </div>
+          </div>
+          <!-- edit theme topic and score inputs -->
+          <!-- <form> -->
+          <div *ngFor="let edit of themeModel.topicScore; let i=index">
+            <div style="display: flex;">
+              <!--class="row"-->
+              <div>
+                <!--class="col-sm-7"-->
+                <div class="form-group">
+                  <p-dropdown class="theme-select dplable" [options]="topicList" [(ngModel)]="edit.topicId" filter="true"
+                    [ngModelOptions]="{standalone: true}"
+                    placeholder="{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.select}}"></p-dropdown>
+                </div>
+              </div>
+              <!-- <div class="col-sm-1" style="padding: 0;"></div> -->
+              <div style="text-align: right;padding: 0;display: flex;margin-left: 26px;">
+                <div class="mt-1" style="padding-top: 3px;">
+                  <p-checkbox class="check-box-theme"
+                    [(ngModel)]="edit.isDefaultScore" [ngModelOptions]="{standalone: true}" binary="false">
+                  </p-checkbox>
+                </div>
+                <!-- class="col-sm-3"-->
+                <div class="form-group"  style="margin-left: 8px;"  [ngStyle]="{'padding': !edit.isDefaultScore ? ' 0 50px':'0 0px'}" >
+                  <input type="number" *ngIf="edit.isDefaultScore" autocomplete="off"  [ngModelOptions]="{standalone: true}"
+                    class="score-theme form-control" [(ngModel)]="edit.defaultScore" max="100">
+                </div>
+                <div class="form-group" style="margin-left: 35px;" >
+                  <input type="number" autocomplete="off" [ngModelOptions]="{standalone: true}"
+                    class="score-theme form-control" [(ngModel)]="edit.score" max="100">
+                </div>
+              </div>
+              <div style="margin-left: 25px;">
+                <!-- class="col-sm-1"-->
+                <!-- <div class="form-group"> -->
+                <button type="button" class="btn-delete-icon" (click)="removeTopicEdit(i)">
+                  <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 8px;">
+                </button>
+                <!-- </div> -->
+              </div>
+              <div style="margin-top: 7px;">
+                <p-checkbox class="check-box-theme"
+                  label="{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.OccTopic}}"
+                  [(ngModel)]="edit.isOccurrence" [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+              </div>
+            </div>
+            <!-- </div> -->
+            <!-- </form> -->
+          </div>
+          <span *ngIf="validationError.topicError!=null && submittedThemeEdit" class="errormsg-topic"
+            style=" position: relative; top: -14px;">{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicError}}</span>
+
+          <!-- Add Topic button -->
+          <div>
+            <button type="button" class="add-btn" style="margin-bottom: 24px;" (click)="addTopicEdit()">
+              <img src="../assets/img/microinteraction/add_item.svg">
+              <span class="btn-txt-add">{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.add}}</span>
+            </button>
+          </div>
+          <!-- save -cancel buttons -->
+          <div class="save-cancel common-bottom">
+            <!-- <form>  -->
+            <div class="row">
+              <div class="col-sm-5" *ngIf = "global.rolePermissions.playbooks.themes.isViewEdit == true">
+                <div class="form-group">
+                  <button type="button" class="btn-save"
+                  [disabled]="loading" (click)="updateTheme()">{{global.language?.playbooks?.themes?.Themecreate?.saveCancel?.save}}</button>
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <button type="button" class="btn-cancel"
+                    (click)="editCancel()">{{global.language?.playbooks?.themes?.Themecreate?.saveCancel?.cancel}}</button>
+                </div>
+              </div>
+
+            </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>
+
+<!-- Create Theme Page -->
+
+<form [formGroup]="themeCreateForm" *ngIf="createOrEdit_theme =='create';">
+  <div style="margin: 36px 176px 0 32px;min-height: 100vh;">
+    <div class="edit-header">
+      <div>
+        <img src="../../../../assets/img/back.svg">
+        <ul class="breadcrumb">
+          <li><label class="bread-crumb-label1" style="cursor: pointer;"
+              (click)="editCancel()">{{global.language?.playbooks?.themes?.Themecreate?.breadcrumb}} </label></li>
+        </ul>
+      </div>
+      <div class="row" style="margin-bottom: 2%">
+        <div class="col-lg-9 col-sm-4">
+          <div class="page-title">
+            <h2>{{global.language?.playbooks?.themes?.Themecreate?.createTilte}} </h2>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="edit-theme-ipt">
+      <h5>{{global.language?.playbooks?.themes?.Themecreate?.themeDesc}} </h5>
+      <!-- <form> -->
+      <div class="row" style="margin-top: 30px;">
+
+        <div class="col-sm-6">
+          <div class="row">
+            <div class="col-sm-12" style="margin-bottom: 4px;">
+              <span class="label-name">{{global.language?.playbooks?.themes?.Themecreate?.themeName}} </span>
+              <span class="label-char" style="float: right;">44
+                {{global.language?.playbooks?.themes?.Themecreate?.characters}} </span>
+            </div>
+            <div class="col-sm-12">
+              <div class="form-group">
+                <input type="text" id="themenameid" class="form-control ipt-edit" maxlength="44" [(ngModel)]="themeModel.strategyName"  (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)" 
+                  formControlName="createThemeName" autocomplete="off"
+                  placeholder="{{global.language?.playbooks?.themes?.Themecreate?.themeName}}" style="height: 56px;"
+                  [ngClass]="{ 'is-invalid ': (submittedThemeCreate || validationThemeCreate.createThemeName.touched) && validationThemeCreate.createThemeName.errors }">
+                <div
+                  *ngIf="(submittedThemeCreate || validationThemeCreate.createThemeName.touched) && validationThemeCreate.createThemeName.errors "
+                  class="is-invalid  ">
+                  <div class="errormsg-topic is-invalid"
+                    *ngIf="(submittedThemeCreate ||validationThemeCreate.createThemeName.touched) && validationThemeCreate.createThemeName.errors.required">
+                    {{global.language?.playbooks?.themes?.Themecreate?.themeError}}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="col-sm-6 ">
+          <div class="row">
+            <div class="col-sm-12" style="margin-bottom: 4px;">
+              <span class="label-name">{{global.language?.playbooks?.themes?.Themecreate?.themeDescription}} </span>
+              <span class="label-char" style="float: right;">70
+                {{global.language?.playbooks?.themes?.Themecreate?.characters}} </span>
+            </div>
+            <div class="col-sm-12">
+              <input type="text" class="form-control ipt-edit" maxlength="70"   
+                [(ngModel)]="themeModel.strategyDescription" autocomplete="off" [ngModelOptions]="{standalone: true}"
+                name="name" placeholder="{{global.language?.playbooks?.themes?.Themecreate?.themeDescription}}"
+                style="height: 56px;">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- </form> -->
+
+    </div>
+    <div class="edit-theme-topic">
+      <h5 style="margin: 32px 0;">
+        {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicDes}}
+      </h5>
+      <div class="row">
+        <div style="padding-left: 16px;">
+          <!-- <div> -->
+            <!-- edit theme topic  & score heading -->
+            <div class="">
+              <!-- <div >
+                                <h6 style="margin: 0;" class="topic-subtitle">Topics</h6>
+                        </div>
+                        <div  style="display: flex;justify-content: flex-end;">
+                          <h6 style="margin: 0;padding-right: 12px;" class="topic-subtitle">Score</h6>
+                                <img src="../assets/img/microinteraction/helptext.svg" 
+                                tooltip="Assign a numerical weight to the occurrence of this topic in conversations.
+                                You can assign a score within a range anywhere between -100 and +100 " placement="right">
+                        </div> -->
+              <div style="display: flex;margin-bottom: 16px;">
+                <div>
+                  <h6 style="margin: 0;" class="topic-subtitle">
+                    {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicTitle}}</h6>
+                </div>
+                <div style="margin-left: 25%;margin-right: 6%;">
+                  <h6 style="margin: 0;" class="topic-subtitle">
+                    {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.defaultScore}}</h6>
+                </div>
+                <div style="display: flex;">
+                  <h6 style="margin: 0;padding-right: 12px;" class="topic-subtitle">
+                    {{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.score}}</h6>
+                  <img src="../assets/img/microinteraction/helptext.svg"
+                    tooltip="{{global.language?.playbooks.themes?.Themecreate?.TopicScore?.tooltip}}" placement="right">
+                </div>
+              </div>
+            </div>
+            <!-- edit theme topic and score inputs -->
+            <!-- <form> -->
+            <!-- <div *ngFor="let createTopic of createTopicInputValues; let j=index"> -->
+            <div *ngFor="let createTopic of themeModel.topicScore; let j=index">
+              <div style="display: flex;">
+                <div style="padding-right: 0px;">
+                  <div class="form-group">
+                    <p-dropdown class="theme-select dplable" [options]="topicList" [(ngModel)]="createTopic.topicId"
+                      filter="true"
+                      placeholder="{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.select}}"
+                      [ngModelOptions]="{standalone: true}"></p-dropdown>
+                  </div>
+                </div>
+                
+                <div style="display:flex;text-align: right;padding: 0;margin-left: 26px;">
+                <div class="mt-1" style="padding-top: 3px;">
+                  <p-checkbox class="check-box-theme"
+                    [(ngModel)]="createTopic.isDefaultScore" [ngModelOptions]="{standalone: true}" binary="false">
+                  </p-checkbox>
+                </div>
+                  <div class="form-group" style="margin-left: 8px;"  [ngStyle]="{'padding':!createTopic.isDefaultScore ? ' 0 50px':'0 0px'}">
+                    <input type="number" *ngIf="createTopic.isDefaultScore" autocomplete="off" class="score-theme form-control" max="100"
+                      [(ngModel)]="createTopic.defaultScore" [ngModelOptions]="{standalone:true}">
+                  </div>
+                  <div class="form-group" style="margin-left: 35px;">
+                    <input type="number" autocomplete="off" class="score-theme form-control" max="100"
+                      [(ngModel)]="createTopic.score" [ngModelOptions]="{standalone:true}">
+                  </div>
+                </div>
+                <div style="margin-left: 25px;">
+                  <!-- class="col-sm-1"-->
+                  <button type="button" class="btn-delete-icon" (click)="removeTopicCreate(j)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="margin-left: -13px;margin-top: 8px;">
+                  </button>
+                </div>
+                <div style="margin-top: 7px;">
+                  <p-checkbox class="check-box-theme"
+                    label="{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.OccTopic}}"
+                    [(ngModel)]="createTopic.isOccurrence" [ngModelOptions]="{standalone: true}" binary="false">
+                  </p-checkbox>
+                </div>
+              </div>
+            </div>
+            <!-- </form> -->
+          <!-- </div> -->
+          <span *ngIf="validationError.topicError!=null && submittedThemeCreate" class="errormsg-topic"
+            style=" position: relative; top: -14px;">{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.topicError}}</span>
+
+          <!-- Add Topic button -->
+          <div>
+            <!--AddNewTopicUpdate()-->
+            <button type="button" class="add-btn" style="margin-bottom: 24px;" (click)="addTopicCreate()">
+              <img src="../assets/img/microinteraction/add_item.svg">
+              <span class="btn-txt-add">{{global.language?.playbooks?.themes?.Themecreate?.TopicScore?.add}}</span>
+            </button>
+          </div>
+          <!-- save -cancel buttons -->
+          <div class="save-cancel common-bottom">
+            <!-- <form>  -->
+            <div class="row">
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <button type="button" class="btn-save"
+                  [disabled]="loading" (click)="createTheme()">{{global.language?.playbooks?.themes?.Themecreate?.saveCancel?.save}}</button>
+                </div>
+              </div>
+              <div class="col-sm-5">
+                <div class="form-group">
+                  <button type="button" class="btn-cancel"
+                    (click)="createCancel()">{{global.language?.playbooks?.themes?.Themecreate?.saveCancel?.cancel}}</button>
+                </div>
+              </div>
+
+            </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</form>
+
+
+<!-- Delete confirm box in themes -->
+<div class="modal" id="myModal" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content delete-popup">
+
+      <!-- Modal Header -->
+      <div class="modal-header" style="border-bottom: 0;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="delete-popup-content">
+          <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+              margin-right: 20px;">
+          <h5>{{global.language?.playbooks?.themes?.EditTheme?.popupForm?.title}}</h5>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer " style="border-top: 0px;">
+        <div style="margin-left: 11.6%;">
+          <button type="button" class="btn-pop-del" data-dismiss="modal"
+            (click)="deleteTheme()">{{global.language?.playbooks?.themes?.EditTheme?.popupForm?.deletebtn}}</button>
+          <button type="button" class="btn-pop-cancel"
+            data-dismiss="modal">{{global.language?.playbooks?.themes?.EditTheme?.popupForm?.cancelbtn}}</button>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

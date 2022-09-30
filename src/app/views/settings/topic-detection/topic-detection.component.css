@@ -1,0 +1,9 @@
+.complete {
+    color: #1d8102!important;
+    font-size: 15px;
+}
+
+.failed {
+    color: #ff0707!important;
+    font-size: 15px;
+}

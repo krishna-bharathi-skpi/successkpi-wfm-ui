@@ -1,0 +1,62 @@
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff !important;
+}
+thead tr{
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+thead tr th{
+    color: #3A3E50 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+}
+tbody tr td{
+  color: #3A3E50 !important;
+  font-size: 14px !important;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+.ui-table .ui-table-tbody > tr> td{
+    padding: .75rem !important;
+}
+.table-header-style{
+    padding: .4rem !important;
+    color: #3a3e50!important;
+    font-size: 12px!important;
+    letter-spacing: .3px !important;
+}
+
+.table-data-style{
+    padding: .4rem !important;
+    font-size: 12px!important;
+    letter-spacing: .3px !important;
+}
+
+.status-card{
+    padding: 12px 20px;
+    height: 60px;
+    justify-content: space-around;
+}
+.status-style{
+    padding: 6px 22px;
+    
+    font-weight: 500;
+    border: 0px;
+    border-radius: 4px;
+    letter-spacing: 0.6px;
+}
+.status-online-bg{
+    background: #74e652;
+    color: #2121f7;
+}
+.status-interacting-bg{
+    background: #012169;
+    color: #fff;
+}
+.status-break-bg{
+    background: #b1b1b1;
+    color:#000
+}

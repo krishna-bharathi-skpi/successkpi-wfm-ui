@@ -1,0 +1,23 @@
+.user-name{
+    color: #0D4DCE !important;
+    cursor: pointer !important;
+}
+.user-name:hover{
+    color: #012169 !important;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #f9f9f9 !important;
+    opacity: 0.8 !important;
+    cursor: not-allowed !important;
+}
+
+.pointers-none{
+    pointer-events: none !important;
+}
+
+.savebtn-disable{
+    background-color: #aaadb3;
+    cursor: not-allowed;
+    border: 0;
+}

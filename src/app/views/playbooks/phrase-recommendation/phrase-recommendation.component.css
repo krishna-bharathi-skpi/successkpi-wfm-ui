@@ -1,0 +1,55 @@
+.savebtn-disable{
+    background-color: #aaadb3;
+    cursor: not-allowed;
+    border: 0;
+}
+
+.gethoverBGCLR:nth-child(even):hover{
+    background: #e5e4e4;
+    border-left: 3px solid #807b7b;
+    font-weight: 500;
+}
+
+.gethoverBGCLR:nth-child(odd):hover{
+    background: #D6E3FD;
+    font-weight: 500;
+    border-left: 3px solid #4A82F1;
+}
+
+.gethoverBGCLR:hover .phrase-content{
+    padding-left: 21px !important;
+}
+
+.activeBGodd{
+    background: #D6E3FD;
+    font-weight: 500;
+    border-left: 3px solid #4A82F1;
+}
+.activeBGeven{
+    background: #e5e4e4;
+    border-left: 3px solid #807b7b;
+    font-weight: 500;
+}
+.selectedBG{
+    background: #d6fde4 !important;
+    font-weight: 500 !important;
+    border-left: 3px solid #4af194 !important;
+}
+
+.phrase-header-title h2{
+    font-size: 30px;
+    font-weight: 300;
+    color: #3A3E50;
+    padding-top: 5px;
+}
+
+.phrase-top-header {
+  height: auto;
+  padding: 0.7rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: sans-serif;
+  margin-left: -30px;
+  margin-right: -15px;
+}

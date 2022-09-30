@@ -1,0 +1,1946 @@
+<!-- TOAST MSG-->
+<ng2-toasty [position]="'top-center'"></ng2-toasty>
+<p-toast class="ptoast-style" position="top-center" key="tc" ></p-toast>
+
+<!-- Evaluation cards -->
+<div style="margin: 0px 200px 0 32px;" *ngIf="createOrEditEvaluation == 'list'">
+
+  <div class="top-header" style="display: flex; justify-content: space-between;">
+         <h2 class="header-title">{{global.language?.evaluations?.evaluationForms?.title}}</h2>
+      <div style="display: flex;">
+        <div class="ipt-theme">
+          <i class="fa fa-search" aria-hidden="true" style="
+                position: relative;
+                left: 5px;
+                opacity: 0.6;
+                top: 29px;
+               "></i>
+          <input type="text" class="inp-searchs form-control" [(ngModel)]="searchEvaluationRoomName"
+            (ngModelChange)="search()" placeholder="{{global.language?.evaluations?.evaluationForms?.search}}">
+        </div>
+        <div class="" *ngIf="global.rolePermissions.evaluate.evaluationFroms.isViewEdit == true">
+          <!--btn-create-->
+          <button type="button" class="create-theme"  (click)="createNewEvaluationForm()">{{global.language?.evaluations?.evaluationForms?.create}}</button>
+        </div>
+      </div>
+      <!-- <div class="col-lg-8"> 
+            <form>
+                <div class="row" > 
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-7">
+                        <i class="fa fa-search" aria-hidden="true" style="z-index: 99999;
+                        position: absolute;
+                        left: 22px;
+                        opacity: 0.6;
+                        top: 10px;"></i>
+                    <input type="text" class="inp-search form-control" placeholder="Find a Topic…">
+                    </div>
+                    
+                    <div class="col-sm-3 " style="text-align: right;">
+                        <button type="button" class="btn-create">Create a Topic</button>
+                    </div>
+                </div>
+            </form>
+          </div> -->
+  </div>
+
+  <!-- Card section -->
+  <section style="margin: 10px 0;" *ngIf="global.rolePermissions.evaluate.evaluationFroms.isViewEdit == true || global.rolePermissions.evaluate.evaluationFroms.isView == true ">
+    <div class="row">
+      <div class="col-sm-6 col-lg-4 evaluation-cards" *ngFor="let evalutionCard of cards ;let i=index;">
+        <div class="card ">
+
+          <!-- <div class="tiles-topics">
+                          <img src="../assets/img/TilePatterns/Pattern_Topics.svg">
+                      </div> -->
+          <div class="card-body ">
+            <div class="row">
+              <div class="card-title col-sm-10 module line-clamp" (click)="clickCard(evalutionCard)">
+                {{evalutionCard.evaluationRoomName}}</div>
+              <div class="col-sm-2" style="text-align: right;">
+                <img src="../assets/img/TilePatterns/evaluation_forms_large.svg">
+              </div>
+            </div>
+
+            <div class="card-desc module line-clamp-desc" (click)="clickCard(evalutionCard)">
+              {{evalutionCard.evaluationRoomDesc}}</div>
+          </div>
+        </div>
+
+
+      </div>
+      <!--  -->
+
+    </div>
+  </section>
+</div>
+
+<!-- Edit Evaluation Forms -->
+<form [formGroup]="editEvaluationForm" >
+  <div *ngIf="createOrEditEvaluation == 'edit'">
+    <div style="margin: 36px 220px 0 32px;">
+      <div class="edit-header">
+        <div>
+          <img src="../../../../assets/img/back.svg">
+          <ul class="breadcrumb" >
+            <li><label class="bread-crumb-label1" (click)="cancel()">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.breadcrumb}}</label></li>
+          </ul>
+        </div>
+        <div class="row" style="margin-bottom: 2%">
+          <div class="col-sm-8">
+            <div class="page-title">
+              <h2>{{evaluationModel.evaluationRoomName}}</h2>
+            </div>
+          </div>
+            <!--button for copy functionality SP-601-->
+            <div class="col-sm-2" style="padding-left: 0;" *ngIf="global.rolePermissions.evaluate.evaluationFroms.isViewEdit == true">
+              <button type="button" class="btn-save" (click)="copyEvaluationForm()">Copy Form</button>
+            </div>
+            <!-- end of button for copy functionality SP-601-->
+            <div class="col-sm-2" style="padding-left: 0;" *ngIf="global.rolePermissions.evaluate.evaluationFroms.isViewEdit == true">
+              <button type="button" data-toggle="modal" data-target="#myModal" class="form-control btn-delete" >{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.delete}}</button>
+            </div>
+        </div>
+      </div>
+      <div class="edit-theme-ipt">
+        <h5 style="width: auto;"> {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evaluationDesc}}</h5>
+
+        <div class="row" style="margin-top: 30px;">
+
+          <div class="col-sm-6 ">
+            <div class="row">
+
+              <div class="col-sm-12" style="margin-bottom: 4px;">
+                <span class="label-name">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalName}}</span>
+                <span class="label-char" style="float: right;">44 {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.characters}}</span>
+              </div>
+
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <input type="text" id="evaluationnameid" class="form-control ipt-edit" maxlength="44" autocomplete="off"
+                    [(ngModel)]="evaluationModel.evaluationRoomName" formControlName="editEvalutionName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                    placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalName}}" style="height: 56px;"
+                    [ngClass]="{ 'is-invalid': (issubmitEdit || editEvaluationForm.controls['editEvalutionName'].touched) && editEvaluationForm.controls['editEvalutionName'].errors  }" [disabled]="global.rolePermissions.evaluate.evaluationFroms.isView == true">
+                  <div
+                    *ngIf="(!editEvaluationForm.controls['editEvalutionName'].valid && editEvaluationForm.controls['editEvalutionName'].touched)
+                                            ||(editEvaluationForm.controls['editEvalutionName'].errors?.required && issubmitEdit)"
+                    class="errormsg-topic">
+                    {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalfromError}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 ">
+            <div class="row">
+              <div class="col-sm-12" style="margin-bottom: 4px;">
+                <span class="label-name">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalDescription}}</span>
+                <span class="label-char" style="float: right;">70 {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.characters}}</span>
+              </div>
+              <div class="col-sm-12">
+                <input type="text" class="form-control ipt-edit" maxlength="70" autocomplete="off"
+                  [(ngModel)]="evaluationModel.evaluationRoomDesc" [ngModelOptions]="{standalone: true}" name="name" 
+                   placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalDescription}}" style="height: 56px;" >
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="edit-evaluation-category row">
+        <div class="category-criteria col-sm-6">
+          <h4>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.title}}</h4>
+          <p>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.categoryDesc}}</p>
+
+          <div class=" eval-theme">
+            <h5>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.label}}</h5>
+            <div class="">
+              <div class="form-group ">
+                <!--ipt-eval-theme-->
+                <!-- <p-autoComplete  
+                      placeholder="Theme" class="ipt-eval-theme">
+                    </p-autoComplete> -->
+                <p-dropdown class=" ipt-eval-theme dplable" [options]="strategyItems" [(ngModel)]="evaluationModel.strategyId" filter="true"
+                  placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.select}}" formControlName="editThemeName"
+                  (onChange)="changeThemeEdit(evaluationModel)"></p-dropdown>
+                <!-- [ngClass]="{ 'is-invalid': (!editEvaluationForm.controls['editThemeName'].valid)
+                                              ||(editEvaluationForm.controls['editThemeName'].errors?.required && issubmitEdit)}"
+                  </p-dropdown>{{(!editEvaluationForm.controls['editThemeName'].valid)}} -->
+                <div *ngIf="(editEvaluationForm.controls['editThemeName'].errors?.required && issubmitEdit)"
+                  class="errormsg-topic">
+                  {{global.language?.evaluations?.evaluationForms.evaluationCreate?.categories?.ThemeError}}
+                </div>
+              </div>
+              
+            </div>
+            <!-- Add -->
+            <!-- <div>
+                  <button type="button" class="add-btn" style="margin-bottom: 24px;">
+                      <img src="../assets/img/microinteraction/add_item.svg">
+                     <span class="btn-txt-add">Add Theme categories</span>
+                  </button>
+                 </div> -->
+          </div>
+        </div>
+        
+         <!-- Evaluator user , Moderators and Controls -->
+         <div class="col-sm-6" style="height: 240px;">
+                <p-tabView>
+                  <p-tabPanel header="Evaluators">
+                    <div class="eval-theme">
+                        <h5>Add users as Evaluators</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userEvaluator" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as evaluator" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(0)" *ngFor="let item of evaluationModel.userEvaluator">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalEdit(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Coaches">
+                    <div class="eval-theme">
+                        <h5>Add users as Coaches</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userCoaches" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as coach" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(1)" *ngFor="let item of evaluationModel.userCoaches">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalCoachCreate(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Moderators">
+                    <div class="eval-theme">
+                        <h5>Add users as Moderators</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userModerator" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as moderator" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(2)" *ngFor="let item of evaluationModel.userModerator">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalModEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalModEdit(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Controls">
+                    <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                        <div class="bold-txt f-15">Lock After Submit (All)</div>
+                        <div>
+                          <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.lockAfterSubmit" [ngModelOptions]="{standalone: true}">
+                          </p-inputSwitch>
+                          <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.lockAfterSubmit == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                        <div class="bold-txt f-15">Allow Multiple Evaluators</div>
+                        <div>
+                          <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.allowResubmit" [ngModelOptions]="{standalone: true}">
+                          </p-inputSwitch>
+                          <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.allowResubmit == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                        </div>
+                    </div>
+                    <!-- <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                      <div class="bold-txt f-15">Allow Evaluators as a Coaches</div>
+                      <div>
+                        <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.allowCoaches" [ngModelOptions]="{standalone: true}">
+                        </p-inputSwitch>
+                        <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.allowCoaches == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                      </div>
+                    </div> -->
+                    <div style="display: flex;justify-content: space-between;margin-bottom: 1px;">
+                        <div class="bold-txt f-15"><p style="margin-bottom: 5px;">Note: These Controls do not apply to Moderators</p></div>
+                    </div>
+                  </p-tabPanel>
+                </p-tabView>
+         </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-2" style="height: 60px;">
+              <button type="button" class="add-btn"  (click)="addEditCoachCategory()">
+                <label tooltip="Add coaching category" placement="right" tooltipDisabled="false">
+                  <img src="../assets/img/microinteraction/add_item.svg">
+                  <span class="btn-txt-add">Add Coaching Criteria</span>
+                </label>
+              </button>
+
+              <div class="category-list">
+                <button class="user-tags" [ngClass]="getTagBG(1)" *ngFor="let item of evaluationModel.coachCategories">  
+                {{item}}
+                  <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="closeEditList(item)"></i>
+                </button>
+              </div>
+            </div>  
+        </div>
+
+        <div class="col-sm-6">
+          <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+            <div class="bold-txt f-15">Automatic Call Hydration</div>
+            <div>
+              <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.automaticcallhydration" (ngModelChange)="evaluationModel.automaticcallhydration?evaluationModel.rulebased='percentage':evaluationModel.rulebased=''" [ngModelOptions]="{standalone: true}">
+              </p-inputSwitch>
+              <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.automaticcallhydration == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+            </div>
+        </div>
+        
+          <div *ngIf='evaluationModel.automaticcallhydration' style="display: flex;margin-bottom: 24px;">
+            <label>
+                <!-- <p-radioButton name="group11" value="percentage"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype=''; evaluationModel.sendcalls=null" [ngModelOptions]="{standalone: true}" label="% based" inputId="based1"> -->
+                  <p-radioButton name="group11" value="percentage"  [(ngModel)]="evaluationModel.rulebased"  [ngModelOptions]="{standalone: true}" label="% based" inputId="based1">
+                </p-radioButton>
+            </label>
+            <label>
+                <!-- <p-radioButton name="group12" value="rule"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype=''; evaluationModel.sendcalls=null" [ngModelOptions]="{standalone: true}" label="Rule based" inputId="rulebased4"> -->
+                  <p-radioButton name="group12" value="rule"  [(ngModel)]="evaluationModel.rulebased"  [ngModelOptions]="{standalone: true}" label="Rule based" inputId="rulebased4">
+                </p-radioButton>
+            </label>
+
+            <label >
+              <button type="button" style="outline: 0px;" class="add-btn" (click)="op.show($event)">
+                <span class="btn-con-add">Conditions &nbsp;</span>
+                  <img src="../assets/img/microinteraction/edit.svg">
+                </button>
+          </label>
+
+          <p-overlayPanel #op for="op" [showCloseIcon]="true" appendTo="body" [style]="{width: '610px'}"   [dismissable]="false">
+            <div class="p-3">
+              <div class="source-title mb-3">Define rules</div>
+              <div class=" mb-2 ">
+                <div style="display: flex;">
+                <label>
+                    <p-radioButton name="group1" value="all"  [(ngModel)]="evaluationModel.conditionMetrics"  [ngModelOptions]="{standalone: true}" label="All conditions met" inputId="preopt1" >
+                  </p-radioButton>
+               </label>
+               <label>
+                  <p-radioButton name="group2" value="any"  [(ngModel)]="evaluationModel.conditionMetrics"  [ngModelOptions]="{standalone: true}" label="Any conditions met" inputId="preopt2">
+               </p-radioButton>
+              </label>
+              </div>
+              </div>
+              <div class="label-section border-0">
+              <div class="row mb-3 ml-1 " style="display: flex;"  *ngFor="let edit of evaluationModel.callHydrationCondition; let i=index">
+                <div>
+                  <p-dropdown [style]="{'width':'160px'}" [options]="metricOption" [(ngModel)]="edit.metricName"  [ngModelOptions]="{standalone: true}" placeholder="Select"
+                 (onChange)="metricNameValidation(edit.metricName,i)" ></p-dropdown>
+                </div>
+                <div class="ml-3" *ngIf="edit.metricName != 'Handle Time' && edit.metricName != 'Talk Time'">
+                  <p-multiSelect class="multiselect-custom-virtual-scroll data-access-ddl" [style]="{'width':'293px'}" [options]="metricValueOption" [(ngModel)]="edit.metricValue" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected" (ngModelChange)="metricOnChange(edit.metricValue,i,'editmetric')"  defaultLabel="Select value" (onFocus)="getMetricValueData(edit.metricName)" [virtualScroll]="true" itemSize="34"  [showToggleAll]="false" [disabled]="edit.metricName === null || (metricOptionErr && i == metricNameIndex)"></p-multiSelect>
+                </div>
+                <div style="display: flex;">
+                  <div class=" ml-3" *ngIf="validateMetricName(edit.metricName)">
+                    <p-dropdown class="choose-Condition dplable" [options]="operatorDDL" [(ngModel)]="edit.metricConditionOperator" 
+                      placeholder="Select a Operation" [ngModelOptions]="{standalone: true}" (ngModelChange)="conditionOperatorChange($event,i)" [disabled]="(metricOptionErr && i == metricNameIndex)"></p-dropdown>
+                  </div>
+                  <div class=" ml-3" *ngIf="validateMetricName(edit.metricName) && edit.metricConditionOperator != '>=<='">
+                    <input type="number" class="score-theme" [(ngModel)]="edit.metricConditionalValue"
+                      [ngModelOptions]="{standalone: true}" min="0" (keypress)="metricKeyPress($event,'<>')" [disabled]="(metricOptionErr && i == metricNameIndex)">
+                  </div>
+                  <div class=" ml-3" *ngIf="edit.metricConditionOperator == '>=<=' && validateMetricName(edit.metricName)">
+                    <input type="text" class="score-theme" [(ngModel)]="edit.metricConditionalValue"
+                      [ngModelOptions]="{standalone: true}" (ngModelChange)="metricBetweenValidation()" min="0" placeholder="eg:1-10" (keypress)="metricKeyPress($event,'between')"/>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn-delete-icon" type="button" (click)="removeConditionCreate(i,'removeedit')" 
+                    style="margin-left: 16px;margin-top: 4px;">
+                    <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="margin-left: -5px;margin-top: 3px;width: 16px;">
+                  </button>
+                </div>
+              </div>
+              </div>
+              <div class="errormsg-topic" *ngIf="metricOptionErr">Cannot choose same metric option, once if option is already existed! </div>
+              <div class="errormsg-topic" *ngIf="metricValueErr">Please select atleast 1 MetricValue option</div>
+              <div class="errormsg-topic" *ngIf="addConditionErr">Condition is already Exist,Please select option and value</div>
+              <div class="errormsg-topic" *ngIf="errBetween == true" >“Between” operator requires a range like 1-10</div>
+              <div class="errormsg-topic" *ngIf="errSameValue == true" >“Between” operator do not accept a same range (1-1)</div>
+              <div class="errormsg-topic" *ngIf="metricConditionErr" >Please Enter the metric condition value</div>
+              <div class="d-flex justify-content-between mt-2 ml-0" >
+                <button type="button" class="add-btn"   (click)="addConditionCreate('editcondition')" [disabled]="isAddDisable">
+                  <label class="d-flex" style="align-items: center;text-decoration: none;" [ngClass]="{'btn-txt-add' : !isAddDisable , 'btn-txt-grey': isAddDisable }" >
+                    <!-- <img src="../assets/img/microinteraction/add_item.svg"> -->
+                    <span  style="font-size: 28px;">+ </span>&nbsp;
+                    <span  >Add Conditions</span>
+                  </label>
+                </button>
+                <div>
+                  <button type="button" class="btn-save" style="float: right" [ngClass]="{'btn-save' : !isDisableDone , 'btn-save-disable': isDisableDone}" (click)="addDefinition($event,op)" [disabled]="isDisableDone" >Done</button>
+                </div>
+              </div>
+              <!-- <div style="display: flex;"> -->
+              <!-- <div style="width:100%;color: grey;justify-content: center;padding-top: 6px;">Note : If Metric option value is choosen,Metric option will be disabled</div> -->
+           
+              <!-- </div> -->
+           </div>
+          </p-overlayPanel> 
+            
+          </div>
+
+          <div class="form-group" *ngIf="evaluationModel.rulebased == 'percentage'">
+            <div style="display: flex;">
+              <span style="margin-left: 4px; padding-top: 6px;">Send</span>
+
+              <input type="text" class="form-control" [(ngModel)]="percentageSend"  [ngModelOptions]="{standalone: true}" (keypress)="keyPress($event)"
+              placeholder="" autocomplete="off" style="margin-left: 8px; width: 56px; border:1px solid #B3B6C7">
+               
+              <span style="margin-left: 8px; padding-top: 6px;">% Calls</span>
+
+              <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="percentageDropdown" 
+              placeholder="" [(ngModel)]="percentageDuration" [ngModelOptions]="{standalone: true}"></p-dropdown>
+              
+              <span style="margin-left: 8px; padding-top: 6px;">per agent to Workspace</span>
+  
+              </div>
+          </div>
+
+          <div class="form-group" *ngIf="evaluationModel.rulebased == 'rule'">
+            <div style="display: flex;">
+
+              <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="ruleDropdown" 
+              placeholder="" [(ngModel)]="ruleDuration" [ngModelOptions]="{standalone: true}"></p-dropdown>
+
+              <input type="text" class="form-control" [(ngModel)]="ruleSend"  [ngModelOptions]="{standalone: true}" (keypress)="keyPress($event)"
+              placeholder="" autocomplete="off" style="margin-left: 8px; width: 56px; border:1px solid #B3B6C7">
+
+              <span style="margin-left: 8px; padding-top: 6px;">Calls per agent to Workspace</span>
+  
+              </div>
+          </div>
+
+        </div>
+        <div class="col-sm-6 mt-5">
+          <div class="form-group"  style="display: flex;flex-direction: column;">
+            <div>
+              <!-- <p-checkbox  class="check-box-active box-genesys check-box-width mr-3" label="" [(ngModel)]="evaluationModel.isNonACD"
+              [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox> -->
+              <!-- <div class="col-md-10"> -->
+                <label style="font-weight: bold;">Form Data Display</label>
+                <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="formLevelDossierIdList" optionLabel="DossierID"
+                [(ngModel)]="evaluationModel.formLevelDossierId" [ngModelOptions]="{standalone: true}" placeholder="Default" [showClear]="true"></p-dropdown>
+              <!-- </div> -->
+
+              <!-- <div class="col-md-2 pl-0">
+                <button class="btn-delete-icon" type="button">
+                  <label style="font-weight: bold;">&nbsp;&nbsp;&nbsp;</label>
+                  <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="margin-top:4px; cursor: pointer; width: 100%;" (click)="evaluationModel.formLevelDossierId=null">
+                </button>
+              </div> -->
+
+            </div>
+            
+            <div>
+            <label>This setting will change the data grid shown for this form in the Evaluation Workspace. Contact your account representitive to add new options to this dropdown.</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group"  style="display: flex;flex-direction: column;">
+              <div>
+                <p-checkbox  class="check-box-active box-genesys check-box-width mr-3" label="" [(ngModel)]="evaluationModel.isNonACD"
+                [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox><label style="font-weight: bold;">Enable non-acd evaluation</label>
+              </div>
+              
+              <div>
+              <label>This setting allows evaluators to review an agent without relating it to a specific conversation within the Evaluation Workspace.
+                This is advantageous when evaluations should be conducted based on external sources of information or unrelated to a specific logged conversation.</label>
+              </div>
+            </div>
+      </div>
+      </div>
+      
+      <div id="coach-category" class="notes-popup pop-category-postion" *ngIf="coachEditPopUP">
+        <div class="form-group ">
+            <div><label class="interaction-label">Add Coaching Category</label><label style="float: right;
+                margin-bottom: 4px;"><button type="button" class="close"style="outline: 0 !important;" (click)="closeEditCoachCategory()">&times;</button></label></div>
+            <input type="text" class="form-control ipt-notes-box"  [(ngModel)]="iptEditCoachModel"
+            [ngModelOptions]="{standalone: true}"name="notes" placeholder="Coach Category Name" maxlength="128" autocomplete="off" (keyup.enter)="addEditList()">
+            <div class="errormsg-topic" *ngIf="errEditCoachCategory==true" style="font-size: 11px;padding: 0;">Please enter the coach category name</div>
+        </div>
+
+        <div>
+            <button type="button" class="save-note-btn" (click)="addEditList()"><i class="fa fa-share mr-1" aria-hidden="true"></i>Add</button>
+        </div>
+      </div>
+
+      <button type="button" class="add-btn" style="margin-bottom: 24px;" (click)="addEditCategory(evaluationModel)">
+        <img src="../assets/img/microinteraction/add_item.svg">
+        <span class="btn-txt-add">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.add}}</span>
+      </button>
+      <div id="accordion" style="width: 118%;">
+        <div  cdkDropList (cdkDropListDropped)="dropCategoryEdit($event)">
+          <div class="card collapse-evalu" *ngFor="let editTopic of evaluationModel.questionsList; let i=index" cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="evaluationModel.questionsList.length == 1">
+            <div class="card-header" id="headingOne">
+              <h5 class="mb-0" style="margin-top: 1.2%;display: flex;
+              justify-content: space-around;">
+              <div class="line-clamp-evaluation" *ngIf="collapse=='down'+i||(collapse!='up'+i && collapse!='down'+i) "style=" text-align: left;">{{editTopic.Topics.topicName}}</div>
+              <!-- <div *ngIf="collapse!='up'+i && collapse!='down'+i " style=" text-align: left;">{{topic.Topics.topicName}}</div> -->
+              <input class="col-sm-4 form-control evaluation-accordion-input" *ngIf="collapse=='up'+i"  maxlength="44"  autocomplete="off" [(ngModel)]="editTopic.Topics.topicName" [ngModelOptions]="{standalone: true}" >
+                <button class="btn-collapse-link" data-toggle="collapse" [attr.data-target]="'#collapseOne'+i"
+                  aria-expanded="false" [attr.aria-controls]="'collapseOne'+i"
+                  style="width: 26%;" (click)="changeTextToInput(i)">
+                </button>
+                <div style="cursor: pointer;display: flex;">
+                  <label>Weight :&nbsp;&nbsp;</label>
+                  <input class="col-sm-8 form-control evaluation-accordion-input" type="number" [min]="0" [(ngModel)]="editTopic.Topics.weight" [ngModelOptions]="{standalone: true}" autocomplete="off" placeholder="Weight in %">
+                </div>
+
+                <div style="cursor: pointer;display: flex;margin-top: -4px;">
+                  <div class="example-handle" cdkDragHandle *ngIf="evaluationModel.questionsList.length != 1">
+                    <svg width="24px" fill="currentColor" viewBox="0 0 24 24" style="position: relative;right: 10px;">
+                      <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                      <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
+                  </div>
+                  <img src="../assets/img/microinteraction/show_less.svg" data-toggle="collapse"
+                    [attr.data-target]="'#collapseOne'+i" [attr.aria-controls]="'collapseOne'+i"
+                    style="margin-top: 7%;padding: 0 10px;height: 14px;" *ngIf="collapse=='up'+i "  (click)="changeTextToInput(i)">
+                  <img src="../assets/img/microinteraction/show_more.svg" data-toggle="collapse"
+                    [attr.data-target]="'#collapseOne'+i" [attr.aria-controls]="'collapseOne'+i"
+                    style="margin-top: 7%;padding: 0 10px;height: 14px;" *ngIf="collapse=='down'+i||(collapse!='up'+i && collapse!='down'+i)" (click)="changeTextToInput(i)" >
+                  <button class="btn-delete-icon" type="button" style="border-left: 1px solid #B3B6C7;">
+                    <img src="../assets/img/microinteraction/delete.svg" style="padding: 0 10px;height: 18px;;margin-top: -7px; "
+                      (click)="removeEditCategory(i)">
+                  </button>
+                </div>
+
+
+
+                <!-- <i class="fa fa-chevron-down"  data-toggle="collapse" data-target="#collapseOne" style="float: right;" *ngIf="collapse"  (click)="collapse = !collapse" aria-hidden="true"></i>
+                <i class="fa fa-chevron-up"  data-toggle="collapse" data-target="#collapseOne" style="float: right;" *ngIf="!collapse" (click)="collapse = !collapse" aria-hidden="true"></i> -->
+              </h5>
+            </div>
+
+            <div [attr.id]="'collapseOne'+i" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
+              <div class="card-body">
+                <div class="collapse-content-title">
+                  <h4>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.title}}</h4>
+                </div>
+                
+                <div cdkDropList class="example-list" (cdkDropListDropped)="drop(i,$event)">
+                  <!-- <div class="example-box" *ngFor="let movie of movies" cdkDrag>{{movie}}</div> -->
+                  <div class="row example-box" *ngFor="let itemEdit of editTopic.Topics.questions;let j = index" cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="editTopic.Topics.questions.length == 1">
+                    
+                    <div class="col-sm-3 pr-0">
+                      <div class="form-group">
+                        <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.question}} {{j+1}}</label>
+                        <label class="ml-2" tooltip="Click the link to add hypertext for each question" placement="bottom" (click)="addHypertext(i,j,'edit')"><i class="fa fa-link" aria-hidden="true"></i></label>
+                        <label class="ml-2" *ngIf="j==0" tooltip="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.tooltipques}}"
+                          placement="right">
+                          <img src="../assets/img/microinteraction/helptext.svg" style="margin-top: -4px;">
+                        </label>
+                        <input type="text" class="form-control" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.type}}" [(ngModel)]="itemEdit.question"
+                          [ngModelOptions]="{standalone: true}"style="border: 1px solid #B3B6C7;">
+                      </div>
+    
+                      <div class="hyper-popup card-postion" *ngIf="textPopupEdit && indexTextj_edit == j && indexTexti_edit == i ">
+                        <div class="form-group mb-2">
+                            <div><label class="interaction-label">Add Question Description</label><label style="float: right;
+                                margin-bottom: 4px;" (click)="closehypertext(i,j,'edit')" ><button type="button" class="close"
+                                        style="outline: 0 !important;" [disabled]="hyperDisplayErr || hyperURLErr || isDisplayErr">&times;</button></label>
+                            </div>
+                            <!-- <input type="text" class="form-control ipt-hyper-box" name="hypertext1" [(ngModel)]="itemEdit.questionDescription"
+                            [ngModelOptions]="{standalone: true}" maxlength="256" autocomplete="off" (ngModelChange)="textchange($event,i,j)"> -->
+                            <!-- <div class="editableDescription mb-3" contenteditable="true" [textContent]="itemEdit.questionDescription" (input)="itemEdit.questionDescription=$event.target.textContent" >
+                                
+                            </div> -->
+                            <textarea  class="editableDescription" contenteditable="true" spellcheck="false" [(ngModel)]="itemEdit.questionDescription"
+                            [ngModelOptions]="{standalone: true}" (ngModelChange)="textchange($event,i,j)"></textarea>
+
+                            <!-- <div contentEditable='true' [textContent]="model" (input)="update($event)">{{value}}</div> -->
+                            <!-- <div id="myH2" contentEditable="true" >
+                              {{itemEdit.questionDescription}} -->
+                                <!-- <a  contentEditable="false" href="https://google.com">GGGGG</a> -->
+                              <!-- </div> -->
+                        </div>
+                      
+                        <div class="" *ngIf="hyperlink" style="display: flex;">
+                          <label style="font-size: 13px;font-weight: 600;" class="interaction-label ml-1 pt-1">Link:</label>
+                          <span *ngIf="itemEdit.hyperlinkUrl.split('//').length == 1"><a class="hyper-link-url" href="https://{{itemEdit.hyperlinkUrl}}" target="_blank" tooltip="https://{{itemEdit.hyperlinkUrl}}"  >{{itemEdit.hyperlinkDisplayType}}</a></span>
+                          <span *ngIf="itemEdit.hyperlinkUrl.split('//').length > 1"><a class="hyper-link-url" href="{{itemEdit.hyperlinkUrl}}" target="_blank" tooltip="{{itemEdit.hyperlinkUrl}}"  >{{itemEdit.hyperlinkDisplayType}}</a></span>
+                          <button type="button" style="outline: 0px;" class="add-btn" (click)="op.toggle($event)">
+                              <img src="../assets/img/microinteraction/edit.svg">
+                            </button>
+                      </div>
+                        <div style="display: flex;justify-content: space-between;">
+                          <span tooltip="Click the link to add hyperlink" placement="bottom"  (click)="op.toggle($event)">
+                          <label class="ml-1" *ngIf="!hyperlink"  ><i class="fa fa-link" aria-hidden="true"></i></label>
+                          <label class="ml-1" *ngIf="!hyperlink" >Insert</label></span>
+                            <button type="button" class="ml-auto" [ngClass]="hyperDisplayErr || isHyperlinkDescription || hyperURLErr || isDisplayErr ? 'save-note-btn-disable' : 'save-note-btn'" (click)="savehypertext(i,j,'edit')" [disabled]="hyperDisplayErr || isHyperlinkDescription || hyperURLErr || isDisplayErr">Save</button>
+                        </div>
+                        <div class="mt-1">
+                        <p-overlayPanel #op appendTo="body" [style]="{width: '398px'}" [dismissable]="false">
+                              <div class="mb-2" >
+                                  <label class="interaction-label">Display As</label>
+                                  <input type="text" class="form-control ipt-hyper-box" name="hyperlink1" [(ngModel)]="itemEdit.hyperlinkDisplayType"
+                                  [ngModelOptions]="{standalone: true}" maxlength="100" autocomplete="off">
+                              </div>
+                              <div class="mb-2">
+                                <label class="interaction-label">URL</label>
+                                <input type="text" class="form-control ipt-hyper-box" name="hyperlink2" [(ngModel)]="itemEdit.hyperlinkUrl"
+                                [ngModelOptions]="{standalone: true}" autocomplete="off">
+                                <div  class="errormsg-topic" *ngIf="hyperDisplayErr">Please enter Display as and URL </div>
+                                <div  class="errormsg-topic" *ngIf="hyperURLErr">Please enter the URL for hyperlink </div>
+                                <div style="white-space: normal;" class="errormsg-topic" *ngIf="isDisplayErr">Enter the string in the description above that should inherit the defined hyperlink</div>
+                            </div>
+                            <div style="display: flex;justify-content: flex-end;">
+                              <button type="button" *ngIf="hyperlink" style="margin-right: 20px;height: 22px;" class="btn-cancel" (click)="resethyperlink(i,j,$event,op)">Clear</button>
+                              <button type="button" style="margin-right: 20px;height: 22px;" class="btn-cancel" (click)="cancelhyperlink('edit',$event,op,i,j)">Cancel</button>
+                              <button type="button"  class="save-note-btn" (click)="savehyperlink(itemEdit.hyperlinkDisplayType,itemEdit.hyperlinkUrl,$event,op,itemEdit.questionDescription)">Add</button>
+                            </div>
+                        </p-overlayPanel>
+                      </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3" style="text-align: center;">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div class="form-group" style="display: flex;flex-direction: column;">
+                            <label>M</label>
+                            <p-checkbox  class="check-box-active box-genesys check-box-width" label="" [(ngModel)]="itemEdit.questionMandatory"
+                            [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                          </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <!-- </div>
+                            <div class="col-sm-2 pr-0" style=" padding-left: 0px;"> -->
+                              <!-- <div class="form-group"> -->
+                                <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.Responsetype}}</label>
+                                <!-- [(ngModel)]="itemEdit.questionChoice" (onChange)="addtopicQuestionChoiceEdit(0, i, j, itemEdit)"  (cilck)="checkAlreadyExisitinQuestionType(itemEdit)"-->
+                              <p-dropdown class="drop-edit-evaluate dplable" [options]="questionChoices"
+                                [(ngModel)]="itemEdit.questionChoice" (onChange)="addtopicQuestionChoiceEdit(0, i, j, itemEdit)"
+                                [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.select}}"></p-dropdown>
+                              <!-- </div> -->
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="col-sm-3 pl-0" style="padding-left: 0px; padding-right:20px;">
+                      <div class="form-group">
+                        <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.ans}}</label>
+                        <label class="ml-2" *ngIf="j==0"
+                          tooltip="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.tooltipans}}"
+                          placement="right">
+                          <img src="../assets/img/microinteraction/helptext.svg" style="margin-top: -4px;">
+                        </label>
+                        <label style="float: right;" *ngIf="itemEdit.questionChoice != 'Comments' && (itemEdit.questionChoice != '' && itemEdit.questionChoice != undefined)">Default Values</label>
+
+                        <input type="number" step="0.1" class="form-control" (keypress)="keyPress($event)" maxlength="6"
+                          *ngIf="itemEdit.questionChoice == null"
+                          [(ngModel)]="itemEdit.questionValue" [ngModelOptions]="{standalone: true}"
+                          [placeholder]="''"style="border: 1px solid #B3B6C7;">
+                          
+                          <div class="form-group row mb-1" *ngIf="itemEdit.questionChoice == 'Number'">
+                            <!-- <div class="col-sm-12" *ngIf="minMaxWarningMessageEdit != '' && minMaxValueValidationIndexI==i && minMaxValueValidationIndex" style="color: red; font-size: 13px;">{{minMaxWarningMessageEdit}}</div> -->
+                            <!-- <div class="col-sm-12" *ngIf="itemEdit.topicQuestionValueMinimumEdit>itemEdit.topicQuestionValueMaximumEdit" style="color: red; font-size: 13px;">Maximum value must be greater than or equal to Minimum value</div> -->
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right" >Min</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="itemEdit.topicQuestionValueMinimumEdit" (ngModelChange)="minMaxWarningMessageFuncionEdit('min', itemEdit.topicQuestionValueMinimumEdit, itemEdit.topicQuestionValueMaximumEdit, i , j); replaceNegativeFloatKeys(itemEdit.topicQuestionValueMinimumEdit, i, j, 'min', null);" [ngModelOptions]="{standalone: true}" placeholder="Min value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-2">
+                              <!-- <p-radioButton name="group11" [value]="itemEdit.topicQuestionValueMinimumEdit"  [(ngModel)]="evaluationModel.rulebased"  [ngModelOptions]="{standalone: true}" label="{{itemEdit.topicQuestionValueMinimumEdit}}" inputId="defaultValue"></p-radioButton> -->
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="itemEdit.topicQuestionValueMinimumEdit" [max]="itemEdit.topicQuestionValueMaximumEdit" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="itemEdit.defaultanswer" (ngModelChange)="minMaxWarningMessageFuncionEdit('min', itemEdit.topicQuestionValueMinimumEdit, itemEdit.topicQuestionValueMaximumEdit, i , j); replaceNegativeFloatKeysDefaultAnswerEdit(itemEdit.defaultanswer, i, j);" [ngModelOptions]="{standalone: true}" placeholder="Default value">
+                            </div>
+                          </div>
+                          <div class="form-group row mb-1" *ngIf="itemEdit.questionChoice == 'Number'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right">Max</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="itemEdit.topicQuestionValueMinimumEdit" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="itemEdit.topicQuestionValueMaximumEdit" (ngModelChange)="minMaxWarningMessageFuncionEdit('max', itemEdit.topicQuestionValueMinimumEdit, itemEdit.topicQuestionValueMaximumEdit, i , j); replaceNegativeFloatKeys(itemEdit.topicQuestionValueMaximumEdit, i, j, 'max',null);" [ngModelOptions]="{standalone: true}" placeholder="Max value">
+                            </div>
+                            <!-- <div class="col-sm-4 pl-0 pr-0">
+                              <p-radioButton name="group11" [value]="itemEdit.topicQuestionValueMaximumEdit"  [(ngModel)]="evaluationModel.rulebased"  [ngModelOptions]="{standalone: true}" label="{{itemEdit.topicQuestionValueMaximumEdit}}" inputId="defaultValue"></p-radioButton>
+                            </div> -->
+                          </div>
+
+                          <div class="m-0 p-0" *ngIf="itemEdit.questionChoice == 'Choice'">
+                            <div class="form-group row mb-0" *ngFor="let choice of itemEdit.topicQuestionChoiceArrayInputsEdit; let ch=index">
+                              <div class="col-sm-6 pr-1">
+                              <input type="text" class="form-control height-25" [(ngModel)]="choice.topicQuestionChoiceQuestionEdit" (ngModelChange)="choiceQuestionTypeFuncionEdit(itemEdit.topicQuestionChoiceArrayInputsEdit, i , j)" [ngModelOptions]="{standalone: true}" placeholder="option1">
+                              </div>
+                              <div class="col-sm-3 pr-1 pl-0">
+                                <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="choice.topicQuestionChoiceValueEdit" (ngModelChange)="choiceQuestionTypeFuncionEdit(itemEdit.topicQuestionChoiceArrayInputsEdit, i , j); replaceNegativeFloatKeys(choice.topicQuestionChoiceValueEdit, i, j, '',ch);" [ngModelOptions]="{standalone: true}" placeholder="value">
+                              </div>
+                              <div class="col-md-1 pl-0">
+                                <img src="../assets/img/microinteraction/delete_keyphrase.svg" class="center-img pt-2" type="button" (click)="removetopicQuestionChoiceEdit(ch, i, j, itemEdit.topicQuestionChoiceArrayInputsEdit, choice, itemEdit.defaultanswer)" style="width: 16px;">
+                                  &nbsp;
+                              </div>
+                              <div class="col-sm-2 pl-0 pr-0 pt-1">
+                                <!-- <p-radioButton name="defaultValue" [value]="{Answer: choice.topicQuestionChoiceQuestionEdit, Score: choice.topicQuestionChoiceValueEdit}" [(ngModel)]="itemEdit.defaultanswer" (ngModelChange)="testvalue(itemEdit.defaultanswer)" [ngModelOptions]="{standalone: true}" label="" inputId="defaultValue"></p-radioButton> -->
+                                <p-radioButton [value]="choice.topicQuestionChoiceQuestionEdit" [(ngModel)]="itemEdit.defaultanswer" (ngModelChange)="testvalue(itemEdit.defaultanswer)" [ngModelOptions]="{standalone: true}" label="" inputId="j"></p-radioButton>&nbsp;
+                                <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="itemEdit.defaultanswer==choice.topicQuestionChoiceQuestionEdit && itemEdit.defaultanswer!=null && itemEdit.defaultanswer !=undefined && itemEdit.defaultanswer !=''" style="margin-top:0px; cursor: pointer; width: 25%;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style="float: right;" *ngIf="itemEdit.questionChoice == 'Choice'">
+                            <button type="button" class="add-btn" style="margin-bottom: 4px;" (click)="addtopicQuestionChoiceEdit(1, i,j,undefined)">
+                              <img src="../assets/img/microinteraction/add_item.svg">
+                              <span class="btn-txt-add">Add</span>
+                            </button>
+                          </div>
+
+                          <div class="form-group row mb-1" *ngIf="itemEdit.questionChoice == 'Yes/No'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right pr-0" >Yes</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="itemEdit.topicQuestionValueYesEdit" (ngModelChange)="yesNoQuestionTypeFuncionEdit( itemEdit.topicQuestionValueYesEdit, itemEdit.topicQuestionValueNoEdit, i , j); replaceNegativeFloatKeys(itemEdit.topicQuestionValueYesEdit, i, j, 'yes', null);testvalue(itemEdit);" [ngModelOptions]="{standalone: true}" placeholder="Yes value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-0 p-field-radiobutton">
+                              <p-radioButton [value]="itemEdit.topicQuestionValueYesEdit"  [(ngModel)]="itemEdit.defaultanswer" (ngModelChange)="testvalue(itemEdit);" [ngModelOptions]="{standalone: true}" inputId="{{j}}"></p-radioButton>&nbsp;
+                              <!-- label="{{itemEdit.topicQuestionValueYesEdit}}" -->
+                              <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="itemEdit.defaultanswer==itemEdit.topicQuestionValueYesEdit && itemEdit.defaultanswer!=null && itemEdit.defaultanswer !=undefined && (itemEdit.defaultanswer!='' || itemEdit.defaultanswer.toString()=='0')" style="margin-top:0px; cursor: pointer; width: 16px;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                            </div>
+                          </div>
+                          <div class="form-group row mb-1" *ngIf="itemEdit.questionChoice == 'Yes/No'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right">No</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="itemEdit.topicQuestionValueNoEdit" (ngModelChange)="yesNoQuestionTypeFuncionEdit( itemEdit.topicQuestionValueYesEdit, itemEdit.topicQuestionValueNoEdit, i , j); replaceNegativeFloatKeys(itemEdit.topicQuestionValueNoEdit, i, j, 'no', null);testvalue(itemEdit);" [ngModelOptions]="{standalone: true}" placeholder="No value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-0">
+                              <p-radioButton [value]="itemEdit.topicQuestionValueNoEdit" [(ngModel)]="itemEdit.defaultanswer" (ngModelChange)="testvalue(itemEdit);" [ngModelOptions]="{standalone: true}" inputId="displaytypedropdown"></p-radioButton>&nbsp;
+                              <!-- label="{{itemEdit.topicQuestionValueNoEdit}}" -->
+                              <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="itemEdit.defaultanswer==itemEdit.topicQuestionValueNoEdit && itemEdit.defaultanswer!=null && itemEdit.defaultanswer !=undefined && (itemEdit.defaultanswer!='' || itemEdit.defaultanswer.toString()=='0')" style="margin-top:0px; cursor: pointer; width: 16px;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                            </div>
+                          </div>
+
+
+                        <textarea maxlength="2048" name="comments" id="commentid" style="display: flex;width: 100%;"
+                          [(ngModel)]="itemEdit.questionValue" *ngIf="itemEdit.questionChoice == 'Comments'" cols="15"
+                          rows="2" [ngModelOptions]="{standalone: true}" placeholder="Type your comments"></textarea>
+                      </div>
+                    </div>
+                    
+                    
+                    <!-- <div class="col-sm-2 pl-0">
+                      <label *ngIf="itemEdit.questionChoice != 'Comments' && itemEdit.questionChoice != 'Number'">Display Type</label>
+
+                      <div class="row">
+                        <div class="col-sm-8 pr-0"  *ngIf="itemEdit.questionChoice != 'Comments' && itemEdit.questionChoice != 'Number'">
+                          <p-selectButton [options]="stateOptions" [(ngModel)]="itemEdit.displaytype" [ngModelOptions]="{standalone: true}" optionLabel="label" optionValue="value"></p-selectButton>
+                        </div>
+                        <div class="col-sm-8 pr-0"  *ngIf="itemEdit.questionChoice == 'Comments' && itemEdit.questionChoice == 'Number'">
+                        </div>
+                        <div class="col-sm-4">
+                          <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                            style="margin-top:15px; cursor: pointer; width: 40%;" (click)="removeQuestionsEdit(i,j)">
+                          &nbsp;
+                            <svg width="18px" fill="currentColor" viewBox="0 0 24 24" class="question-handle" cdkDragHandle *ngIf="evaluationModel.questionsList[i].Topics.questions.length != 1">
+                              <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                              <path d="M0 0h24v24H0z" fill="none"></path>
+                            </svg>
+                        </div>
+                      </div>
+                    </div> -->
+
+                    
+                    <div class="col-sm-3 pl-0">
+                      <div class="row">
+                        <div class="col-md-7">
+                          <label *ngIf="itemEdit.questionChoice != 'Comments' && itemEdit.questionChoice != 'Number'">Display Type</label>
+
+                          <div class="row">
+                            <div class="col-sm-8 pr-0"  *ngIf="itemEdit.questionChoice != 'Comments' && itemEdit.questionChoice != 'Number'">
+                              <p-selectButton [options]="stateOptions" [(ngModel)]="itemEdit.displaytype" [ngModelOptions]="{standalone: true}" optionLabel="label" optionValue="value"></p-selectButton>
+                            </div>
+                            <div class="col-sm-8 pr-0"  *ngIf="itemEdit.questionChoice == 'Comments' && itemEdit.questionChoice == 'Number'">
+                            </div>
+                            <div class="col-sm-4">
+                              <!-- <br>&nbsp; -->
+                              <img src="../assets/img/microinteraction/delete_keyphrase.svg"
+                                style="margin-top:15px; cursor: pointer; width: 16px;" (click)="removeQuestionsEdit(i,j)">
+                              &nbsp;
+                                <svg width="18px" fill="currentColor" viewBox="0 0 24 24" class="question-handle" cdkDragHandle *ngIf="evaluationModel.questionsList[i].Topics.questions.length != 1">
+                                  <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                                  <path d="M0 0h24v24H0z" fill="none"></path>
+                                </svg>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="col-md-5 pl-0" [ngStyle]="{'cursor' : i == 0 && j == 0 ? 'not-allowed' : '', 'background-color' : i == 0 && j == 0 ? 'lightgray' : ''}" style="border-left: 2px solid lightgray;">
+                          <div class="form-check pl-2" style="margin-top: 28%;">
+                          <!-- Exisiting Changes -->
+                            <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="itemEdit.conditionalSkip" (ngModelChange)="disabledConditionalDisplay()" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px; margin-left: 33%;" >
+                            <br>
+                            <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none; cursor: pointer; text-align: center;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                            <button type="button" class="add-btn" [ngStyle]="{'cursor': disabledConditionalDisplayOption==true?'not-allowed' : 'pointer'}" [disabled]="disabledConditionalDisplayOption" *ngIf="itemEdit.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModalEdit"  (click)="addconditionalSkipEdit(0, i, j, itemEdit);" tooltip="Update / Add Conditional Display questions" placement="top" style="margin-bottom: 24px; color: #0D4DCE; padding-right: 0px; margin-left: 33%;" >
+                              <img src="../assets/img/microinteraction/pencil-square.svg"  style="color: #0D4DCE;">
+                            </button>
+                            <!-- New Changes -->                      
+                            <!-- <button  type="button" class="add-btn" *ngIf="!itemEdit.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModalEdit" (click)="addconditionalSkipEdit(0, i, j, itemEdit);">
+                              <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="itemEdit.conditionalSkip" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;" >
+                              <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none; cursor: pointer;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                              <span id="EditModalOpen" data-toggle="modal" data-target="#conditionalSkipModalEdit"></span>
+                            </button>
+                            <button  type="button" class="add-btn" *ngIf="itemEdit.conditionalSkip">
+                              <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="itemEdit.conditionalSkip" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;" >
+                              <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none; cursor: pointer;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                              <span id="EditModalOpen" data-toggle="modal" data-target="#conditionalSkipModalEdit"></span>
+                            </button> -->
+
+                      
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- <div class="col-sm-2 pl-3 pr-1" [ngStyle]="{'cursor' : i == 0 && j == 0 ? 'not-allowed' : '', 'background-color' : i == 0 && j == 0 ? 'lightgray' : ''}" style="border-left: 2px solid lightgray;">
+                      <div class="form-check" style="margin-top: 28%;">
+                        <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="itemEdit.conditionalSkip" (ngModelChange)="disabledConditionalDisplay()" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;" >
+                        <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none; cursor: pointer;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                      <button type="button" class="add-btn" [ngStyle]="{'cursor': disabledConditionalDisplayOption==true?'not-allowed' : 'pointer'}" [disabled]="disabledConditionalDisplayOption" *ngIf="itemEdit.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModalEdit"  (click)="addconditionalSkipEdit(0, i, j, itemEdit);" tooltip="Update / Add Conditional Display questions" placement="top" style="margin-bottom: 24px; color: #0D4DCE; padding-right: 0px;" >
+                        <img src="../assets/img/microinteraction/pencil-square.svg"  style="color: #0D4DCE;">
+                      </button>
+                      </div>
+                    </div> -->
+                    
+    
+                  </div>
+                </div>
+                <div>
+                  <button type="button" class="add-btn" style="margin-bottom: 10px;" (click)="addQuestionsEdit(i)">
+                    <img src="../assets/img/microinteraction/add_item.svg">
+                    <span class="btn-txt-add">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.add}}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div>
+            <button type="button" class="add-btn" style="margin-bottom: 24px;">
+                <img src="../assets/img/microinteraction/add_item.svg">
+               <span class="btn-txt-add">Add categories</span>
+            </button>
+       </div> -->
+       <div class="errormsg-topic" *ngIf="metricOptionErr || metricValueErr || addConditionErr || metricConditionErr ">Call Hydration doesnot satisfy the condition,Please Validate</div>
+      <div class="save-cancel common-bottom">
+
+        <div class="row">
+          <div class="col-sm-5" *ngIf="global.rolePermissions.evaluate.evaluationFroms.isViewEdit == true">
+            <div class="form-group" >
+              <!-- <button type="button" class="btn-save" [disabled]="loading || QustionChoiceAnswerValue" (click)="evaluationUpdate(evaluationModel)">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.save}}</button> -->
+              <button type="button" class="btn-save" (click)="evaluationUpdate(evaluationModel)">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.save}}</button>
+            </div>
+          </div>
+          <div class="col-sm-5">
+            <div class="form-group">
+              <button type="button" class="btn-cancel" (click)="cancel()">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.cancel}}</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+</form>
+
+<!-- Create Evaluation Forms -->
+<form [formGroup]="createEvaluationForm">
+  <div *ngIf="createOrEditEvaluation == 'create'">
+    <div style="margin: 36px 220px 0 32px;">
+      <div class="edit-header">
+        <div>
+          <img src="../../../../assets/img/back.svg">
+          <ul class="breadcrumb" >
+            <li><label class="bread-crumb-label1" style="cursor: pointer;" (click)="cancel()">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.breadcrumb}}</label></li>
+          </ul>
+      </div>
+        <div class="row" style="margin-bottom: 2%">
+          <div class="col-lg-10 col-sm-4">
+            <div class="page-title">
+              <h2>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.createTilte}}</h2>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="edit-theme-ipt">
+        <h5 style="width: auto;">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evaluationDesc}}</h5>
+
+        <div class="row" style="margin-top: 30px;">
+
+          <div class="col-sm-6 ">
+            <div class="row">
+
+              <div class="col-sm-12" style="margin-bottom: 4px;">
+                <span class="label-name">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalName}}</span>
+                <span class="label-char" style="float: right;">44 {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.characters}}</span>
+              </div>
+
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <input type="text" id="evaluationnameid" class="form-control ipt-edit" maxlength="44" autocomplete="off"
+                    [(ngModel)]="evaluationModel.evaluationRoomName" formControlName="createEvalutionName" (keypress)="omit_special_char($event)" (ngModelChange)="onPaste($event)"
+                    placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalName}}" style="height: 56px;"
+                    [ngClass]="{ 'is-invalid': (!createEvaluationForm.controls['createEvalutionName'].valid && createEvaluationForm.controls['createEvalutionName'].touched)
+                                            ||(createEvaluationForm.controls['createEvalutionName'].errors?.required && issubmitCreate)}">
+                  <div
+                    *ngIf="(!createEvaluationForm.controls['createEvalutionName'].valid && createEvaluationForm.controls['createEvalutionName'].touched)
+                                            ||(createEvaluationForm.controls['createEvalutionName'].errors?.required && issubmitCreate)"
+                    class="errormsg-topic">
+                    {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalfromError}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 ">
+            <div class="row">
+              <div class="col-sm-12" style="margin-bottom: 4px;">
+                <span class="label-name">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalDescription}}</span>
+                <span class="label-char" style="float: right;">70 {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.characters}}</span>
+              </div>
+              <div class="col-sm-12">
+                <input type="text" class="form-control ipt-edit" maxlength="70"
+                  [(ngModel)]="evaluationModel.evaluationRoomDesc" [ngModelOptions]="{standalone: true}" 
+                  autocomplete="off" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.evalDescription}}" style="height: 56px;">
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="edit-evaluation-category row">
+        <div class="category-criteria col-sm-6">
+          <h4>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.title}}</h4>
+          <p>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.categoryDesc}}</p>
+          
+          <div class=" eval-theme">
+            <h5>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.label}}</h5>
+            <div class="">
+              <div class="form-group ">
+                <!-- <select class="form-control" [(ngModel)]="evaluationModel.strategyId" [ngModelOptions]="{standalone: true}" (change)="changeThemeCreate(evaluationModel.strategyId)" >
+                              <option value=null disabled selected>Select a category</option>
+                              <option *ngFor="let item of strategyItems" [value]="item.Key">{{item.Value}}</option>
+                            </select> -->
+                <p-dropdown class=" ipt-eval-theme dplable" [options]="strategyItems"
+                  [(ngModel)]="evaluationModel.strategyId" filter="true" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.select}}" formControlName="createThemeName"
+                  (onChange)="changeThemeCreate(evaluationModel.strategyId)"
+                  [ngClass]="{ 'is-invalid': (!createEvaluationForm.controls['createThemeName'].valid && createEvaluationForm.controls['createThemeName'].touched)
+                                              ||(createEvaluationForm.controls['createThemeName'].errors?.required && issubmitCreate)}"></p-dropdown>
+                <div *ngIf="(!createEvaluationForm.controls['createThemeName'].valid && createEvaluationForm.controls['createThemeName'].touched)
+                ||(createEvaluationForm.controls['createThemeName'].errors?.required && issubmitCreate)"
+                  class="errormsg-topic">
+                  {{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.ThemeError}}
+                </div>
+                <!-- <p-autoComplete  
+                            placeholder="Theme" class="ipt-eval-theme"[suggestions]="filteredThemeList" (completeMethod)="filterTheme($event)"
+                             [(ngModel)]="evaluationModel.strategyId"[ngModelOptions]="{standalone: true}" (change)="changeThemeCreate(evaluationModel.strategyId)">
+                          </p-autoComplete> -->
+              </div>
+            </div>
+            <!-- Add -->
+            <!-- <div> -->
+            <!-- <button type="button" class="add-btn" style="margin-bottom: 24px;">
+                          <img src="../assets/img/microinteraction/add_item.svg">
+                         <span class="btn-txt-add">Add Theme categories</span>
+                      </button> -->
+            <!-- </div> -->
+          </div>
+        </div>
+        
+         <!-- Evaluator user, Moderators and Lock Options -->
+         <div class="col-sm-6" style="height: 240px;">
+            <p-tabView >
+                  <p-tabPanel header="Evaluators">
+                    <div class="eval-theme">
+                        <h5>Add users as Evaluators</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userEvaluator" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as evaluator" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(0)" *ngFor="let item of evaluationModel.userEvaluator">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalEdit(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Coaches">
+                    <div class="eval-theme">
+                        <h5>Add users as Coaches</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userCoaches" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as coach" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(1)" *ngFor="let item of evaluationModel.userCoaches">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalCoachCreate(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Moderators">
+                    <div class="eval-theme">
+                        <h5>Add users as Moderators</h5>
+                    </div>
+                    <div >
+                        <p-multiSelect [options]="users" [(ngModel)]="evaluationModel.userModerator" optionLabel="label"  [ngModelOptions]="{standalone: true}" defaultLabel="Choose user as moderator" maxSelectedLabels="0" selectedItemsLabel="{0} user selected" [showToggleAll]="false"></p-multiSelect>
+                    </div>
+                    <div class ="selected-user-div">
+                        <button class="user-tags" [ngClass]="getTagBG(2)" *ngFor="let item of evaluationModel.userModerator">  
+                        {{item.label}}
+                          <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalModEdit(item)"> -->
+                          <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="deleteEvalModEdit(item)"></i>
+                        </button>
+                    </div>
+                  </p-tabPanel>
+                  <p-tabPanel header="Controls">
+                      <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                          <div class="bold-txt f-15">Lock After Submit (All)</div>
+                          <div>
+                            <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.lockAfterSubmit" [ngModelOptions]="{standalone: true}">
+                            </p-inputSwitch>
+                            <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.lockAfterSubmit == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                          </div>
+                      </div>
+                      <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                          <div class="bold-txt f-15">Allow Multiple Evaluators</div>
+                          <div>
+                            <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.allowResubmit" [ngModelOptions]="{standalone: true}">
+                            </p-inputSwitch>
+                            <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.allowResubmit == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                          </div>
+                      </div>
+                      <!-- <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+                        <div class="bold-txt f-15">Allow Evaluators as a Coaches</div>
+                        <div>
+                          <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.allowCoaches" [ngModelOptions]="{standalone: true}">
+                          </p-inputSwitch>
+                          <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.allowCoaches == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+                        </div>
+                      </div> -->
+                      <div style="display: flex;justify-content: space-between;margin-bottom: 1px;">
+                          <div class="bold-txt f-15"><p style="margin-bottom: 5px;">Note: These Controls do not apply to Moderators</p></div>
+                      </div>
+                  </p-tabPanel>
+            </p-tabView>
+         </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="mb-2" style="height: 60px;">
+            <button type="button" class="add-btn"  (click)="addCoachCategory()">
+              <label tooltip="Add coaching category" placement="right" tooltipDisabled="false">
+                <img src="../assets/img/microinteraction/add_item.svg">
+                <span class="btn-txt-add">Add Coaching Criteria</span>
+              </label>
+            </button>
+
+            <div class="category-list">
+              <button class="user-tags" [ngClass]="getTagBG(1)" *ngFor="let item of evaluationModel.coachCategories">  
+              {{item}}
+                <!-- <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="padding-left: 12px;" (click)="deleteEvalModEdit(item)"> -->
+                <i class="fa fa-times-circle time-size" aria-hidden="true" (click)="closeList(item)"></i>
+              </button>
+            </div>
+          </div>  
+        </div>
+
+        <div class="col-sm-6">
+          <div style="display: flex;justify-content: space-between;margin-bottom: 16px;">
+            <div class="bold-txt f-15">Automatic Call Hydration</div>
+            <div>
+              <p-inputSwitch class="ipt-switch-platform" [(ngModel)]="evaluationModel.automaticcallhydration" (ngModelChange)="evaluationModel.automaticcallhydration?evaluationModel.rulebased='percentage':evaluationModel.rulebased=''" [ngModelOptions]="{standalone: true}">
+              </p-inputSwitch>
+              <span class="on-off-toggle" style="top: -6px;">{{evaluationModel.automaticcallhydration == true ? global.language?.settings?.platformSettings?.genesys?.on : global.language?.settings?.platformSettings?.genesys?.off}}</span>
+            </div>
+        </div>
+        
+          <div *ngIf='evaluationModel.automaticcallhydration' style="display: flex;margin-bottom: 24px;">
+            <label>
+                <!-- <p-radioButton name="group11" value="percentage"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype=''; evaluationModel.sendcalls=null; evaluationModel.ruletype='HOURLY';" [ngModelOptions]="{standalone: true}" label="% based" inputId="based1"> -->
+                  <p-radioButton name="group11" value="percentage"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype='HOURLY';" [ngModelOptions]="{standalone: true}" label="% based" inputId="based1">
+                </p-radioButton>
+            </label>
+            <label>
+                <!-- <p-radioButton name="group12" value="rule"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype=''; evaluationModel.sendcalls=null; evaluationModel.ruletype='DAILY';" [ngModelOptions]="{standalone: true}" label="Rule based" inputId="rulebased4"> -->
+                  <p-radioButton name="group12" value="rule"  [(ngModel)]="evaluationModel.rulebased" (ngModelChange)="evaluationModel.ruletype='DAILY';" [ngModelOptions]="{standalone: true}" label="Rule based" inputId="rulebased4">
+                </p-radioButton>
+            </label>
+
+            <label >
+              <button type="button" style="outline: 0px;" class="add-btn"  (click)="op.show($event)" >
+                <span class="btn-con-add">Conditions &nbsp;</span>
+                  <img src="../assets/img/microinteraction/edit.svg">
+                </button>
+          </label>
+          
+          <p-overlayPanel #op for="op" [showCloseIcon]="true" appendTo="body" [style]="{width: '610px'}"   [dismissable]="false">
+            <div class="p-3">
+              <div class="source-title mb-3">Define rules</div>
+              <div class=" mb-2 ">
+                <div style="display: flex;">
+                <label>
+                    <p-radioButton name="group1" value="all"  [(ngModel)]="evaluationModel.conditionMetrics"  [ngModelOptions]="{standalone: true}" label="All conditions met" inputId="preopt1" >
+                  </p-radioButton>
+               </label>
+               <label>
+                  <p-radioButton name="group2" value="any"  [(ngModel)]="evaluationModel.conditionMetrics"  [ngModelOptions]="{standalone: true}" label="Any conditions met" inputId="preopt2">
+               </p-radioButton>
+              </label>
+              </div>
+              </div>
+              <div class="label-section border-0">
+              <div class="row mb-3 ml-1 " style="display: flex;"  *ngFor="let create of evaluationModel.callHydrationCondition; let i=index">
+                <div>
+                  <p-dropdown [style]="{'width':'160px'}" [options]="metricOption" [(ngModel)]="create.metricName"  [ngModelOptions]="{standalone: true}" placeholder="Select"
+                 (onChange)="metricNameValidation(create.metricName,i)" ></p-dropdown>
+                </div>
+                <div class="ml-3" *ngIf="create.metricName != 'Handle Time' && create.metricName != 'Talk Time'">
+                  <p-multiSelect class="multiselect-custom-virtual-scroll data-access-ddl" [style]="{'width':'293px'}" [options]="metricValueOption" [(ngModel)]="create.metricValue" [ngModelOptions]="{standalone: true}" maxSelectedLabels="0" selectedItemsLabel="{0} data selected" (ngModelChange)="metricOnChange(create.metricValue,i,'createmetric')"  defaultLabel="Select value" (onFocus)="getMetricValueData(create.metricName)" [virtualScroll]="true" itemSize="34"  [showToggleAll]="false" [disabled]="create.metricName === null || (metricOptionErr && i == metricNameIndex)"></p-multiSelect>
+                </div>
+                <div style="display: flex;">
+                  <div class=" ml-3" *ngIf="validateMetricName(create.metricName)">
+                    <p-dropdown class="choose-Condition dplable" [options]="operatorDDL" [(ngModel)]="create.metricConditionOperator" 
+                      placeholder="Select a Operation" [ngModelOptions]="{standalone: true}" (ngModelChange)="conditionOperatorChange($event,i)" [disabled]="(metricOptionErr && i == metricNameIndex)"></p-dropdown>
+                  </div>
+                  <div class=" ml-3" *ngIf="validateMetricName(create.metricName) && create.metricConditionOperator != '>=<='">
+                    <input type="number" class="score-theme" [(ngModel)]="create.metricConditionalValue"
+                      [ngModelOptions]="{standalone: true}" min="0" (keypress)="metricKeyPress($event,'<>')" [disabled]="(metricOptionErr && i == metricNameIndex)">
+                  </div>
+                  <div class=" ml-3" *ngIf="create.metricConditionOperator == '>=<=' && validateMetricName(create.metricName)">
+                    <input type="text" class="score-theme" [(ngModel)]="create.metricConditionalValue"
+                      [ngModelOptions]="{standalone: true}" (ngModelChange)="metricBetweenValidation()" min="0" placeholder="eg:1-10" (keypress)="metricKeyPress($event,'between')"/>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn-delete-icon" type="button" (click)="removeConditionCreate(i,'removecreate')" 
+                    style="margin-left: 16px;margin-top: 4px;">
+                    <img src="../assets/img/microinteraction/delete_keyphrase.svg" style="margin-left: -5px;margin-top: 3px;width: 16px;">
+                  </button>
+                </div>
+              </div>
+              </div>
+              <div class="errormsg-topic" *ngIf="metricOptionErr">Cannot choose same metric option, once if option is already existed! </div>
+              <div class="errormsg-topic" *ngIf="metricValueErr">Please select atleast 1 MetricValue option</div>
+              <div class="errormsg-topic" *ngIf="addConditionErr">Condition is already Exist,Please select option and value</div>
+              <div class="errormsg-topic" *ngIf="errBetween == true" >“Between” operator requires a range like 1-10</div>
+              <div class="errormsg-topic" *ngIf="errSameValue == true" >“Between” operator do not accept a same range (1-1)</div>
+              <div class="errormsg-topic" *ngIf="metricConditionErr" >Please Enter the metric condition value</div>
+              <div class="d-flex justify-content-between  mt-2 ml-0" >
+                <button type="button" class="add-btn"   (click)="addConditionCreate('createcondition')" [disabled]="isAddDisable">
+                  <label class="d-flex" style="align-items: center;text-decoration: none;" [ngClass]="{'btn-txt-add' : !isAddDisable , 'btn-txt-grey': isAddDisable }" >
+                    <!-- <img src="../assets/img/microinteraction/add_item.svg"> -->
+                    <span  style="font-size: 28px;">+ </span>&nbsp;
+                    <span  >Add Conditions</span>
+                  </label>
+                </button>
+                <div >
+                  <button type="button" class="btn-save" style="float: right" [ngClass]="{'btn-save' : !isDisableDone , 'btn-save-disable': isDisableDone}" (click)="addDefinition($event,op)" [disabled]="isDisableDone" >Done</button>
+                </div>
+              </div>
+              <!-- <div style="display: flex;">
+              <div style="width:100%;color: grey;justify-content: center;padding-top: 6px;">Note : If Metric option value is choosen,Metric option will be disabled</div>
+              
+              </div> -->
+           </div>
+          </p-overlayPanel> 
+            
+          </div>
+
+          <div class="form-group" *ngIf="evaluationModel.automaticcallhydration && evaluationModel.rulebased == 'percentage'">
+            <div style="display: flex;">
+              <span style="margin-left: 4px; padding-top: 6px;">Send</span>
+
+              <input type="text" class="form-control" [(ngModel)]="percentageSend"  [ngModelOptions]="{standalone: true}" (keypress)="keyPress($event)"
+              placeholder="" autocomplete="off" style="margin-left: 8px; width: 56px; border:1px solid #B3B6C7">
+               
+              <span style="margin-left: 8px; padding-top: 6px;">% Calls</span>
+
+              <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="percentageDropdown" 
+              placeholder="" [(ngModel)]="percentageDuration" [ngModelOptions]="{standalone: true}"></p-dropdown>
+              
+              <span style="margin-left: 8px; padding-top: 6px;">per agent to Workspace</span>
+  
+              </div>
+          </div>
+
+          <div class="form-group" *ngIf="evaluationModel.automaticcallhydration && evaluationModel.rulebased == 'rule'">
+            <div style="display: flex;">
+
+              <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="ruleDropdown" 
+              placeholder="" [(ngModel)]="ruleDuration" [ngModelOptions]="{standalone: true}"></p-dropdown>
+
+              <input type="text" class="form-control" [(ngModel)]="ruleSend"  [ngModelOptions]="{standalone: true}" (keypress)="keyPress($event)"
+              placeholder="" autocomplete="off" style="margin-left: 8px; width: 56px; border:1px solid #B3B6C7">
+
+              <span style="margin-left: 8px; padding-top: 6px;">Calls per agent to Workspace</span>
+  
+              </div>
+          </div>
+
+        </div>
+        <div class="col-sm-6 mt-5">
+          <div class="form-group"  style="display: flex;flex-direction: column;">
+            <div>
+              <!-- <p-checkbox  class="check-box-active box-genesys check-box-width mr-3" label="" [(ngModel)]="evaluationModel.isNonACD"
+              [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox> -->
+              <label style="font-weight: bold;">Form Data Display</label>
+              <p-dropdown class="drop-edit-evaluate ml-1 dplable" [options]="formLevelDossierIdList" optionLabel="DossierID"
+              placeholder="Default" [(ngModel)]="evaluationModel.formLevelDossierId" [ngModelOptions]="{standalone: true}" [showClear]="true"></p-dropdown>
+            </div>
+            
+            <div>
+            <label>This setting will change the data grid shown for this form in the Evaluation Workspace. Contact your account representitive to add new options to this dropdown.</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="form-group"  style="display: flex;flex-direction: column;">
+              <div>
+                <p-checkbox  class="check-box-active box-genesys check-box-width mr-3" label="" [(ngModel)]="evaluationModel.isNonACD"
+                [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox><label style="font-weight: bold;">Enable non-acd evaluation</label>
+              </div>
+              
+              <div>
+              <label>This setting allows evaluators to review an agent without relating it to a specific conversation within the Evaluation Workspace.
+                This is advantageous when evaluations should be conducted based on external sources of information or unrelated to a specific logged conversation.</label>
+              </div>
+            </div>
+      </div>
+      </div>
+
+      
+      <div id="coach-category" class="notes-popup pop-category-postion" *ngIf="coachPopUP">
+        <div class="form-group ">
+            <div><label class="interaction-label">Add Coaching Category</label><label style="float: right;
+                margin-bottom: 4px;"><button type="button" class="close"style="outline: 0 !important;" (click)="closeCoachCategory()">&times;</button></label></div>
+            <input type="text" class="form-control ipt-notes-box"  [(ngModel)]="iptCoachModel"
+            [ngModelOptions]="{standalone: true}"name="notes" maxlength="128"  placeholder="Coach Category Name" autocomplete="off" (keyup.enter)="addList()">
+            <div class="errormsg-topic" *ngIf="errCoachCategory==true" style="font-size: 11px;padding: 0;">Please enter the coach category name</div>
+        </div>
+
+        <div>
+            <button type="button" class="save-note-btn" (click)="addList()"><i class="fa fa-share mr-1" aria-hidden="true"></i>Add</button>
+        </div>
+      </div>
+
+      <button type="button" class="add-btn" style="margin-bottom: 24px;" (click)="addCategory(evaluationModel)"
+        [disabled]="getStrategyValue !='' ? false:true">
+        <label tooltip="Add category" placement="right" tooltipDisabled="false">
+          <img src="../assets/img/microinteraction/add_item.svg">
+          <span class="btn-txt-add">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.categories?.add}}</span>
+        </label>
+      </button>
+
+      <div id="accordion" *ngIf="getStrategyValue!=''" style="width: 118%;">
+        <!--*ngFor="let topic of evaluationModel.questionsList"-->
+        <div  cdkDropList (cdkDropListDropped)="dropCategoryCreate($event)">
+          <div class="card collapse-evalu" *ngFor="let topic of evaluationModel.questionsList; let i=index" cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="evaluationModel.questionsList.length == 1">
+            <div class="card-header" id="headingOne">
+              <h5 class="mb-0" style="margin-top: 1.2%;display: flex;
+                  justify-content: space-around;">
+                  <div class="line-clamp-evaluation"*ngIf="collapse=='down'+i||(collapse!='up'+i && collapse!='down'+i) "   style=" text-align: left;">{{topic.Topics.topicName}}</div>
+                  <!-- <div *ngIf="collapse!='up'+i && collapse!='down'+i " style=" text-align: left;">{{topic.Topics.topicName}}</div> -->
+                  <input class="col-sm-4 form-control evaluation-accordion-input" *ngIf="collapse=='up'+i" maxlength="44" autocomplete="off" [(ngModel)]="topic.Topics.topicName" [ngModelOptions]="{standalone: true}">
+                <button class="btn-collapse-link" data-toggle="collapse" [attr.data-target]="'#collapseOne'+i" aria-expanded="false" [attr.aria-controls]="'collapseOne'+i" 
+                style="width: 26%;" (click)="changeTextToInput(i)" >
+                </button>
+                <div style="cursor: pointer;display: flex;">
+                  <label>Weight :&nbsp;&nbsp;</label>
+                  <input class="col-sm-8 form-control evaluation-accordion-input" type="text"  [min]="0" [(ngModel)]="topic.Topics.weight" [ngModelOptions]="{standalone: true}" autocomplete="off" placeholder="Weight in %">
+                </div>
+                <div style="cursor: pointer;display: flex;margin-top: -4px;">
+                  <div class="example-handle" cdkDragHandle *ngIf="evaluationModel.questionsList.length != 1">
+                    <svg width="24px" fill="currentColor" viewBox="0 0 24 24"  style="position: relative;right: 10px;">
+                      <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                      <path d="M0 0h24v24H0z" fill="none"></path>
+                    </svg>
+                  </div>
+                  <img src="../assets/img/microinteraction/show_less.svg" data-toggle="collapse" [attr.data-target]="'#collapseOne'+i" [attr.aria-controls]="'collapseOne'+i"
+                    style="margin-top: 7%;padding: 0 10px;height: 14px;" *ngIf="collapse=='up'+i "  (click)="changeTextToInput(i)">
+                    <!-- <img src="../assets/img/microinteraction/show_less.svg" data-toggle="collapse" [attr.data-target]="'#collapseOne'+i" [attr.aria-controls]="'collapseOne'+i"
+                    style="margin-top: 1%;padding: 0 10px;" *ngIf="collapse!='up'+i && collapse!='down'+i"  (click)="changeTextToInput($event,i)"> -->
+                  <img src="../assets/img/microinteraction/show_more.svg" data-toggle="collapse" [attr.data-target]="'#collapseOne'+i" [attr.aria-controls]="'collapseOne'+i"
+                    style="margin-top: 7%;padding: 0 10px;height: 14px;" *ngIf="collapse=='down'+i||(collapse!='up'+i && collapse!='down'+i)" (click)="changeTextToInput(i)" >
+                  <button class="btn-delete-icon" type="button" style="border-left: 1px solid #B3B6C7;"
+                    (click)="removeCreateCategory(i)">
+                    <img src="../assets/img/microinteraction/delete.svg" style="padding: 0 10px;height: 18px;margin-top: -7px; ">
+                  </button>
+                </div>
+              </h5>
+            </div>
+
+            <div [attr.id]="'collapseOne'+i" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
+              <div class="card-body">
+                <div class="collapse-content-title">
+                  <h4>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.title}}</h4>
+                </div>
+                <div cdkDropList class="example-list" (cdkDropListDropped)="dropCreate(i,$event)">
+                  <div class="row example-box" *ngFor="let item of topic.Topics.questions;let j = index" cdkDragLockAxis="y" cdkDrag [cdkDragDisabled]="topic.Topics.questions.length == 1">
+                    <div class="col-sm-3 pr-0">
+                      <div class="form-group">
+                        <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.question}} {{j+1}}</label>
+                        
+                        <label class="ml-2" tooltip="Click the link to add hypertext for each question" placement="bottom" (click)="addHypertext(i,j,'create')"><i class="fa fa-link" aria-hidden="true"></i></label>
+
+                        <label class="ml-2" *ngIf="j==0" tooltip="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.tooltipques}}"
+                          placement="right">
+                          <img src="../assets/img/microinteraction/helptext.svg" style="margin-top: -4px;">
+                        </label>
+                        <input type="text" class="form-control" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.type}}" [(ngModel)]="item.question"
+                          [ngModelOptions]="{standalone: true}" style="border: 1px solid #B3B6C7;">
+                      </div>
+
+                      <div class="hyper-popup card-postion" *ngIf="textPopup && indexTextj == j && indexTexti == i ">
+                          <div class="form-group mb-2">
+                              <div><label class="interaction-label">Add Question Description</label><label style="float: right;
+                                  margin-bottom: 4px;" (click)="closehypertext(i,j,'create')" ><button type="button" class="close"
+                                          style="outline: 0 !important;" [disabled]="hyperDisplayErr || hyperURLErr || isDisplayErr">&times;</button></label>
+                              </div>
+                              <!-- <input type="text" class="form-control ipt-hyper-box" name="hypertext1" [(ngModel)]="item.questionDescription"
+                              [ngModelOptions]="{standalone: true}" maxlength="256" autocomplete="off" (ngModelChange)="textchange($event,i,j)"> -->
+                              <textarea class="editableDescription" contenteditable="true" spellcheck="false" [(ngModel)]="item.questionDescription" 
+                              [ngModelOptions]="{standalone: true}" (ngModelChange)="textchange($event,i,j)"></textarea>
+                              
+                          </div>
+                          <div class="" *ngIf="hyperlink" style="display: flex;">
+                            <label  style="font-size: 13px;font-weight: 600;" class="interaction-label ml-1 pt-1">Link:</label>
+                            <span *ngIf="item.hyperlinkUrl.split('//').length == 1"><a class="hyper-link-url" href="https://{{item.hyperlinkUrl}}" target="_blank" tooltip="https://{{item.hyperlinkUrl}}" >{{item.hyperlinkDisplayType}}</a></span>
+                            <span *ngIf="item.hyperlinkUrl.split('//').length > 1"><a class="hyper-link-url" href="{{item.hyperlinkUrl}}" target="_blank" tooltip="{{item.hyperlinkUrl}}" >{{item.hyperlinkDisplayType}}</a></span>
+                            <button type="button" style="outline: 0px;" class="add-btn" (click)="op.toggle($event)">
+                                <img src="../assets/img/microinteraction/edit.svg">
+                              </button>
+                        </div>
+                          <div style="display: flex;justify-content: space-between;">
+                            <span tooltip="Click the link to add hyperlink" placement="bottom"  (click)="op.toggle($event)">
+                            <label class="ml-1" *ngIf="!hyperlink"  ><i class="fa fa-link" aria-hidden="true"></i></label>
+                            <label class="ml-1" *ngIf="!hyperlink" >Insert</label></span>
+                              <button type="button" class="ml-auto" [ngClass]="hyperDisplayErr || isHyperlinkDescription || hyperURLErr || isDisplayErr ? 'save-note-btn-disable' : 'save-note-btn'" (click)="savehypertext(i,j,'create')" [disabled]="hyperDisplayErr || isHyperlinkDescription || hyperURLErr || isDisplayErr">Save</button>
+                          </div>
+                          <div class="mt-1">
+                          <p-overlayPanel #op appendTo="body" [style]="{width: '398px'}" [dismissable]="false">
+                                <div class="mb-2" >
+                                    <label class="interaction-label">Display As</label>
+                                    <input type="text" class="form-control ipt-hyper-box" name="hyperlink1" [(ngModel)]="item.hyperlinkDisplayType"
+                                    [ngModelOptions]="{standalone: true}" maxlength="100" autocomplete="off">
+                                </div>
+                                <div class="mb-2">
+                                  <label class="interaction-label">URL</label>
+                                  <input type="text" class="form-control ipt-hyper-box" name="hyperlink2" [(ngModel)]="item.hyperlinkUrl"
+                                  [ngModelOptions]="{standalone: true}" autocomplete="off">
+                                  <div  class="errormsg-topic" *ngIf="hyperDisplayErr">Please enter Display as and URL </div>
+                                <div  class="errormsg-topic" *ngIf="hyperURLErr">Please enter the URL for hyperlink </div>
+                                <div style="white-space: normal;" class="errormsg-topic" *ngIf="isDisplayErr">Enter the string in the description above that should inherit the defined hyperlink</div>
+                              </div>
+                              <div style="display: flex;justify-content: flex-end;">
+                                <button type="button" *ngIf="hyperlink" style="margin-right: 20px;height: 22px;" class="btn-cancel" (click)="resethyperlink(i,j,$event,op)">Clear</button>
+                                <button type="button" style="margin-right: 20px;height: 22px;" class="btn-cancel" (click)="cancelhyperlink('create',$event,op,i,j,item.questionDescription)">Cancel</button>
+                                <button type="button"  class="save-note-btn" (click)="savehyperlink(item.hyperlinkDisplayType,item.hyperlinkUrl,$event,op,item.questionDescription)">Add</button>
+                              </div>
+                          </p-overlayPanel>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-3" style="text-align: center;">
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <div class="form-group"  style="display: flex;flex-direction: column;">
+                            <label>M</label>
+                            <p-checkbox  class="check-box-active box-genesys check-box-width" label="" [(ngModel)]="item.questionMandatory"
+                            [ngModelOptions]="{standalone: true}" binary="false"></p-checkbox>
+                          </div>
+                        </div>
+                        <div class="col-sm-9">
+                          <!-- </div>
+                          <div class="col-sm-2 pr-0" style="padding-left: 0px;"> -->
+                          <!-- <div class="form-group"> -->
+                          <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.Responsetype}}</label>
+                          <p-dropdown  class="dplable drop-edit-evaluate" [options]="questionChoices" [(ngModel)]="item.questionChoice" (ngModelChange)="addtopicQuestionChoice(0, i, j)"
+                            [ngModelOptions]="{standalone: true}" placeholder="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.select}}"></p-dropdown>
+                          <!-- </div> -->
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-3 pl-0" style="padding-left: 0px; padding-right:20px;">
+                      <div class="form-group">
+                        <label>{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.ans}}</label>
+                        <label class="ml-2" *ngIf="j==0"
+                          tooltip="{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.tooltipans}}"
+                          placement="right">
+                          <img src="../assets/img/microinteraction/helptext.svg" style="margin-top: -4px;">
+                        </label>
+                        <!-- <input type="text" class="form-control" (keypress)="keyPress($event)" maxlength="6"
+                          *ngIf="item.questionChoice == 'Number' || item.questionChoice == null"
+                          [(ngModel)]="item.questionValue" [ngModelOptions]="{standalone: true}"
+                          [placeholder]="item.questionChoice == null ? '' : '5-10' "style="border: 1px solid #B3B6C7;"> -->
+                        <!-- <textarea maxlength="2048" name="choice" id="choiceid" style="display: flex;width: 100%;"
+                          [(ngModel)]="item.questionValue" *ngIf="item.questionChoice == 'Choice'" cols="15" rows="2"
+                          [ngModelOptions]="{standalone: true}" placeholder="Option1=3,Option2=5,Option3=7"></textarea> -->
+                        <!-- <input type="text" class="form-control" [(ngModel)]="item.questionValue"
+                          *ngIf="item.questionChoice == 'Yes/No'" [ngModelOptions]="{standalone: true}"
+                          placeholder="Yes=5,No=10" style="border: 1px solid #B3B6C7;"> -->
+                          <label style="float: right;" *ngIf="item.questionChoice != 'Comments' && (item.questionChoice != '' && item.questionChoice != undefined)">Default Values</label>
+                          <input type="number" step="0.1" class="form-control" (keypress)="keyPress($event)" maxlength="6"
+                          *ngIf="item.questionChoice == null"
+                          [(ngModel)]="item.questionValue" [ngModelOptions]="{standalone: true}"
+                          [placeholder]="''"style="border: 1px solid #B3B6C7;">
+                          <!-- <input type="number" class="form-control height-25" id="inputPassword" [min]="0" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="item.topicQuestionValueMinimumEdit" (ngModelChange)="minMaxWarningMessageFuncionEdit('min', item.topicQuestionValueMinimumEdit, item.topicQuestionValueMaximumEdit, i , j); replaceNegativeFloatKeys(item.topicQuestionValueMinimumEdit, i, j, 'min', null);" [ngModelOptions]="{standalone: true}" placeholder="Min value"> -->
+                          
+                          <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Number'">
+                            <!-- <div class="col-sm-12" *ngIf="minMaxWarningMessage != ''" style="color: red; font-size: 13px;">{{minMaxWarningMessage}}</div> -->
+                            <!-- <div class="col-sm-12" *ngIf="item.topicQuestionValueMinimum>item.topicQuestionValueMaximum" style="color: red; font-size: 13px;">Maximum value must be greater than or equal to Minimum value</div> -->
+
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right" >Min</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" [(ngModel)]="item.topicQuestionValueMinimum" (ngModelChange)="minMaxWarningMessageFuncion('min', item.topicQuestionValueMinimum, item.topicQuestionValueMaximum, i , j); 
+                              replaceNegativeFloatKeysCreate(item.topicQuestionValueMinimum, i, j, 'min', null);" [ngModelOptions]="{standalone: true}" placeholder="Min value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-2">
+                              <!-- <p-radioButton name="group11" [value]="item.topicQuestionValueMinimum"  [(ngModel)]="evaluationModel.rulebased"  [ngModelOptions]="{standalone: true}" label="{{item.topicQuestionValueMinimumEdit}}" inputId="defaultValue"></p-radioButton> -->
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="item.topicQuestionValueMinimum" [max]="item.topicQuestionValueMaximum" (keypress)="restrictNegativeFloatKeys($event)" [(ngModel)]="item.defaultanswer" (ngModelChange)="minMaxWarningMessageFuncion('min', item.topicQuestionValueMinimum, item.topicQuestionValueMaximum, i , j); replaceNegativeFloatKeysDefaultAnswerCreate(item.defaultanswer, i, j);" [ngModelOptions]="{standalone: true}" placeholder="Default value">
+                            </div>
+                          </div>
+                          <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Number'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right">Max</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="item.topicQuestionValueMinimum" [(ngModel)]="item.topicQuestionValueMaximum" (ngModelChange)="minMaxWarningMessageFuncion('max', item.topicQuestionValueMinimum, item.topicQuestionValueMaximum, i , j); 
+                              replaceNegativeFloatKeysCreate(item.topicQuestionValueMaximum, i, j, 'max', null);" [ngModelOptions]="{standalone: true}" placeholder="Max value">
+                            </div>
+                          </div>
+
+                          <div class="m-0 p-0" *ngIf="item.questionChoice == 'Choice'">
+                            <div class="form-group row mb-0" *ngFor="let choice of item.topicQuestionChoiceArrayInputs; let ch=index">
+                              <div class="col-sm-6">
+                              <!-- <label for="inputPassword" class="col-sm-3 col-form-label float-right pr-0" >Option1</label> -->
+                              <input type="text" class="form-control height-25" [(ngModel)]="choice.topicQuestionChoiceQuestion" (ngModelChange)="choiceQuestionTypeFuncion(item.topicQuestionChoiceArrayInputs, i , j)" [ngModelOptions]="{standalone: true}" placeholder="option1">
+                              </div>
+                              <div class="col-sm-3 pr-1 pl-0">
+                                <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" [(ngModel)]="choice.topicQuestionChoiceValue" (ngModelChange)="choiceQuestionTypeFuncion(item.topicQuestionChoiceArrayInputs, i , j); 
+                                replaceNegativeFloatKeysCreate(choice.topicQuestionChoiceValue, i, j, '', ch);" [ngModelOptions]="{standalone: true}" placeholder="value">
+                              </div>
+                              <div class="col-md-1 pl-0">
+                                <img src="../assets/img/microinteraction/delete_keyphrase.svg" class="center-img pt-2" type="button" (click)="removetopicQuestionChoice(ch, i, j, item.topicQuestionChoiceArrayInputs, choice)" style="width: 16px;">
+                                  &nbsp;
+                              </div>
+                              <div class="col-sm-2 pl-0 pr-0 pt-1">
+                                <p-radioButton [value]="{Answer: choice.topicQuestionChoiceQuestion, Score: choice.topicQuestionChoiceValue}"  [(ngModel)]="item.defaultanswer" (click)="testvalue(item.defaultanswer)" [ngModelOptions]="{standalone: true}" label="" inputId="defaultValue"></p-radioButton>&nbsp;
+                                <!-- <p-radioButton [value]="choice.topicQuestionChoiceQuestion"  [(ngModel)]="item.defaultanswer" (click)="testvalue(item.defaultanswer)" [ngModelOptions]="{standalone: true}" label="" inputId="defaultValue"></p-radioButton>&nbsp; -->
+                                <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="item.defaultanswer?.Answer==choice.topicQuestionChoiceQuestion && item.defaultanswer?.Answer!=null && item.defaultanswer?.Answer !=undefined && item.defaultanswer?.Answer !=''" style="margin-top:0px; cursor: pointer; width: 25%;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                            </div>
+                            </div>
+                          </div>
+
+                          <div style="float: right;" *ngIf="item.questionChoice == 'Choice'">
+                            <button type="button" class="add-btn" style="margin-bottom: 4px;" (click)="addtopicQuestionChoice(1, i,j)">
+                              <img src="../assets/img/microinteraction/add_item.svg">
+                              <span class="btn-txt-add">Add</span>
+                            </button>
+                          </div>
+
+                          <!-- <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Choice'">
+                            <div class="col-sm-6">
+                               <label for="inputPassword" class="col-sm-3 col-form-label float-right pr-0" >Option2</label>
+                              <input type="text" class="form-control height-25" [(ngModel)]="item.questionValue" [ngModelOptions]="{standalone: true}" placeholder="option2">
+                              </div>                            
+                              <div class="col-sm-6">
+                              <input type="number" class="form-control height-25" id="inputPassword" [(ngModel)]="item.questionValueOption2" [ngModelOptions]="{standalone: true}" placeholder="value">
+                            </div>
+                          </div>
+                          <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Choice'">
+                            <div class="col-sm-6">
+                               <label for="inputPassword" class="col-sm-3 col-form-label float-right pr-0" >Option3</label> 
+                              <input type="text" class="form-control height-25" [(ngModel)]="item.questionValue" [ngModelOptions]="{standalone: true}" placeholder="option3">
+                              </div>                            
+                              <div class="col-sm-6">
+                              <input type="number" class="form-control height-25" id="inputPassword" [(ngModel)]="item.questionValueOption3" [ngModelOptions]="{standalone: true}" placeholder="value">
+                            </div>
+                          </div> -->
+
+                          <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Yes/No'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right pr-0" >Yes</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" [(ngModel)]="item.topicQuestionValueYes" (ngModelChange)="yesNoQuestionTypeFuncion( item.topicQuestionValueYes, item.topicQuestionValueNo, i , j); 
+                              replaceNegativeFloatKeysCreate(item.topicQuestionValueYes, i, j, 'yes', null);testvalue(item.defaultanswer);" [ngModelOptions]="{standalone: true}" placeholder="Yes value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-0">
+                              <p-radioButton name="displaytyperadio" [value]="{Answer: 'Yes', Score: item.topicQuestionValueYes}"  [(ngModel)]="item.defaultanswer"  [ngModelOptions]="{standalone: true}" inputId="displaytyperadio"></p-radioButton>&nbsp;
+                              <!-- <p-radioButton name="displaytyperadio" [value]="item.topicQuestionValueYes" [(ngModel)]="item.defaultanswer"  [ngModelOptions]="{standalone: true}" inputId="displaytyperadio"></p-radioButton>&nbsp; -->
+                              <!-- label="{{item.topicQuestionValueYesEdit}}"  && itemEdit.defaultanswer!=null && itemEdit.defaultanswer !=undefined && itemEdit.defaultanswer !=''-->
+                              <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="item.defaultanswer?.Score==item.topicQuestionValueYes && item.defaultanswer?.Score !=null && item.defaultanswer?.Score !=undefined && (item.defaultanswer?.Score!='' || item.defaultanswer?.Score.toString()=='0')" style="margin-top:0px; cursor: pointer; width: 16px;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                            </div>
+                          </div>
+                          <div class="form-group row mb-1" *ngIf="item.questionChoice == 'Yes/No'">
+                            <label for="inputPassword" class="col-sm-3 col-form-label float-right">No</label>
+                            <div class="col-sm-5">
+                              <input type="number" step="0.1" class="form-control height-25" id="inputPassword" [min]="0" [(ngModel)]="item.topicQuestionValueNo" (ngModelChange)="yesNoQuestionTypeFuncion( item.topicQuestionValueYes, item.topicQuestionValueNo, i , j); 
+                              replaceNegativeFloatKeysCreate(item.topicQuestionValueNo, i, j, 'no', null);testvalue(item.defaultanswer);" [ngModelOptions]="{standalone: true}" placeholder="No value">
+                            </div>
+                            <div class="col-sm-4 pl-0 pr-0">
+                              <p-radioButton name="displaytypedropdown" [value]="{Answer: 'No', Score: item.topicQuestionValueNo}"  [(ngModel)]="item.defaultanswer" (ngModelChange)="testvalue(item.defaultanswer)" [ngModelOptions]="{standalone: true}" inputId="displaytypedropdown"></p-radioButton>&nbsp;
+                              <!-- <p-radioButton name="displaytypedropdown" [value]="item.topicQuestionValueNo"  [(ngModel)]="item.defaultanswer"  [ngModelOptions]="{standalone: true}" inputId="displaytypedropdown"></p-radioButton>&nbsp; -->
+                              <!-- label="{{item.topicQuestionValueNoEdit}}" -->
+                              <img src="../assets/img/microinteraction/delete_keyphrase.svg" *ngIf="item.defaultanswer?.Score==item.topicQuestionValueNo && item.defaultanswer?.Score!=null && item.defaultanswer?.Score !=undefined && (item.defaultanswer?.Score!='' || item.defaultanswer?.Score.toString()=='0')" style="margin-top:0px; cursor: pointer; width: 16px;" (click)="removeQuestionsDefaultValueEdit(i,j)">
+                            </div>
+                          </div>
+
+                        <textarea maxlength="2048" name="comments" id="commentid" style="display: flex;width: 100%;"
+                          [(ngModel)]="item.questionValue" *ngIf="item.questionChoice == 'Comments'" cols="15" rows="2"
+                          [ngModelOptions]="{standalone: true}" placeholder="Type your comments"></textarea>
+                          
+                      </div>
+                    </div>
+                    <!-- <div class="col-sm-2 pl-0 pt-3">
+                      <label *ngIf="item.questionChoice != 'Comments' && item.questionChoice != 'Number'">Display Type</label>
+                      <div class="row">
+                        <div class="col-sm-8 pr-0"  *ngIf="item.questionChoice != 'Comments' && item.questionChoice != 'Number'">
+                          <p-selectButton [options]="stateOptions" [(ngModel)]="item.displaytype" [ngModelOptions]="{standalone: true}" optionLabel="label" optionValue="value"></p-selectButton>
+                        </div>
+                        <div class="col-sm-8 pr-0"  *ngIf="item.questionChoice == 'Comments' && item.questionChoice == 'Number'">
+                        </div>
+                        <div class="col-sm-4">
+                  
+                      <img src="../assets/img/microinteraction/delete_keyphrase.svg" type="button" (click)="removeQuestionsCreate(i,j)" style="width: 16px;">
+                      &nbsp;
+                      <svg width="18px" fill="currentColor" viewBox="0 0 24 24" class="question-handle mt-0" cdkDragHandle *ngIf="evaluationModel.questionsList[i].Topics.questions.length != 1">
+                        <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                      </svg>
+
+                    </div>
+                  </div>
+                  </div> -->
+
+
+                  <div class="col-sm-3 pl-0">
+                    <div class="row">
+                      <div class="col-md-7">
+                        <label *ngIf="item.questionChoice != 'Comments' && item.questionChoice != 'Number'">Display Type</label>
+                        <div class="row">
+                          <div class="col-sm-8 pr-0"  *ngIf="item.questionChoice != 'Comments' && item.questionChoice != 'Number'">
+                            <p-selectButton [options]="stateOptions" [(ngModel)]="item.displaytype" [ngModelOptions]="{standalone: true}" optionLabel="label" optionValue="value"></p-selectButton>
+                          </div>
+                          <div class="col-sm-8 pr-0"  *ngIf="item.questionChoice == 'Comments' && item.questionChoice == 'Number'">
+                          </div>
+                          <div class="col-sm-4">
+                    
+                        <img src="../assets/img/microinteraction/delete_keyphrase.svg" type="button" (click)="removeQuestionsCreate(i,j)"style="margin-top:15px; cursor: pointer; width: 16px;">
+                        &nbsp;
+                        <svg width="18px" fill="currentColor" viewBox="0 0 24 24" class="question-handle mt-0" cdkDragHandle *ngIf="evaluationModel.questionsList[i].Topics.questions.length != 1">
+                          <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                          <path d="M0 0h24v24H0z" fill="none"></path>
+                        </svg>
+  
+                      </div>
+                    </div>
+
+                      </div>
+                      <div class="col-md-5 pl-0" [ngStyle]="{'cursor' : i == 0 && j == 0 ? 'not-allowed' : '', 'background-color' : i == 0 && j == 0 ? 'lightgray' : ''}" style="border-left: 2px solid lightgray;">
+                        <div class="form-check pl-2" style="margin-top: 28%;">
+                          <!-- Exisiting Changes -->
+                          <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="item.conditionalSkip" (ngModelChange)="disabledConditionalDisplay()" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px; margin-left: 33%;" id="defaultCheck1">
+                          <br>
+                          <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none; cursor: pointer; text-align: center;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                            <button type="button" class="add-btn" [ngStyle]="{'cursor': disabledConditionalDisplayOption==true?'not-allowed' : 'pointer'}" [disabled]="disabledConditionalDisplayOption" *ngIf="item.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModal"  (click)="addconditionalSkipDetailCreate(0, i, j, item)" tooltip="Add Conditional Display questions" placement="top" style="margin-bottom: 24px; color: #0D4DCE; padding-right: 0px; margin-left: 33%;">
+                                <img src="../assets/img/microinteraction/pencil-square.svg" style="color: #0D4DCE;">
+                          </button>
+  
+                          <!-- New Changes -->
+                          <!-- <button  type="button" class="add-btn" *ngIf="!item.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModal" (click)="addconditionalSkipDetailCreate(0, i, j, item)">
+                            <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" disabled [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="item.conditionalSkip" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;">
+                            <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                            <span id="createModalOpen" data-toggle="modal" data-target="#conditionalSkipModal"></span>
+                          </button>
+                          <button  type="button" class="add-btn" *ngIf="item.conditionalSkip">
+                            <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" disabled [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="item.conditionalSkip" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;">
+                            <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                            <span id="createModalOpen" data-toggle="modal" data-target="#conditionalSkipModal"></span>
+                          </button> -->
+  
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                      <!-- <div class="col-sm-2 pl-3 pr-1" [ngStyle]="{'cursor' : i == 0 && j == 0 ? 'not-allowed' : '', 'background-color' : i == 0 && j == 0 ? 'lightgray' : ''}" style="border-left: 2px solid lightgray;">
+                      <div class="form-check" style="margin-top: 28%;">
+                        <input class="form-check-input" type="checkbox" id="{{'conditionalSkip'+i+j}}" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}" [(ngModel)]="item.conditionalSkip" (ngModelChange)="disabledConditionalDisplay()" [ngModelOptions]="{standalone: true}" style="width: 18px; height: 18px;" id="defaultCheck1">
+                        <label class="form-check-label" for="{{'conditionalSkip'+i+j}}" style="pointer-events: none;" [ngStyle]="{'pointer-events' : i == 0 && j == 0 ? 'none' : '','cursor' : i == 0 && j == 0 ? 'not-allowed' : 'pointer'}">Conditional Display</label>
+                        <button type="button" class="add-btn" [ngStyle]="{'cursor': disabledConditionalDisplayOption==true?'not-allowed' : 'pointer'}" [disabled]="disabledConditionalDisplayOption" *ngIf="item.conditionalSkip" data-toggle="modal" data-target="#conditionalSkipModal"  (click)="addconditionalSkipDetailCreate(0, i, j, item)" tooltip="Add Conditional Display questions" placement="top" style="margin-bottom: 24px; color: #0D4DCE; padding-right: 0px;">
+                        <img src="../assets/img/microinteraction/pencil-square.svg" style="color: #0D4DCE;">
+                        </button>
+                      </div>
+                    </div> -->
+                    
+
+                    </div>
+
+                  </div>
+                <div>
+                  <button type="button" class="add-btn" style="margin-bottom: 24px;" (click)="addQuestionsCreate(i)">
+                    <img src="../assets/img/microinteraction/add_item.svg">
+                    <span class="btn-txt-add">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.CollapseData?.add}}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Collapsible Group Item #1
+                  </button>
+                </h5>
+              </div>
+          
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Collapsible Group Item #2
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Collapsible Group Item #3
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+          </div> -->
+      <div>
+
+      </div>
+
+      <div class="errormsg-topic" *ngIf="metricOptionErr || metricValueErr || addConditionErr || metricConditionErr">Call Hydration doesnot satisfy the condition,Please Validate</div>
+      <div class="save-cancel common-bottom">
+
+        <div class="row">
+          <div class="col-sm-5">
+            <div class="form-group">
+              <!-- <button type="button" class="btn-save" [disabled]="loading || QustionChoiceAnswerValue"  (click)="postEvaluation(evaluationModel)">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.save}}</button> -->
+              <button type="button" class="btn-save" (click)="postEvaluation(evaluationModel)">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.save}}</button>
+            </div>
+          </div>
+          <div class="col-sm-5">
+            <div class="form-group">
+              <button type="button" class="btn-cancel" (click)="cancel()">{{global.language?.evaluations?.evaluationForms?.evaluationCreate?.saveCancel?.cancel}}</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</form>
+
+
+<!-- Delete confirm box in themes -->
+<div class="modal" id="myModal" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content delete-popup">
+
+      <!-- Modal Header -->
+      <div class="modal-header" style="border-bottom: 0;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="delete-popup-content">
+          <img src="../assets/img/glyphs_messaging/glyph_danger.svg" style="margin-top: -10px;
+              margin-right: 20px;">
+          <h5>{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.popupForm?.title}}</h5>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer " style="border-top: 0px;">
+        <div style="margin-left: 3.6%;">
+          <button type="button" class="btn-pop-del" data-dismiss="modal" (click)="deleteEvaluationForm()">{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.popupForm?.deletebtn}}</button>
+          <button type="button" class="btn-pop-cancel" data-dismiss="modal">{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.popupForm?.cancelbtn}}</button>
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Create Evaluation Form Conditional Display Modal box in themes -->
+<div class="modal fade" tabindex="-1" id="conditionalSkipModal" data-backdrop="static">
+  <div class="modal-dialog  modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+          <h5>Conditional Display Modal</h5>
+          <!-- <button type="button" id="createModalClose" class="close" data-dismiss="modal">&times;</button> -->
+          <span id="createModalClose" data-dismiss="modal"> </span>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body mt-3">
+
+        <!-- <div class="m-3" style="text-align: center;" *ngIf="invalidSupportConditionalInputs!=''">
+          <span style="color: red;">{{invalidSupportConditionalInputs}}</span>
+        </div> -->
+
+        <label class="mb-3">
+          <p-radioButton name="group12" value="All"  [(ngModel)]="conditionalSkipDetails.allConditionMet"  [ngModelOptions]="{standalone: true}" label="All conditions met" inputId="allConditionMet2">
+          </p-radioButton>
+        </label>
+        <label class="mb-3">
+          <p-radioButton name="group12" value="Any"  [(ngModel)]="conditionalSkipDetails.allConditionMet"  [ngModelOptions]="{standalone: true}" label="Any conditions met" inputId="anyConditionMet2">
+          </p-radioButton>
+        </label>
+
+        <!-- <div class="mb-3" style="text-align: center;" *ngIf="conditionalSkipQuestionRepeated==true || conditionalSkipChoiceQuestionValueRepeated == true">
+          <span style="color: red;" *ngIf="conditionalSkipQuestionRepeated==true">Same Question is not allowed</span>
+          <span style="color: red;" *ngIf="conditionalSkipChoiceQuestionValueRepeated==true">Same Question choice value is not allowed</span>
+        </div> -->
+
+        <div class="row"  *ngFor="let condition of conditionalSkipDetails.conditionalSkipArrayInputs;let cs = index">
+          <div class="col-md-8 pb-3">
+            <p-dropdown class="drop-edit-evaluate dplable" [options]="conditionalSkipQuestionList" [(ngModel)]="condition.conditionalQuestion" 
+            (ngModelChange)="addSCBQuestionChoiceList(0, cs, condition.conditionalQuestion, conditionalSkipDetails.conditionalSkipArrayInputs, condition)" [ngModelOptions]="{standalone: true}" optionLabel="name" placeholder="Conditional Display Question"></p-dropdown>
+          </div>
+          <div class="col-md-3 pl-0 pr-0">
+            <div class="form-group">
+              <!-- <select class="form-control" id="sel1" [(ngModel)]="condition.conditionalValue"  [ngModelOptions]="{standalone: true}">
+                <option>Option 1</option>"Number"
+                <option>Option 2</option> "Choice"
+                <option>Option 3</option> "Yes/No"
+                <option>Option 4</option>"Comments"
+              </select> -->
+              <input type="text" class="form-control" *ngIf="condition.conditionalQuestion?.questionChoice == undefined || condition.conditionalQuestion?.questionChoice == null || condition.conditionalQuestion?.questionChoice == '' || condition.conditionalQuestion == null || condition.conditionalQuestion == undefined" [placeholder]="''"style="border: 1px solid #B3B6C7;">
+              
+              <!-- ConditionalSkipCheckMaxvalueCreate(condition.conditionalMinValue, cs, condition, 'min'); -->
+              <input type="number" step="0.1" class="form-control height-25 mb-1" *ngIf="condition.conditionalQuestion?.questionChoice=='Number'" [(ngModel)]="condition.conditionalMinValue" (ngModelChange)=" conditionalSkipValueChange(condition.conditionalMinValue, condition.conditionalMaxValue==undefined?'':condition.conditionalMaxValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Min value'"style="border: 1px solid #B3B6C7;">
+              <!-- ConditionalSkipCheckMaxvalueCreate(condition.conditionalMaxValue, cs, condition, 'max'); -->
+              <input type="number"  step="0.1"class="form-control height-25" *ngIf="condition.conditionalQuestion?.questionChoice=='Number'" [(ngModel)]="condition.conditionalMaxValue" (ngModelChange)=" conditionalSkipValueChange(condition.conditionalMinValue, condition.conditionalMaxValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Max value'"style="border: 1px solid #B3B6C7;">
+              
+              <div class="m-0 p-0" *ngIf="condition.conditionalQuestion?.questionChoice=='Choice'">
+                <div class="m-0 p-0" *ngFor="let choice of condition.choiceQuestionList; let addIndex=index">
+                  <div class="row mb-2">
+                    <div class="col-md-12">
+                      <!-- <input type="text" class="form-control height-25 mb-1" [(ngModel)]="choice.choiceQuestionOption" (ngModelChange)="conditionalSkipValueChangeAdditional(condition.choiceQuestionList, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Option'"style="border: 1px solid #B3B6C7;"> -->
+                      <select class="form-control"  *ngIf="condition.conditionalQuestion?.questionChoice=='Choice'" [(ngModel)]="choice.choiceQuestionOption" 
+                      (ngModelChange)="conditionalSkipValueChangeChoice(cs, condition.choiceQuestionList, choice.choiceQuestionOption,  condition.conditionalSkipChoiceOptionList );" [ngModelOptions]="{standalone: true}">
+                        <option *ngFor="let optionChoice of condition.conditionalSkipChoiceOptionList" value="{{optionChoice.label}}">{{optionChoice.label}}</option>
+                      </select>
+            <!-- <p-dropdown class="drop-edit-evaluate" [options]="conditionalSkipChoiceOptionList" [(ngModel)]="choice.choiceQuestionOption" (ngModelChange)="conditionalSkipValueChangeChoice(choice.choiceQuestionOption, cs, conditionalSkipChoiceOptionList, condition.choiceQuestionList);" [ngModelOptions]="{standalone: true}" optionLabel="name" placeholder="Conditional Display Question"></p-dropdown> -->
+
+                    </div>
+                    <div class="col-md-9" style="padding-right: 12px;">
+                      <!-- <input type="number" class="form-control height-25" [(ngModel)]="choice.choiceQuestionOptionValue" (ngModelChange)="conditionalSkipValueChangeAdditional(condition.choiceQuestionList, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Value'"style="border: 1px solid #B3B6C7;"> -->
+                    </div>
+                    <div class="col-md-3 pl-0">
+                      <button type="button" class="add-btn" style="margin-bottom: 4px;" (click)="removeconditionalSkipAdditional(cs, addIndex, condition.choiceQuestionList, condition.conditionalSkipChoiceOptionList)">
+                        <img src="../assets/img/microinteraction/delete.svg">
+                      </button>
+                    </div>
+                  </div>
+                </div>                
+                <div style="float: right;" *ngIf="condition.conditionalQuestion?.questionChoice=='Choice' && conditionalSkipDetails.allConditionMet=='All' &&  condition.conditionalSkipChoiceOptionList.length >condition?.choiceQuestionList?.length">
+                  <button type="button" class="add-btn pr-0" style="margin-bottom: 4px;" (click)="addSCBQuestionChoiceList(1, cs, undefined, undefined, undefined)">
+                    <img src="../assets/img/microinteraction/add_item.svg">
+                    <span class="btn-txt-add">Add</span>
+                  </button>
+                </div>                
+              </div>
+             
+              <!-- <input type="number" class="form-control height-25 mb-1" *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalYesValue" (ngModelChange)="conditionalSkipValueChange(condition.conditionalYesValue, condition.conditionalNoValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Yes value'"style="border: 1px solid #B3B6C7;">
+              <input type="number" class="form-control height-25" *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalNoValue" (ngModelChange)="conditionalSkipValueChange(condition.conditionalYesValue, condition.conditionalNoValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'No value'"style="border: 1px solid #B3B6C7;"> -->
+              <select class="form-control" id="sel1conditionalQuestionSubYN"  *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalYesNoValue" (ngModelChange)="conditionalSkipValueChangeYesNo(condition.conditionalYesNoValue, cs, condition.conditionalSkipChoiceYesNoList)" [ngModelOptions]="{standalone: true}">
+                <option *ngFor="let optionChoice of condition.conditionalSkipChoiceYesNoList" value="{{optionChoice.label}}">{{optionChoice.label}}</option>
+              </select>
+              
+              <textarea maxlength="2048" maxlength="2048" name="comments" id="commentid" *ngIf="condition.conditionalQuestion?.questionChoice=='Comments'" 
+              [(ngModel)]="condition.questionValue" (ngModelChange)="condition.conditionalValue=condition.questionValue" cols="15" rows="2" [ngModelOptions]="{standalone: true}"
+              style="display: flex;width: 100%;" placeholder="Type your comments"></textarea>
+            </div>       
+          </div>
+          
+          <div class="col-md-1 pl-2">
+            <img src="../assets/img/microinteraction/delete_keyphrase.svg" class="center-img pt-2" type="button" (click)="removeconditionalSkip(cs, conditionalSkipDetails.conditionalSkipArrayInputs, condition.choiceQuestionList, condition.conditionalSkipChoiceOptionList)" style="width: 16px;">
+          </div>
+
+        </div>
+          
+          <div class="mt-3">
+            <button type="button" class="add-btn" (click)="addconditionalSkipDetailCreate(1,0,0, undefined)">
+              <img src="../assets/img/microinteraction/add_item.svg">
+              <span class="btn-txt-add">Add Condition</span>
+            </button>
+          </div>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer mt-2" style="justify-content: flex-end;">
+        <div style="margin-left: 3.6%;">
+          <button type="button" class="btn btn-primary btn-save" [disabled]="conditionalSkipQuestionRepeated || conditionalSkipChoiceQuestionValueRepeated" 
+          (click)="saveConditionalSkip()" style="float: right;">Done</button>
+          <!-- <button type="button" class="btn-pop-cancel" data-dismiss="modal">{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.popupForm?.cancelbtn}}</button> -->
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Evaluation Form Conditional Display Modal box in themes -->
+<div class="modal fade" tabindex="-1" id="conditionalSkipModalEdit" data-backdrop="static">
+  <div class="modal-dialog  modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+          <h5>Conditional Display Modal</h5>
+          <!-- <button type="button" class="close" id="createModalClose1" data-dismiss="modal">&times;</button> -->
+          <span id="createModalClose1" data-dismiss="modal"> </span>
+        </div>
+
+      <!-- Modal body -->
+      <div class="modal-body mt-3">
+        <!-- <div class="m-3" style="text-align: center;" *ngIf="invalidSupportConditionalInputs!=''">
+          <span style="color: red;">{{invalidSupportConditionalInputs}}</span>
+        </div> -->
+
+        <label class="mb-3">
+          <p-radioButton name="group12" value="All"  [(ngModel)]="conditionalSkipDetailsEdit.conditionMet"  [ngModelOptions]="{standalone: true}" label="All conditions met" inputId="allConditionMet1">
+          </p-radioButton>
+      </label>
+      <label class="mb-3">
+          <p-radioButton name="group12" value="Any"  [(ngModel)]="conditionalSkipDetailsEdit.conditionMet"  [ngModelOptions]="{standalone: true}" label="Any conditions met" inputId="anyConditionMet1">
+          </p-radioButton>
+      </label>
+
+      <!-- <div class="mb-3" style="text-align: center;" *ngIf="conditionalSkipQuestionRepeated==true || conditionalSkipChoiceQuestionValueRepeated==true">
+        <span style="color: red;"*ngIf="conditionalSkipQuestionRepeated==true">Same Question is not allowed</span>
+        <span style="color: red;" *ngIf="conditionalSkipChoiceQuestionValueRepeated==true">Same Question choice value is not allowed</span>
+      </div> -->
+
+      <div class="row"  *ngFor="let condition of conditionalSkipDetailsEdit.conditionalSkipArrayInputsEdit;let cs = index">
+        <div class="col-md-8 pb-3">
+          <p-dropdown class="drop-edit-evaluate dplable" id="conditionalSkipQuestionListEditId" [options]="conditionalSkipQuestionListEdit" 
+          [(ngModel)]="condition.conditionalQuestion" (ngModelChange)="addSCBQuestionChoiceListEdit(0, cs, condition.conditionalQuestion, conditionalSkipDetailsEdit.conditionalSkipArrayInputsEdit);" 
+          [ngModelOptions]="{standalone: true}" optionLabel="name" placeholder="Conditional Display Question"></p-dropdown>
+        </div>
+        <div class="col-md-3 pl-0 pr-0">
+          <div class="form-group">
+            <input type="text" class="form-control" *ngIf="condition.conditionalQuestion?.questionChoice == undefined || condition.conditionalQuestion?.questionChoice == null || condition.conditionalQuestion?.questionChoice == '' || condition.conditionalQuestion == null || condition.conditionalQuestion == undefined" [placeholder]="''"style="border: 1px solid #B3B6C7;">
+            
+            <!-- ConditionalSkipCheckMaxvalueEdit(condition.conditionalMinValue, cs, condition, 'min'); -->
+            <input type="number" step="0.1" class="form-control height-25 mb-1" *ngIf="condition.conditionalQuestion?.questionChoice=='Number'" [(ngModel)]="condition.conditionalMinValue" (ngModelChange)=" conditionalSkipValueChangeEdit(condition.conditionalMinValue, condition.conditionalMaxValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Min value'"style="border: 1px solid #B3B6C7;">
+            <!-- ConditionalSkipCheckMaxvalueEdit(condition.conditionalMinValue, cs, condition, 'max'); -->
+            <input type="number" step="0.1" class="form-control height-25" *ngIf="condition.conditionalQuestion?.questionChoice=='Number'" [(ngModel)]="condition.conditionalMaxValue" (ngModelChange)=" conditionalSkipValueChangeEdit(condition.conditionalMinValue, condition.conditionalMaxValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Max value'"style="border: 1px solid #B3B6C7;">
+            
+            <div class="m-0 p-0" *ngIf="condition.conditionalQuestion?.questionChoice=='Choice'">
+              <div class="m-0 p-0" *ngFor="let choice of condition.choiceQuestionList; let addIndex=index">
+                <div class="row">
+                  <div class="col-md-12">
+                    <!-- <input type="text" class="form-control height-25 mb-1" [(ngModel)]="choice.choiceQuestionOption" (ngModelChange)="conditionalSkipValueChangeAdditional(condition.choiceQuestionList, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Option'"style="border: 1px solid #B3B6C7;"> -->
+                    <select class="form-control" *ngIf="condition.conditionalQuestion?.questionChoice=='Choice'" [(ngModel)]="choice.choiceQuestionOption" 
+                    (ngModelChange)="conditionalSkipValueChangeAdditionalEdit( cs, condition.choiceQuestionList, choice.choiceQuestionOption, condition.conditionalSkipChoiceOptionList)" [ngModelOptions]="{standalone: true}">
+                      <option *ngFor="let optionChoice of condition.conditionalSkipChoiceOptionList" value="{{optionChoice.label}}">{{optionChoice.label}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-9" style="padding-right: 12px;">
+                    <!-- <input type="number" class="form-control height-25" [(ngModel)]="choice.choiceQuestionOptionValue" (ngModelChange)="conditionalSkipValueChangeAdditional(condition.choiceQuestionList, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Value'"style="border: 1px solid #B3B6C7;"> -->
+                  </div>
+                  <div class="col-md-3 pl-0">
+                    <button type="button" class="add-btn" style="margin-bottom: 4px;" (click)="removeconditionalSkipAdditionalEdit(cs, addIndex, condition.choiceQuestionList, condition.conditionalSkipChoiceOptionList)">
+                      <img src="../assets/img/microinteraction/delete.svg">
+                    </button>
+                  </div>
+                </div>
+              </div>              
+              <div style="float: right;" *ngIf="condition.conditionalQuestion?.questionChoice=='Choice' && condition.conditionalSkipChoiceOptionList.length >condition.choiceQuestionList.length">
+                <button type="button" class="add-btn" style="margin-bottom: 4px;" (click)="addSCBQuestionChoiceListEdit(1, cs, undefined, undefined)">
+                  <img src="../assets/img/microinteraction/add_item.svg">
+                  <span class="btn-txt-add"></span>
+                </button>
+              </div>              
+            </div>
+
+            <!-- <input type="number" class="form-control height-25 mb-1" *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalYesValue" (ngModelChange)="conditionalSkipValueChange(condition.conditionalYesValue, condition.conditionalNoValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'Yes value'"style="border: 1px solid #B3B6C7;">
+            <input type="number" class="form-control height-25" *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalNoValue" (ngModelChange)="conditionalSkipValueChange(condition.conditionalYesValue, condition.conditionalNoValue, cs)" [ngModelOptions]="{standalone: true}"[placeholder]="'No value'"style="border: 1px solid #B3B6C7;"> -->
+            <!-- <select class="form-control" id="sel1conditionalQuestion"  *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalValue"  [ngModelOptions]="{standalone: true}">
+              <option value="Yes-1">Yes</option>
+              <option value="No-0">No</option>
+            </select> -->
+            <select class="form-control" id="sel1conditionalQuestionSubYN"  *ngIf="condition.conditionalQuestion?.questionChoice=='Yes/No'" [(ngModel)]="condition.conditionalYesNoValue" (ngModelChange)="conditionalSkipValueChangeYesNoEdit(condition.conditionalYesNoValue, cs, condition.conditionalSkipChoiceYesNoList)" [ngModelOptions]="{standalone: true}">
+              <option *ngFor="let optionChoice of condition.conditionalSkipChoiceYesNoList" value="{{optionChoice.label}}">{{optionChoice.label}}</option>
+            </select>
+
+            <textarea maxlength="2048" name="comments" id="commentid" *ngIf="condition.conditionalQuestion?.questionChoice=='Comments'" 
+            [(ngModel)]="condition.questionValue" (ngModelChange)="condition.conditionalValue=condition.questionValue" cols="15" rows="2" [ngModelOptions]="{standalone: true}"
+            style="display: flex;width: 100%;" placeholder="Type your comments"></textarea>
+          </div>       
+        </div>
+        
+        <div class="col-md-1 pl-2">
+          <img src="../assets/img/microinteraction/delete_keyphrase.svg" class="center-img pt-2" type="button" (click)="removeconditionalSkipEdit(cs, conditionalSkipDetailsEdit.conditionalSkipArrayInputsEdit, condition.choiceQuestionList, condition.conditionalSkipChoiceOptionList); conditionalSkipChoiceQuestionValueRepeated=false;" style="width: 16px;">
+        </div>
+
+      </div>
+          
+          <div class="mt-3">
+            <button type="button" class="add-btn" (click)="addconditionalSkipEdit(1,0,0, undefined)">
+              <img src="../assets/img/microinteraction/add_item.svg">
+              <span class="btn-txt-add">Add Condition</span>
+            </button>
+          </div>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer mt-2" style="justify-content: flex-end;">
+        <div style="margin-left: 3.6%;">
+          <button type="button" class="btn btn-primary btn-save" [disabled]="conditionalSkipQuestionRepeated || conditionalSkipChoiceQuestionValueRepeated"  
+          (click)="saveConditionalSkipEdit()" style="float: right;">Done</button>
+          <!-- <button type="button" class="btn-pop-cancel" data-dismiss="modal">{{global.language?.evaluations?.evaluationForms?.evaluationEdit?.popupForm?.cancelbtn}}</button> -->
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

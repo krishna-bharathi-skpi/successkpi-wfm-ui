@@ -1,0 +1,112 @@
+.wfm h1,h2,h3,h4,h5,h6,li,p,a,button,label,textarea{
+    font-family: sans-serif;
+}
+  
+.wfm h1,h2,h3,h4,h5,h6, label{
+    color:#303030;
+    font-weight: 500;
+}
+
+.form-control{
+    background-color: #FFFFFF;
+    border: 1px solid #B3B6C7;
+    border-radius: 4px;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.1rem;
+    /* line-height: 2.375rem; */
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #aaaaaa;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1); 
+}
+
+.days-label{
+    float: left;
+    margin-right: 10px;
+}
+
+.days{
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: sans-serif;
+    color: #7a7a7a !important;
+    background-color: #ffffff;
+    border: 2px solid #dedede;
+    border-radius: 50%;
+    margin-right: 5px;
+    float: left;
+    display: flex;
+    text-align: center;
+    cursor: pointer;
+}
+
+.days-sel{
+    color: #ffffff !important;
+    background-color: #30BCED;
+    border: 2px solid #30BCED;
+}
+
+.taskbar-option{
+    width: 100%;
+    display: block;
+    color:#777777; 
+    font-size: 0.827rem;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+.taskbar-option:hover{
+    color:#111111;
+}
+
+.taskbar-option-color{
+    height: 15px;
+    width: 25px;
+    float: left;
+    margin-right: 5px;
+    border-radius: 4px;
+    cursor:pointer;
+}
+
+.task-add-btn{
+    font-size: 9px;
+    color: #1E50C6;
+    padding: 2px 3px;
+    margin-left: 5px;
+    background: #ffffff;
+    border: 2px solid #1E50C6;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1); 
+    background-color: #aaaaaa;
+}

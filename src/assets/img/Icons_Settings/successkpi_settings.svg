@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="12px" viewBox="0 0 18 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>successkpi_settings</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-693.000000, -466.000000)" fill="#FFFFFF">
+            <g id="successkpi_settings" transform="translate(692.000000, 462.000000)">
+                <g>
+                    <rect id="Rectangle" fill-opacity="0" x="0" y="0" width="20" height="20"></rect>
+                    <g id="SuccessKPI_cloud" transform="translate(1.000000, 4.000000)" fill-rule="nonzero">
+                        <rect id="Rectangle" x="11.4" y="7.74" width="3.67" height="3.67" rx="0.18"></rect>
+                        <rect id="Rectangle" x="15.8" y="7.74" width="2.2" height="2.2" rx="0.18"></rect>
+                        <rect id="Rectangle" x="12.85" y="4.07" width="2.94" height="2.94" rx="0.18"></rect>
+                        <path d="M11,1.66 C10.4844738,1.77543838 10.020884,2.05640189 9.68,2.46 C8.79039221,0.906729683 6.9635664,0.150837776 5.2365439,0.621416114 C3.5095214,1.09199445 2.31867332,2.67014083 2.34,4.46 L2.34,4.66 C0.764779681,5.27034359 -0.159685658,6.90867308 0.132229813,8.57259126 C0.424145283,10.2365094 1.85108973,11.4623109 3.54,11.5 L10.27,11.5 C10.4721296,11.4947472 10.6347472,11.3321296 10.64,11.13 L10.64,7.38 C10.6344973,7.28110649 10.6699823,7.18431456 10.738101,7.1124115 C10.8062197,7.04050844 10.9009536,6.99984703 11,7 L11.74,7 C11.8372361,7.00003752 11.9303522,6.96073943 11.9981603,6.89104781 C12.0659683,6.82135619 12.102701,6.72719856 12.1,6.63 L12.1,3.7 C12.1052528,3.49787038 12.2678704,3.33525276 12.47,3.33 L13,3.33 C13.1972674,3.34180235 13.3689884,3.19649996 13.39,3 L13.39,2.83 C13.39,2.57 12.85,1.36 11,1.66 Z" id="Path"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

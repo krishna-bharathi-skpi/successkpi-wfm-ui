@@ -1,0 +1,46 @@
+<div class="wfm">
+    <!-- Begin top header -->
+    <div class="row top-header">
+        <div class="col">
+            <h2 class="title">Dashboard</h2>
+        </div>
+        <div class="col text-right">
+            <!-- <button type="button" routerLink="/wfm/forecast/create" class="btn">{{global.language?.wfm?.forecast?.list?.createNewForecastBtn}}</button> -->
+        </div>
+    </div>
+    <!-- End top header -->
+
+    <!-- Begin body content -->
+    <div style="padding:15px 32px;">
+        <div class="card">
+            <div class="card-body">
+                <!-- <div class="row">
+                    <div class="col-sm-5">
+                        <h4 class="card-title mb-0">Forecasting</h4>
+                        <div class="small text-muted">November 2017</div>
+                    </div>
+                    <div class="col-sm-7 d-none d-md-block">
+                        <button type="button" class="btn btn-primary float-right"><i
+                                class="icon-cloud-download"></i></button>
+                        <div class="btn-group btn-group-toggle float-right mr-3" data-toggle="buttons">
+                            <label class="btn btn-outline-secondary" btnRadio="Day" id="option1">Day</label>
+                            <label class="btn btn-outline-secondary" btnRadio="Month" id="option2">Month</label>
+                            <label class="btn btn-outline-secondary" btnRadio="Year" id="option3">Year</label>
+                        </div>
+                    </div>
+                </div> -->
+                
+
+                <!-- Begin Chart wrapper -->
+                <div>
+                    <iframe style="width:100%; min-height:450px;" mstr-embed-iframe="true"  frameBorder="0" [src]="urlSafe"></iframe>
+                    <!-- <iframe style="width:100%; min-height:360px;" mstr-embed-iframe="true" src="https://analytics-qa.successkpis.com/AnalyticsLibrary/app/BB6D6E1D11EAF5243EF60080EF95023D/295669EF11EAF820FA250080EFA5D491?idToken=eyJhbGciOiJIUzUxMiIsInppcCI6IkRFRiJ9.eNo80clymzAAANB_4RxmEEIsnclBgNjssNkg8IUxYBZjCGYJDp3-e9NLr-_6fjPzwvxihskNfZi2-ATL8XC0x0JMl64WWxxAeEQfMjjXIi8Yu-cMr7nTo8Xb-cAZrD3SwzHUhQ-YfPViPoQmjTSXZZ8gNW-2u356VMonA7UCSLpKu52v6kCd_GJuc6N34YXkR1aZ_EPmPdGzsSf5sN-Hye6jbC73m9rdo6uco0GoA2hRVlRqdilZmwrYMjwptocu64KCJJkSB2hFL8t75t3F_YrKmBAZ6atfeuwB4x4YzijM00lPMlA9U7MpKhXJVHc0_BrUuyZp_I0Nc8nbMzZrP6_9970tJadQm8Ik_eOhQGE-jWo_aoEOzt_VXazoEjejxxddWJCYOJL86AfOrAxqHb24SpMl8tctIQMnb7p8OJeU1sYWp5GViKayupdQO--S2xnE75tQGqFyNavN9_k6K3jamDaH39-ZN6a9_gQBEQGeRyIEb8ztNf4H5R_Ma_5TaHAG4TDRBMUAGpJ4DiGMVQywCnkVQZH58xcAAP__.fRYl0gakTn_Qv5i1RBrbypMJ8s8SA9dqKygsreJPt42KkdLK5ld-AxBi9G70Fzk_IKrdqSl1_hdXlX22iZSdeA&amp;app.embedded=true&amp;auth.freeLogin=false&amp;feature.filter=false&amp;ui.message=false"></iframe> -->
+                    <!-- <div echarts [options]="chartOptions" [merge]="mergeOptions" class="demo-chart"></div> -->
+                </div>
+                <!-- End Chart wrapper -->
+
+            </div>
+        </div>
+    </div>
+    <!-- End body content -->
+</div>

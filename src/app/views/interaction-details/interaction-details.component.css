@@ -1,0 +1,116 @@
+.interaction-player-left{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 #B3B6C7;
+    /* width: 520px; */
+    /* height: 600px; */
+    width: 60%;
+    padding: 24px 24px;
+    border-radius: 4px;
+}
+.interaction-player-right{
+    background-color: #FFFFFF;
+    box-shadow: 1px 1px 3px 0 #B3B6C7;
+    /* width: 520px; */
+    /* height: 600px; */
+    width: 40%;
+    height: 600px;
+    padding: 24px 24px;
+    border-radius: 4px;
+}
+
+/* div#controls {
+    color: #333;
+    display: table;
+    text-align: center;
+    width: 100%;
+    background-color: #e4e7ea;
+}
+.plspan {
+    margin-right: 50px;
+    font-size: 15px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#play-btn {
+    font-size: 20px;
+}
+
+#mute {
+    font-size: 20px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+#refresh-btn {
+    font-size: 20px;
+    margin-left: 10px;
+} */
+.table td{
+    padding-left: 0px !important;
+}
+.remove-border{
+    border-top: 0px solid !important;
+}
+.borderpx{
+    border-bottom: 1px solid #c8ced3 !important;
+    cursor: default;
+}
+.borderpx:hover{
+    background-color: #D6E3FD !important;
+    border-left: 3px solid #4A82F1;
+    color: #000 !important;
+    font-weight: 700;
+    /* padding-left: 8px; */
+}
+.hover-bg-transcript:hover{
+    background-color: #D6E3FD !important;
+    border-left: 3px solid #4A82F1;
+    color: #000 !important;
+    font-weight: 700;
+}
+.topic-header-mstr{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #c8ced3 !important;
+    cursor: default;
+    /* width: 84%; */
+}
+.loop-data-topics{
+    display: flex;
+    justify-content: space-between;
+     /* width: 84%; */
+     height: 35px; 
+     padding: 5px 0;
+}
+.no-found-topic{
+    /* text-align: center; */
+     margin-top: 5%;
+    font-weight: 500;
+    margin-left: 10%;
+
+}
+.scroll-topic{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 480px;
+}
+
+.evalDetailsBottom{
+    height: 240px;
+}
+
+#displayOptions{
+    border: 2px solid #ced4da;
+    background: #ffffff;
+    width: 16px;
+    height: 16px;
+    color: #495057;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+#dropdownPlayerLink + .dropdown-menu.show {
+    transform: none !important;
+    left: 81% !important;
+}

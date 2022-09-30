@@ -1,0 +1,14 @@
+<!-- <div [hidden]="true" *ngIf="isMstrActive">
+    <iframe frameBorder="0"
+        src="microstrategylogouturl">
+    </iframe>
+</div> -->
+<!-- <div class="top-header">
+    <div class="col">
+        <h2 class="header-title">Subscriptions</h2>
+    </div>
+</div> -->
+<div [hidden]="Subscription">
+    <iframe width="100%" id="IsSubscription" height="800px" frameBorder="0"
+        [src]="[keySubscription.Mstr_Subscription] | safe"></iframe>
+</div>

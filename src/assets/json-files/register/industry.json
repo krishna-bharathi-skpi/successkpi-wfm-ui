@@ -1,0 +1,47 @@
+[
+    {
+        "label": "Healthcare",
+        "value": "1"
+    },
+    {
+        "label": "Retail",
+        "value": "2"
+    },
+    {
+        "label": "Telco",
+        "value": "3"
+    },
+    {
+        "label": "Hospitality",
+        "value": "4"
+    },
+    {
+        "label": "Airlines",
+        "value": "5"
+    },
+    {
+        "label": "Airlines",
+        "value": "6"
+    },
+    {
+        "label": "High Tech",
+        "value": "7"
+    },
+    {
+        "label": "Banking",
+        "value": "8"
+    },
+    {
+        "label": "Finance",
+        "value": "9"
+    },
+    {
+        "label": "Insurace",
+        "value": "10"
+    },
+    {
+        "label": "Others",
+        "value": "11"
+    }
+]
+

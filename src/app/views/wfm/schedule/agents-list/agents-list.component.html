@@ -1,0 +1,456 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="999999"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header" style="justify-content:left;" (click)="opFilter.hide();">
+        <div class="col-md-6">
+            <h2 class="title" *ngIf="isContinueToAddInWorkgroup && workgroupName">{{ 'Add Agents to ' + workgroupName }} </h2>
+            <h2 class="title" *ngIf="!isContinueToAddInWorkgroup">Agents</h2>
+        </div>
+        <div class="col-md-6 text-right" *ngIf="isContinueToAddInWorkgroup">
+            <button type="button" class="cust-btn-outlined" (click)="manageSelectedWorkgroupAgents('gotoWorkgroups');">Return to Workgroup List</button>
+            <button type="button" class="cust-btn" *ngIf="model.agentType == 'unassigned'" (click)="manageSelectedWorkgroupAgents('add')" [disabled]="!selectedWorkgroupAgents || !selectedWorkgroupAgents.length">Add to this Workgroup</button>
+            <button type="button" class="cust-btn cust-btn-danger" *ngIf="model.agentType == 'assigned'" (click)="manageSelectedWorkgroupAgents('remove')" [disabled]="!selectedWorkgroupAgents || !selectedWorkgroupAgents.length">Remove from this Workgroup</button>
+        </div>
+    </div>
+<!-- End top header -->
+
+<!-- Begin content header -->
+<div class="row content-header" (click)="opFilter.hide();" *ngIf="isContinueToAddInWorkgroup">
+    <div class="col-12">
+        <h4>{{ isContinueToAddInWorkgroup ? 'Add Agents To Your Workgroup' : 'Manage Your Agents'}}</h4>
+        <span>{{ isContinueToAddInWorkgroup ? 'Select, Add or Remove Agents to or from your workgroup.' : 'Select, Add or Remove Agents'}}</span>
+        <!-- <span>{{global.language?.wfm?.forecast?.list?.subTitle}}</span> -->
+    </div>
+</div>
+<!-- End content header -->
+
+<!-- Begin filter options -->
+<div class="row custom-row mb-20" (click)="opFilter.hide();">
+    <div class="col-md-12" *ngIf="isContinueToAddInWorkgroup">
+        <button pRipple (click)="onChangeAgentType('assigned')" class="filter-btn" [ngClass]="{'filter-btn-active': model.agentType =='assigned'}">ASSIGNED AGENTS</button> 
+        <button pRipple (click)="onChangeAgentType('unassigned')" class="filter-btn" [ngClass]="{'filter-btn-active': model.agentType =='unassigned'}">UNASSIGNED AGENTS</button>
+        <!-- <button pRipple (click)="onChangeAgentType('all')" class="filter-btn" [ngClass]="{'filter-btn-active': model.agentType =='all'}">ALL AGENTS</button> -->
+    </div>
+</div>
+<!-- End filter options -->
+
+<div class="row custom-row">
+    <div class="col-md-5" (click)="opFilter.hide();">
+        <button type="button" (click)="manageSelectedWorkgroupAgents('add')" [disabled]="!selectedWorkgroupAgents || !selectedWorkgroupAgents.length" *ngIf="isContinueToAddInWorkgroup && model.agentType == 'unassigned' && global.rolePermissions.work.schedule.isViewEdit == true" class="cust-btn-x-sm" ><i class="fa fa-check"></i>&nbsp;&nbsp;Add To This Workgroup</button>
+        <button type="button" (click)="manageSelectedWorkgroupAgents('remove')" [disabled]="!selectedWorkgroupAgents || !selectedWorkgroupAgents.length" *ngIf="isContinueToAddInWorkgroup && model.agentType == 'assigned' && global.rolePermissions.work.schedule.isViewEdit == true" class="cust-btn-x-sm cust-btn-danger" ><i class="fa fa-minus"></i>&nbsp;&nbsp;Remove From This Workgroup</button>
+        <!-- <button type="button" class="cust-btn-x-sm cust-btn-danger" (click)="manageSelectedWorkgroupAgents('delete')" [disabled]="!selectedWorkgroupAgents || !selectedWorkgroupAgents.length" *ngIf="global.rolePermissions.work.schedule.isViewEdit == true"><i class="fa fa-trash-o"></i> {{global.language?.wfm?.deleteBtn}}</button> -->
+    </div>
+    <div class="col-md-4 text-right">
+        <button type="button" (click)="clearFilters(dt)" class="cust-btn-x-sm" style="margin-right:15px;"><i class="fa fa-filter"></i> {{global.language?.wfm?.clearFilters}}</button>
+        <div class="btn-group" dropdown container="body">
+            <span (click)="opFilter.toggle($event)" class="font center-align" style="font-size:0.87rem; cursor:pointer;"><strong>FILTER BY</strong>
+                &nbsp;<i class="pi pi-fw pi-angle-down filter-indicator"></i></span>
+                <p-overlayPanel #opFilter appendTo="body" [baseZIndex]="1021" styleClass="cust-overlay-panel filter-op" [dismissable]="false" [showCloseIcon]="false" [style]="{width: 'auto'}">
+                    <div class="row filter-widget">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12 filter-header">
+                                    <h5>Filters</h5>
+                                    <i class="pi pi-fw pi-times-circle close advance-filter-close-btn" (click)="clearFilters(dt);"></i>
+                                </div>
+                            </div>
+                            <hr class="solid" />
+                            <div class="row filter-action">
+                                <div class="col-12 text-center">
+                                    <button type="button" (click)="clearFilters(dt);" class="cust-btn-outlined-sm">Clear All</button>
+                                    <button type="button" (click)="applySearch();" class="cust-btn-sm">Search</button>
+                                </div>
+                            </div>
+                            <div class="row filter-content">
+                                <div class="col-12">
+                                    <div class="cust-accordion" id="filterAccordion">
+                                        <div class="item">
+                                            <div class="item-header" id="headingOne">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                        Agent Name
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <input type="text" placeholder="Enter the Agent Name" class="form-control" [(ngModel)]="params.agentName" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item" *ngIf="col.divisionName?.length">
+                                            <div class="item-header" id="headingTwo">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        Divisions
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div *ngIf="divisions.length > 0">
+                                                        <p-listbox 
+                                                            [options]="divisions" 
+                                                            [(ngModel)]="selectedDivisions" 
+                                                            [metaKeySelection]="false" 
+                                                            [checkbox]="true" 
+                                                            [filter]="true" 
+                                                            [multiple]="true" 
+                                                            optionLabel="divisionName" 
+                                                            [listStyle]="{'max-height':'165px'}" 
+                                                            [style]="{'width':'auto'}"
+                                                            styleClass="filter-listbox"
+                                                            >
+                                                        </p-listbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item" *ngIf="col.workgroupName?.length">
+                                            <div class="item-header" id="headingThree">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        Workgroups
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div *ngIf="workgroups.length > 0">
+                                                        <p-listbox 
+                                                            [options]="workgroups" 
+                                                            [(ngModel)]="selectedWorkgroups" 
+                                                            [metaKeySelection]="false" 
+                                                            [checkbox]="true" 
+                                                            [filter]="true" 
+                                                            [multiple]="true" 
+                                                            optionLabel="workgroupName" 
+                                                            [listStyle]="{'max-height':'165px'}" 
+                                                            [style]="{'width':'auto'}"
+                                                            styleClass="filter-listbox"
+                                                            >
+                                                        </p-listbox> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item" *ngIf="col.queueName?.length">
+                                            <div class="item-header" id="headingFour">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                        Queues
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div *ngIf="queues.length">
+                                                        <p-listbox 
+                                                            [options]="queues" 
+                                                            [(ngModel)]="selectedQueues" 
+                                                            [metaKeySelection]="false" 
+                                                            [checkbox]="true" 
+                                                            [filter]="true" 
+                                                            [multiple]="true" 
+                                                            optionLabel="queueName" 
+                                                            [listStyle]="{'max-height':'165px'}" 
+                                                            [style]="{'width':'auto'}"
+                                                            styleClass="filter-listbox"
+                                                            >
+                                                        </p-listbox> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item" *ngIf="col.emailId?.length">
+                                            <div class="item-header" id="headingFive">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFiveSix">
+                                                        Email Address
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <input type="text" placeholder="Search for email" class="form-control" [(ngModel)]="params.email" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item" *ngIf="col.state?.length">
+                                            <div class="item-header" id="headingSix">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                                        Status
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div *ngIf="statuses.length">
+                                                        <p-listbox 
+                                                            [options]="statuses" 
+                                                            [(ngModel)]="selectedStatuses" 
+                                                            [metaKeySelection]="false" 
+                                                            [checkbox]="true" 
+                                                            [filter]="true" 
+                                                            [multiple]="true" 
+                                                            optionLabel="state" 
+                                                            [listStyle]="{'max-height':'165px'}" 
+                                                            [style]="{'width':'auto'}"
+                                                            styleClass="filter-listbox"
+                                                            >
+                                                        </p-listbox> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="item" *ngIf="col.updatedTimestamp?.length">
+                                            <div class="item-header" id="headingFive">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFour">
+                                                        Updated Date
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <p-calendar
+                                                            (onSelect)="onSelectUpdatedDate($event)"
+                                                            (onClearClick)="onSelectUpdatedDate('')"
+                                                            [showButtonBar]="true"
+                                                            styleClass="advance-filter-ui-calendar"
+                                                            placeholder="Search"
+                                                            [readonlyInput]="true"
+                                                            dateFormat="mm/dd/yy"
+                                                            appendTo="body"
+                                                            [baseZIndex]="1022"
+                                                        ></p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-overlayPanel> 
+                <div class="tot-count-disp">{{workgroupAgents.length}}</div>
+        </div>
+    </div>
+    <div class="col-md-3" (click)="opFilter.hide();">
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" [placeholder]="!isContinueToAddInWorkgroup ? 'Search for Agents' : (model.agentType == 'assigned') ? 'Search for an Assigned Agents' : (model.agentType == 'all') ? 'Search for Agents' : 'Search for an Unassigned Agents'" />
+            <span class="text-muted" style="position: absolute;">To search date, the format should be MM/DD/YYYY</span>
+        </div>
+    </div>
+</div>
+
+<div style="padding: 32px;" (click)="opFilter.hide();">
+    <!-- Begin body content -->
+    <div class="row">
+        <div class="col-lg-12 cust-table agents-table">
+            <!-- Begin PrimeNG datatable -->
+            <p-table
+                #dt
+                dataKey="agentId"
+                [value]="workgroupAgents"
+                [lazy]="true" (onLazyLoad)="loadWorkgroupAgents($event)"
+                styleClass="p-datatable-customers"
+                [rowHover]="true"
+                [showCurrentPageReport]="true"
+                [filterDelay]="1200"
+                [globalFilterFields]="['agentName', 'startDate', 'endDate', 'status', 'updatedTimestamp', 'updatedBy']"
+                [(selection)]="selectedWorkgroupAgents"
+                [loading]="loading"
+                [scrollable]="true" scrollHeight="350px"
+            >
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th *ngIf="isContinueToAddInWorkgroup && model.agentType !== 'all'" style="width: 3rem;">
+                        <p-tableHeaderCheckbox id="frcst_select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                    </th>
+                    <th pSortableColumn="agentName">Agent Name<p-sortIcon field="agentName"> </p-sortIcon></th>
+                    <th pSortableColumn="divisionName" *ngIf="col.divisionName?.length">Division <p-sortIcon field="divisionName"> </p-sortIcon></th>
+                    <th pSortableColumn="workgroupName" *ngIf="col.workgroupName?.length">Workgroup <p-sortIcon field="workgroupName"> </p-sortIcon></th>
+                    <th pSortableColumn="queueName" *ngIf="col.queueName?.length" style="width:250px;">Queues <p-sortIcon field="queueName"> </p-sortIcon></th>
+                    <th pSortableColumn="emailId" *ngIf="col.emailId?.length" style="width:250px;">Email Address <p-sortIcon field="emailId"> </p-sortIcon></th>
+                    <th pSortableColumn="state" *ngIf="col.state?.length">Status <p-sortIcon field="state"> </p-sortIcon></th>
+                    <th pSortableColumn="updatedTimestamp" *ngIf="col.updatedTimestamp?.length">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                    <th class="text-center" style="width: 3rem;">
+                        <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                        <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                            <div>
+                                <ul class="list-group">
+                                    <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                        <div class="row">
+                                            <div class="col-9" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }">{{col.header}}</div>
+                                            <div class="col-2"  [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                        </div>
+                                    </li>
+                                  </ul>
+                            </div>
+                        </p-overlayPanel>
+                    </th>
+                </tr>
+                <!-- <tr>
+                    <th style="width: 3rem;"></th>
+                    <th>
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="dt.filter($event.target.value, 'agentName', 'startsWith')"
+                            placeholder="Search"
+                            class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                        />
+                    </th>
+                    <th *ngIf="col.divisionName">
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="dt.filter($event.target.value, 'divisionName', 'contains')"
+                            placeholder="Search"
+                            class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                        />
+                    </th>
+                    <th *ngIf="col.workgroupName">
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="dt.filter($event.target.value, 'workgroupName', 'contains')"
+                            placeholder="Search"
+                            class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                        />
+                    </th>
+                    <th *ngIf="col.emailId" style="width:20rem;">
+                        <input
+                            pInputText
+                            type="text"
+                            (input)="dt.filter($event.target.value, 'emailId', 'contains')"
+                            placeholder="Search"
+                            class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                        />
+                    </th>
+                    <th *ngIf="col.updatedTimestamp" style="width:10rem;">
+                        <p-calendar
+                            (onSelect)="onDateSelect($event,'updatedTimestamp')"
+                            (onClearClick)="dt.filter('', 'updatedTimestamp', 'equals')"
+                            [showButtonBar]="true"
+                            styleClass="p-column-filter"
+                            placeholder="Search"
+                            [readonlyInput]="true"
+                            dateFormat="mm/dd/yy"
+                            appendTo="body"
+                        ></p-calendar>
+                    </th>
+                    <th style="width: 3rem;"></th>
+                </tr> -->
+            </ng-template>
+                <ng-template pTemplate="body" let-workgroupAgent let-i="rowIndex">
+                    <tr [pSelectableRow]="workgroupAgent">
+                        <td *ngIf="isContinueToAddInWorkgroup && model.agentType !== 'all'" style="width: 3rem;">
+                            <p-tableCheckbox [value]="workgroupAgent" class="cust-chkbox"></p-tableCheckbox>
+                        </td>
+                        <td>
+                            {{workgroupAgent.agentName}}
+                        </td>
+                        <td *ngIf="col.divisionName?.length">
+                            {{workgroupAgent.divisionName}}
+                        </td>
+                        <td *ngIf="col.workgroupName?.length" class="capitalize">
+                            {{(workgroupAgent.workgroupName) ? workgroupAgent.workgroupName : '--'}}
+                        </td>
+                        <td *ngIf="col.queueName?.length" class="capitalize" style="width:250px; word-break:break-word;">
+                            {{(workgroupAgent.queueName) ? workgroupAgent.queueName : '--'}}
+                        </td>
+                        <td *ngIf="col.emailId?.length" style="width:250px; overflow-wrap:break-word; padding-right:10px;">
+                            {{workgroupAgent.emailId}}
+                        </td>
+                        <td *ngIf="col.state?.length" class="capitalize">
+                            {{workgroupAgent.state}}
+                        </td>
+                        <td *ngIf="col.updatedTimestamp?.length">
+                            {{workgroupAgent.updatedTimestamp}}
+                        </td>
+                        <td class="text-center" style="width: 3rem;">
+                            <i *ngIf="isContinueToAddInWorkgroup && !selectedWorkgroupAgents.length" (click)="opOption.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                            <p-overlayPanel #opOption appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                <div>
+                                    <ul class="list-group">
+                                        <li *ngIf="!workgroupAgent.workgroupName" (click)="manageWorkgroupAgent(workgroupAgent,'addToWorkgroup');" (click)="opOption.hide();" class="list-group-item"><i class="fa fa-plus"></i>Add to this Workgroup</li>
+                                        <li *ngIf="workgroupAgent.workgroupName" (click)="manageWorkgroupAgent(workgroupAgent,'removeFromWorkgroup');" (click)="opOption.hide();" class="list-group-item" style="color: #FC5130 !important"><i class="fa fa-minus" style="color: #FC5130 !important"></i>Remove from this Workgroup</li>
+                                      </ul>
+                                </div>
+                            </p-overlayPanel>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <!-- End PrimeNG datatable -->
+            <!-- <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords" dropdownAppendTo="body"></p-paginator> -->
+        </div>
+        <!--/.col-->
+    </div>
+    <!--/.row-->
+    <!-- End body content -->
+</div>
+
+<!-- Begin agent confirm dialog -->
+<p-dialog class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000">
+    <p-header *ngIf="isAddToWorkGroup || isRemoveAgentFromWorkGroup">
+        Confirm
+    </p-header>
+
+    <!-- Begin agent confirmation content -->
+    <div *ngIf="isAddToWorkGroup || isRemoveAgentFromWorkGroup">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-body-content confirm-text" *ngIf="isAddToWorkGroup && !agentsAssignedToOtherWorkgroup.length">
+                    You are going to add {{ (selectedWorkgroupAgents.length > 1) ? selectedWorkgroupAgents.length + ' Agents' : (isDeleteConfirm) ? 'agent ' + agentName : 'this agent'}} to the {{workgroupName}}
+                </div>
+                <div class="dialog-body-content confirm-text" *ngIf="agentsAssignedToOtherWorkgroup.length" style="color:#D32F2F;">
+                   {{(selectedWorkgroupAgents.length > 1) ? 'Here some of the agents are already assigned to another workgroups.' : 'This agent is already assigned to other workgroup.'}} Do you really want to change the workgroup?
+                </div>
+                <div class="dialog-body-content confirm-text" *ngIf="isRemoveAgentFromWorkGroup" style="color:#D32F2F;">
+                    Do you really want to remove {{(selectedWorkgroupAgents.length > 1) ? 'these agents' : 'this agent'}} from {{(model.agentType !== 'assigned') ? otherWorkgroupName : workgroupName}}?
+                </div>
+            </div>
+        </div>
+        <!-- End body content -->
+
+        <!-- Begin action footer content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-action-footer">
+                    <button type="button" (click)="resetDialogFlags()" pRipple class="cust-btn-outlined" style="width:240px">No Return to Agent List</button>
+                    <button type="submit" (click)="addAgentsToWorkgroup('add')" *ngIf="isAddToWorkGroup" pRipple class="cust-btn" style="width:200px">{{(selectedWorkgroupAgents.length > 1) ? 'Yes Add Agents' : 'Yes Add Agent'}}</button>
+                    <button type="submit" (click)="selectedWorkgroupAgents.length ? deleteAllRecords() : deleteRecord()" *ngIf="isRemoveAgentFromWorkGroup" pRipple class="cust-btn cust-btn-danger" style="width:200px">{{(selectedWorkgroupAgents.length > 1) ? 'Yes remove Agents' : 'Yes Remove Agent'}}</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- End action footer content -->
+    </div>
+    <!-- End agent confirm content -->
+</p-dialog>
+<!-- End agent confirm dialog -->
+</div>

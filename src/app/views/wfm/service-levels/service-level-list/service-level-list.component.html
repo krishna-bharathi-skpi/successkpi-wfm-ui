@@ -1,0 +1,278 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="1021"></p-toast>
+<!-- Begin top header -->
+<div class="row top-header">
+    <div class="col-md-6" >
+        <h2 class="title">Service Quality Objectives</h2>
+    </div>
+    <div class="col-md-6 text-right">
+        <button type="button" routerLink="/wfm/service_levels/create" class="cust-btn">Create New Service Quality Objective</button>
+    </div>
+</div>
+<!-- End top header -->
+
+<!-- Begin content header -->
+<div class="row content-header">
+    <div class="col-12">
+        <h4>Manage Service Quality Objectives</h4>
+        <span>Select, edit, delete your full list of service quality objectives below</span>
+        <!-- <h2>{{global.language?.settings?.users?.title}}</h2> -->
+    </div>
+</div>
+<!-- End content header -->
+
+<div class="row custom-row">
+    <div class="col-md-6">
+        <button type="button" class="cust-btn-x-sm cust-btn-danger" (click)="deleteSelectedRecords()" [disabled]="!selectedServiceLevels || !selectedServiceLevels.length" *ngIf="global.rolePermissions.work.serviceQuality.isViewEdit == true"><i class="fa fa-trash-o"></i> Delete</button>
+    </div>
+    <div class="col-md-2 text-right">
+        <button type="button" class="cust-btn-x-sm" (click)="clearFilters(dt)"><i class="fa fa-filter"></i> Clear Filters</button>
+    </div>
+    <div class="col-md-4">
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" placeholder="Search for a Service Quality Objectives" />
+            <span class="text-muted" style="position: absolute;">To search date, the format should be MM/DD/YYYY</span>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding: 32px;">
+    <!-- Begin body content -->
+    <div class="col-lg-12 cust-table">
+        <!-- Begin PrimeNG datatable -->
+        <p-table
+            #dt
+            dataKey="serviceLevelId"
+            [value]="serviceLevels"
+            [lazy]="true" (onLazyLoad)="loadServiceLevels($event)"
+            styleClass="p-datatable-customers"
+            [rowHover]="true"
+            [showCurrentPageReport]="true"
+            [paginator]="false"
+            [filterDelay]="1200"
+            [globalFilterFields]="['serviceLevelName', 'channel', 'serviceLevel', 'targetAnswerTime', 'avgSpeedToAnswer', 'updatedBy']"
+            [(selection)]="selectedServiceLevels"
+            [loading]="loading"
+        >
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th style="width: 3rem;">
+                        <p-tableHeaderCheckbox class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                        <!-- <input type="checkbox" [checked]="isAllCheckBoxChecked()" (change)="checkAllCheckBox($event)"> -->
+                    </th>
+                    <th pSortableColumn="serviceLevelName" style="width: 175px;" >Name <p-sortIcon field="serviceLevelName"></p-sortIcon></th>
+                    <th pSortableColumn="channel" *ngIf="col.channel" style="width: 130px;" >Media Type <p-sortIcon field="channel"></p-sortIcon></th>
+                    <th pSortableColumn="serviceLevel" *ngIf="col.serviceLevel" style="width:325px;">Service Level<p-sortIcon field="serviceLevel"> </p-sortIcon></th>
+                    <!-- <th pSortableColumn="targetAnswerTime">Answered In <p-sortIcon field="targetAnswerTime">
+                        </p-sortIcon>
+                    </th> -->
+                    <th pSortableColumn="avgSpeedToAnswer" *ngIf="col.avgSpeedToAnswer" style="width:200px;">Avg Speed of Answer <p-sortIcon field="avgSpeedToAnswer"> </p-sortIcon></th>
+                    <th pSortableColumn="updatedTimestamp" *ngIf="col.updatedTimestamp">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                    <th pSortableColumn="updatedBy" *ngIf="col.updatedBy" style="width: 160px;">Updated By <p-sortIcon field="updatedBy"> </p-sortIcon></th>
+                    <th class="text-center">
+                        <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                        <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                            <div>
+                                <ul class="list-group">
+                                    <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                        <div class="row">
+                                            <div class="col-10" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-right:2px;">{{col.header}}</div>
+                                            <div class="col-2" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-left:2px;"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                        </div>
+                                    </li>
+                                  </ul>
+                            </div>
+                        </p-overlayPanel>
+                    </th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'serviceLevelName', 'startsWith')" placeholder="Search" class="p-column-filter" /></th>
+                    <th *ngIf="col.channel">
+                        <p-dropdown 
+                            [options]="mediaTypes" 
+                            dataKey="value"
+                            optionValue="value"
+                            optionLabel="label"
+                            (onChange)="dt.filter($event.value, 'channel', 'equals')" 
+                            [(ngModel)]="mediaType" styleClass="p-column-filter" 
+                            placeholder="Search" 
+                            [showClear]="false" 
+                            appendTo="body"
+                        >
+                            <ng-template let-option pTemplate="item">
+                                <span>{{option.label}}</span>
+                            </ng-template>
+                        </p-dropdown>
+                    </th>
+                    <th *ngIf="col.serviceLevel">
+                        <div class="row">
+                            <div class="col input-group-btn">
+                                <input pInputText type="text" (input)="dt.filter($event.target.value, 'serviceLevel', 'startsWith')" placeholder="Search" class="p-column-filter" />
+                            </div>
+                            <!-- <div class="col input-group-btn" style="padding-right: 0;">
+                                <input pInputText type="text" (input)="dt.filter($event.target.value, 'serviceLevel', 'startsWith')" pKeyFilter="int" placeholder="Search Service Level" class="p-column-filter" style="border-radius: 5px 0px 0px 5px" />
+                            </div>
+                            <div class="col" style="padding-left: 0;">
+                                <input pInputText type="text" (input)="dt.filter($event.target.value, 'targetAnswerTime', 'startsWith')" pKeyFilter="int" placeholder="Search Target Answer" class="p-column-filter" style="border-radius: 0px 5px 5px 0px; border-left-width:0;" />
+                            </div> -->
+                        </div>
+                    </th>
+                    <th *ngIf="col.avgSpeedToAnswer"><input pInputText type="text" (input)="dt.filter($event.target.value, 'avgSpeedToAnswer', 'startsWith')" placeholder="Search" class="p-column-filter" /></th>
+                    <th *ngIf="col.updatedTimestamp">
+                        <p-calendar
+                            (onSelect)="onDateSelect($event,'updatedTimestamp')"
+                            (onClearClick)="dt.filter('', 'updatedTimestamp', 'equals')"
+                            [showButtonBar]="true"
+                            styleClass="p-column-filter"
+                            placeholder="Search"
+                            [readonlyInput]="true"
+                            dateFormat="mm/dd/yy"
+                            appendTo="body"
+                            [baseZIndex]="1022"
+                        ></p-calendar>
+                    </th>
+                    <th *ngIf="col.updatedBy"><input pInputText type="text" (input)="dt.filter($event.target.value, 'updatedBy', 'startsWith')" placeholder="Search" class="p-column-filter" /></th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-serviceLevel let-i="rowIndex">
+                <tr [pSelectableRow]="serviceLevel">
+                    <td>
+                        <p-tableCheckbox [value]="serviceLevel" class="cust-chkbox"></p-tableCheckbox>
+                        <!-- <input type="checkbox" [id]="forecast.forecastRequestId" value="{{forecast.forecastRequestId}}" [(ngModel)]="forecasts[i].checked"> -->
+                    </td>
+                    <td>
+                        <a (click)="manageServiceLevel(serviceLevel, 'edit');" tooltip="Click here to edit your Service Quality" class="col-link">{{serviceLevel.serviceLevelName}}</a>
+                    </td>
+                    <td *ngIf="col.channel">
+                        {{serviceLevel.channel}}
+                    </td>
+                    <td *ngIf="col.serviceLevel">
+                        {{serviceLevel.serviceLevel}}% of interactions answered in {{serviceLevel.targetAnswerTime}} 
+                    </td>
+                    <td *ngIf="col.avgSpeedToAnswer">
+                        {{serviceLevel.avgSpeedToAnswer}}
+                    </td>
+                    <td *ngIf="col.updatedTimestamp">
+                        {{serviceLevel.updatedTimestamp}}
+                    </td>
+                    <td *ngIf="col.updatedBy">
+                        {{serviceLevel.updatedBy}}
+                    </td>
+                    <td class="text-center">
+                        <i (click)="opOptions.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                        <p-overlayPanel #opOptions appendTo="body" styleClass="cust-overlay-panel" [dismissable]="true" [style]="{width: 'auto'}">
+                            <div>
+                                <ul class="list-group">
+                                    <li class="list-group-item" (click)="manageServiceLevel(serviceLevel,'view');" (click)="opOptions.hide();"><i class="icon-eye icons"></i>View</li>
+                                    <!-- <li class="list-group-item" (click)="manageServiceLevel(serviceLevel,'edit');" (click)="opOptions.hide();"><i class="fa fa-pencil"></i>Edit</li> -->
+                                    <!-- <li class="list-group-item" (click)="manageServiceLevel(serviceLevel,'delete')" (click)="opOptions.hide();" *ngIf="global.rolePermissions.work.serviceQuality.isViewEdit == true" style="color: #FC5130 !important"><i class="fa fa-trash-o" style="color: #FC5130 !important"></i>Delete</li> -->
+                                  </ul>
+                            </div>
+                        </p-overlayPanel>        
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords" dropdownAppendTo="body"></p-paginator>
+        <!-- End PrimeNG datatable -->
+    </div>
+    <!-- End body content -->
+</div>
+
+<!-- Begin confirm dialog -->
+<!-- <p-confirmDialog class="cust-dialog"></p-confirmDialog> -->
+<!-- End confirm dialog -->
+
+<!-- Begin create servel dialog -->
+<p-dialog id="dialog" class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000" [transitionOptions]="'0ms'">
+
+    <p-header *ngIf="isViewDetail">
+        Service Quality Objective Details
+    </p-header>
+    <p-header *ngIf="!isViewDetail">
+        Confirm
+    </p-header>
+
+    <!-- Begin service level detail content -->
+    <!-- Begin body content -->
+    <div *ngIf="service && isViewDetail">
+        <div class="row" style="padding-top: 15px; padding-bottom: 15px;">
+            <div class="col-lg-6">
+                <div class="card-body">
+                    <div class="view-content">
+                        <div><span class="text-key capitalize">Name: </span><span class="text-val capitalize">{{service.serviceLevelName}}</span></div>
+                        <div><span class="text-key">Channel: </span><span class="text-val capitalize">{{service.channel}}</span></div>
+                        <div><span class="text-key">Service Level: </span><span class="text-val">{{service.serviceLevel ? service.serviceLevel + '%' : '-'}}</span></div>
+                        <div><span class="text-key">Target Answer Time: </span><span class="text-val">{{service.targetAnswerTime }}</span></div>
+                        <div><span class="text-key">Avg Speed of Answer: </span><span class="text-val">{{service.avgSpeedToAnswer ? service.avgSpeedToAnswer : '-'}}</span></div>
+                    </div>
+                </div>
+            </div>
+            <!--/.col-->
+            <div class="col-lg-6">
+                <div class="card-body">
+                    <div class="view-content">
+                        <!-- <div><span class="text-key">Customer Id: </span><span class="text-val">{{service.customerId}}</span></div> -->
+                        <div><span class="text-key">Wfm Config Id: </span><span class="text-val">{{service.wfmConfigId}}</span></div>
+                        <div><span class="text-key">Created On: </span><span class="text-val">{{service.createdTimestamp}}</span></div>
+                        <div><span class="text-key">Created By: </span><span class="text-val" style="text-transform: lowercase;">{{service.createdBy}}</span></div>
+                        <div><span class="text-key">Updated On: </span><span class="text-val">{{service.updatedTimestamp}}</span></div>
+                        <div><span class="text-key">Updated By: </span><span class="text-val" style="text-transform: lowercase;">{{service.updatedBy}}</span></div>
+                    </div>
+                </div>
+            </div>
+            <!--/.col-->
+        </div>
+        <div class="row" *ngIf="service.serviceLevelDescription"  style="padding-bottom: 15px;">
+            <div class="col-12">
+                <div class="card-body">
+                    <div>
+                        <span class="text-key">Description: </span>
+                        <div class="desc"><span class="capitalize">{{service.serviceLevelDescription}}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End body content -->
+    <!-- End service level detail content -->
+
+    <!-- Begin delete confirmation content -->
+    <div *ngIf="!isViewDetail">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-body-content confirm-text" *ngIf="isDeleteConfirm">
+                    Do you really want to delete the record: {{serviceLevelName}}?
+                </div>
+                <div class="dialog-body-content confirm-text" *ngIf="isDeleteAllConfirm">
+                    Do you really want to delete {{selectedServiceLevels.length > 1 ? 'these ' + selectedServiceLevels.length + ' records?' : 'this record?'}}
+                </div>
+            </div>
+        </div>
+        <!-- End body content -->
+
+        <!-- Begin action footer content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-action-footer">
+                    <button type="button" (click)="closeDialog()" pRipple class="cust-btn-outlined" style="width:200px">Cancel</button>
+                    <button type="submit" (click)="deleteRecord()" *ngIf="isDeleteConfirm" pRipple class="cust-btn" style="width:200px">Delete</button>
+                    <button type="submit" (click)="deleteAllRecords()" *ngIf="isDeleteAllConfirm" pRipple class="cust-btn" style="width:200px">Delete</button>
+                </div>
+            </div>
+        </div>
+        <!-- End action footer content -->
+    </div>
+    <!-- End delete confirmation content -->
+</p-dialog>
+<!-- End create servel dialog -->
+</div>

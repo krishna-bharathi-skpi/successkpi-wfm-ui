@@ -1,0 +1,513 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="999999"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header" (click)="opFilter.hide();">
+        <div class="col-md-6">
+            <h2 class="title">{{global.language?.wfm?.forecast?.list?.title}}</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <button type="button" routerLink="/wfm/forecast/create" class="cust-btn">{{global.language?.wfm?.forecast?.list?.createNewForecastBtn}}</button>
+        </div>
+    </div>
+<!-- End top header -->
+
+<!-- Begin content header -->
+<div class="row content-header" (click)="opFilter.hide();">
+    <div class="col-12">
+        <h4>Manage Your Forecasts</h4>
+        <span>Select, edit, delete your full list of forecasts below</span>
+        <!-- <span>{{global.language?.wfm?.forecast?.list?.subTitle}}</span> -->
+    </div>
+</div>
+<!-- End content header -->
+
+<div class="row custom-row">
+    <div class="col-md-5" (click)="opFilter.hide();">
+        <button type="button" class="cust-btn-x-sm cust-btn-danger" (click)="deleteSelectedForecasts()" [disabled]="!selectedForecasts || !selectedForecasts.length" *ngIf="global.rolePermissions.work.forecasting.isViewEdit == true"><i class="fa fa-trash-o"></i> {{global.language?.wfm?.deleteBtn}}</button>
+    </div>
+    <!-- <div class="col-md-2 text-right">
+        <button type="button" class="cust-btn-x-sm" (click)="clearFilters(dt)"><i class="fa fa-filter"></i> {{global.language?.wfm?.clearFilters}}</button>
+    </div> -->
+    <div class="col-md-4 text-right">
+        <button type="button" (click)="clearFilters(dt)" class="cust-btn-x-sm" style="margin-right:15px;"><i class="fa fa-filter"></i> {{global.language?.wfm?.clearFilters}}</button>
+        <div class="btn-group" dropdown container="body">
+            <span (click)="opFilter.toggle($event)" class="font center-align" style="font-size:0.87rem; cursor:pointer;"><strong>FILTER BY</strong>
+                &nbsp;<i class="pi pi-fw pi-angle-down filter-indicator"></i></span>
+                <p-overlayPanel #opFilter appendTo="body" [baseZIndex]="1021" styleClass="cust-overlay-panel filter-op" [dismissable]="false" [showCloseIcon]="false" [style]="{width: 'auto'}">
+                    <div class="row filter-widget">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-12 filter-header">
+                                    <h5>Filters</h5>
+                                    <i class="pi pi-fw pi-times-circle close advance-filter-close-btn" (click)="clearFilters(dt);"></i>
+                                </div>
+                            </div>
+                            <hr class="solid" />
+                            <div class="row filter-action">
+                                <div class="col-12 text-center">
+                                    <button type="button" (click)="clearFilters(dt);" class="cust-btn-outlined-sm">Clear All</button>
+                                    <button type="button" (click)="applySearch();" class="cust-btn-sm">Search</button>
+                                </div>
+                            </div>
+                            <div class="row filter-content">
+                                <div class="col-12">
+                                    <div class="cust-accordion" id="filterAccordion">
+                                        <div class="item">
+                                            <div class="item-header" id="headingOne">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                        Forecast Name
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <input type="text" placeholder="Search" class="form-control" [(ngModel)]="params.name"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="item-header" id="headingTwo">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        Date Range
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div class="col-12">
+                                                        <img src="../assets/img/microinteraction/calendar.svg" class="cust-calendar-img" style="top: 10px;" />
+                                                        <p-calendar
+                                                            [(ngModel)]="intervalStart"
+                                                            (onSelect)="onChangeStartDate($event)"
+                                                            (onClearClick)="onChangeStartDate('')"
+                                                            [showButtonBar]="true"
+                                                            styleClass="filter-calendar"
+                                                            placeholder="From Date"
+                                                            [readonlyInput]="true"
+                                                            dateFormat="mm/dd/yy"
+                                                            appendTo="body"
+                                                            [baseZIndex]="1022"
+                                                            [ngClass]="{'is-invalid': (isSearchApplied && !intervalStart && intervalEnd)}"
+                                                        ></p-calendar>
+                                                        <div *ngIf="isSearchApplied" style="margin-top:-10px; margin-bottom:7px;">
+                                                            <small *ngIf="isSearchApplied && !intervalStart && intervalEnd" class="errormsg-topic">Select start date </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <img src="../assets/img/microinteraction/calendar.svg" class="cust-calendar-img" style="top: 10px;" />
+                                                        <p-calendar
+                                                            [(ngModel)]="intervalEnd"
+                                                            (onSelect)="onChangeEndDate($event)"
+                                                            (onClearClick)="onChangeEndDate('')"
+                                                            [minDate]="intervalStart"
+                                                            [showButtonBar]="true"
+                                                            styleClass="filter-calendar"
+                                                            placeholder="To Date"
+                                                            [readonlyInput]="true"
+                                                            dateFormat="mm/dd/yy"
+                                                            appendTo="body"
+                                                            [baseZIndex]="1022"
+                                                        ></p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="item-header" id="headingThree">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        Status
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div *ngIf="statuses.length > 0">
+                                                        <p-listbox 
+                                                            [options]="statuses" 
+                                                            [(ngModel)]="selectedStatus" 
+                                                            [metaKeySelection]="false" 
+                                                            [checkbox]="true" 
+                                                            [filter]="true" 
+                                                            [multiple]="true" 
+                                                            optionLabel="label" 
+                                                            [listStyle]="{'max-height':'165px'}" 
+                                                            [style]="{'width':'auto'}"
+                                                            styleClass="filter-listbox"
+                                                            >
+                                                        </p-listbox> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="item-header" id="headingFour">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                                        Updated By
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <input type="text" placeholder="Search" class="form-control"  [(ngModel)]="params.updateBy"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="item" *ngIf="col.updatedTimestamp?.length">
+                                            <div class="item-header" id="headingFive">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFour">
+                                                        Updated Date
+                                                        <i class="fa fa-angle-down"></i>
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#filterAccordion">
+                                                <div class="body">
+                                                    <div style="padding:5px 10px">
+                                                        <p-calendar
+                                                            (onSelect)="onSelectUpdatedDate($event)"
+                                                            (onClearClick)="onSelectUpdatedDate('')"
+                                                            [showButtonBar]="true"
+                                                            styleClass="advance-filter-ui-calendar"
+                                                            placeholder="Search"
+                                                            [readonlyInput]="true"
+                                                            dateFormat="mm/dd/yy"
+                                                            appendTo="body"
+                                                            [baseZIndex]="1022"
+                                                        ></p-calendar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-overlayPanel> 
+                <div class="tot-count-disp">{{totalRecords}}</div>                       
+        </div>
+    </div>
+    <div class="col-md-3" (click)="opFilter.hide();">
+        <div class="has-search">
+            <span class="fa fa-search form-control-feedback"></span>
+            <input type="text" (input)="dt.filterGlobal($event.target.value, 'startsWith')" class="form-control" placeholder="{{global.language?.wfm?.forecast?.list?.searchPlaceholderText}}" />
+            <span class="text-muted" style="position: absolute;">To search date, the format should be MM/DD/YYYY</span>
+        </div>
+    </div>
+</div>
+
+<div style="padding: 32px;" (click)="opFilter.hide();">
+    <!-- Begin body content -->
+    <div class="row">
+        <div class="col-lg-12 cust-table">
+            <!-- Begin PrimeNG datatable -->
+            <p-table
+                #dt
+                dataKey="staffingRequestId"
+                [value]="forecasts"
+                [lazy]="true" (onLazyLoad)="loadForecasts($event)"
+                styleClass="p-datatable-customers"
+                [rowHover]="true"
+                [showCurrentPageReport]="true"
+                [paginator]="false"
+                [filterDelay]="1200"
+                [globalFilterFields]="['staffingRequestName', 'startDate', 'endDate', 'status', 'updatedTimestamp', 'updatedBy']"
+                [(selection)]="selectedForecasts"
+                [loading]="loading"
+            >
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th style="width: 3rem;">
+                            <p-tableHeaderCheckbox id="frcst_select_all_chkbox" class="cust-chkbox select-all-chkbox"></p-tableHeaderCheckbox>
+                            <!-- <input type="checkbox" [checked]="isAllCheckBoxChecked()" (change)="checkAllCheckBox($event)"> -->
+                        </th>
+                        <th pSortableColumn="staffingRequestName">{{global.language?.wfm?.forecast?.list?.table?.header?.name}} <p-sortIcon field="staffingRequestName"> </p-sortIcon></th>
+                        <th pSortableColumn="startDate" *ngIf="col.startDate">{{global.language?.wfm?.forecast?.list?.table?.header?.startDate}} <p-sortIcon field="startDate"></p-sortIcon></th>
+                        <th pSortableColumn="endDate" *ngIf="col.endDate">
+                            {{global.language?.wfm?.forecast?.list?.table?.header?.endDate}}
+                            <p-sortIcon field="endDate"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="updatedTimestamp" *ngIf="col.updatedTimestamp">Updated On <p-sortIcon field="updatedTimestamp"> </p-sortIcon></th>
+                        <th pSortableColumn="updatedBy" *ngIf="col.updatedBy">Updated By <p-sortIcon field="updatedBy"> </p-sortIcon></th>
+                        <th pSortableColumn="status" *ngIf="col.status" style="width:165px;">
+                            {{global.language?.wfm?.forecast?.list?.table?.header?.status}}
+                            <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th class="text-center">
+                            <i (click)="op.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                            <p-overlayPanel #op appendTo="body" styleClass="cust-overlay-panel" [style]="{width: 'auto'}">
+                                <div>
+                                    <ul class="list-group">
+                                        <li *ngFor="let col of cols" class="list-group-item" (click)="onChangeColumn(col.field, col.enabled)">
+                                            <div class="row">
+                                                <div class="col-10" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-right:2px;">{{col.header}}</div>
+                                                <div class="col-2" [ngStyle]="{'color': col.enabled ? '#98DFAF' : '#ffffff' }" style="padding-left:0px;"><i *ngIf="col.enabled" class="fa fa-check"></i></div>
+                                            </div>
+                                        </li>
+                                      </ul>
+                                </div>
+                            </p-overlayPanel>
+                        </th>
+                    </tr>
+                    <!-- <tr>
+                        <th></th>
+                        <th>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="dt.filter($event.target.value, 'staffingRequestName', 'startsWith')"
+                                placeholder="{{global.language?.wfm?.forecast?.list?.table?.filterPlaceHolder?.name}}"
+                                class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                            />
+                        </th>
+                        <th *ngIf="col.startDate">
+                            <p-calendar
+                                (onSelect)="onDateSelect($event,'startDate')"
+                                (onClearClick)="dt.filter('', 'startDate', 'equals')"
+                                [showButtonBar]="true"
+                                styleClass="p-column-filter"
+                                placeholder="{{global.language?.wfm?.forecast?.list?.table?.filterPlaceHolder?.startDate}}"
+                                [readonlyInput]="true"
+                                dateFormat="mm/dd/yy"
+                                appendTo="body"
+                                [baseZIndex]="1022"
+                            ></p-calendar>
+                        </th>
+                        <th *ngIf="col.endDate">
+                            <p-calendar
+                                (onSelect)="onDateSelect($event,'endDate')"
+                                (onClearClick)="dt.filter('', 'endDate', 'equals')"
+                                [showButtonBar]="true"
+                                styleClass="p-column-filter"
+                                placeholder="{{global.language?.wfm?.forecast?.list?.table?.filterPlaceHolder?.endDate}}"
+                                [readonlyInput]="true"
+                                dateFormat="mm/dd/yy"
+                                appendTo="body"
+                                [baseZIndex]="1022"
+                            ></p-calendar>
+                        </th>
+                        <th *ngIf="col.updatedTimestamp">
+                            <p-calendar
+                                (onSelect)="onDateSelect($event,'updatedTimestamp')"
+                                (onClearClick)="dt.filter('', 'updatedTimestamp', 'equals')"
+                                [showButtonBar]="true"
+                                styleClass="p-column-filter"
+                                placeholder="Search"
+                                [readonlyInput]="true"
+                                dateFormat="mm/dd/yy"
+                                appendTo="body"
+                                [baseZIndex]="1022"
+                            ></p-calendar>
+                        </th>
+                        <th *ngIf="col.updatedBy">
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="dt.filter($event.target.value, 'updatedBy', 'startsWith')"
+                                placeholder="Search"
+                                class="p-column-filter ui-inputtext ui-corner-all ui-state-default ui-widget"
+                            />
+                        </th>
+                        <th *ngIf="col.status">
+                            <p-dropdown
+                                [options]="statuses"
+                                dataKey="value"
+                                optionValue="value"
+                                optionLabel="label"
+                                (onChange)="dt.filter($event.value, 'status', 'equals')"
+                                [(ngModel)]="status"
+                                styleClass="p-column-filter"
+                                placeholder="{{global.language?.wfm?.forecast?.list?.table?.filterPlaceHolder?.status}}"
+                                [showClear]="false"
+                                appendTo="body"
+                            >
+                                <ng-template let-option pTemplate="item">
+                                    <span>{{option.label}}</span>
+                                </ng-template>
+                            </p-dropdown>
+                        </th>
+                        <th></th>
+                    </tr> -->
+                </ng-template>
+                <ng-template pTemplate="body" let-forecast let-i="rowIndex">
+                    <tr [pSelectableRow]="forecast">
+                        <td>
+                            <p-tableCheckbox [value]="forecast" class="cust-chkbox"></p-tableCheckbox>
+                            <!-- <input type="checkbox" [id]="forecast.forecastRequestId" value="{{forecast.forecastRequestId}}" [(ngModel)]="forecasts[i].checked"> -->
+                        </td>
+                        <td>
+                            <a (click)="manageForecast(forecast, 'fcst_data');" *ngIf="forecast.status == 'complete' || forecast.status == 'published'" [tooltip]="(forecast.status == 'published') ? 'Click here to view your Forecast Data' : 'Click here to view or edit your Forecast Data'" class="col-link capitalize">{{forecast.staffingRequestName}}</a>
+                            <a *ngIf="forecast.status == 'failure' || forecast.status == 'in-progress' || forecast.status == 'draft'" tooltip="Forecast data not available" style="cursor: default;" class="col-link capitalize">{{forecast.staffingRequestName}}</a>
+                        </td>
+                        <td *ngIf="col.startDate">
+                            {{forecast.startDate}}
+                        </td>
+                        <td *ngIf="col.endDate">
+                            {{forecast.endDate}}
+                        </td>
+                        <td *ngIf="col.updatedTimestamp">
+                            {{forecast.updatedTimestamp}}
+                        </td>
+                        <td *ngIf="col.updatedBy">
+                            {{forecast.updatedBy}}
+                        </td>
+                        <td *ngIf="col.status" style="text-transform: capitalize;">
+                            <span class="p-column-title" *ngIf="forecast.status == 'failure'" [tooltip]="forecast.message" placement="top">{{forecast.status}}</span>
+                            <span *ngIf="forecast.status !== 'failure'">{{forecast.status}}</span>
+                        </td>
+                        <td class="text-center">
+                            <i (click)="opOptions.toggle($event)" class="pi pi-ellipsis-h font-1xl"></i>
+                            <p-overlayPanel #opOptions appendTo="body" styleClass="cust-overlay-panel" [dismissable]="true" [style]="{width: 'auto'}">
+                                <div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'view');" (click)="opOptions.hide();"><i class="icon-eye icons"></i>View Forecast Definition</li>
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'regenerate');" (click)="opOptions.hide();" *ngIf="global.rolePermissions.work.forecasting.isViewEdit == true && forecast.status == 'complete'"><i class="fa fa-gear"></i>Regenerate Forecast</li>
+                                        <li class="list-group-item" (click)="confirmPublish(forecast);" (click)="opOptions.hide();" *ngIf="global.rolePermissions.work.forecasting.isViewEdit == true && forecast.status == 'complete'"><i class="fa fa-upload"></i>Publish Forecast</li>
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'generate');" (click)="opOptions.hide();" *ngIf="global.rolePermissions.work.forecasting.isViewEdit == true && forecast.status == 'draft'"><i class="fa fa-gear"></i>Generate Forecast</li>
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'edit');" (click)="opOptions.hide();" *ngIf="forecast.status == 'draft'"><i class="fa fa-pencil"></i>Edit Forecast Definition</li>
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'fcst_data');" (click)="opOptions.hide();" *ngIf="forecast.status == 'complete'"><i class="fa fa-pencil"></i>Edit Forecast Data</li>
+                                        <li class="list-group-item" (click)="manageForecast(forecast,'delete')" (click)="opOptions.hide();"  *ngIf="global.rolePermissions.work.forecasting.isViewEdit == true" style="color: #FC5130 !important"><i class="fa fa-trash-o" style="color: #FC5130 !important"></i>Delete</li>
+                                      </ul>
+                                </div>
+                            </p-overlayPanel>        
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <!-- End PrimeNG datatable -->
+            <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords" dropdownAppendTo="body"></p-paginator>
+        </div>
+        <!--/.col-->
+    </div>
+    <!--/.row-->
+    <!-- End body content -->
+</div>
+
+<!-- Begin confirm dialog -->
+<!-- <p-confirmDialog class="cust-dialog"></p-confirmDialog> -->
+<!-- End confirm dialog -->
+
+<!-- Begin forecast detail dialog -->
+<p-dialog class="cust-dialog" [(visible)]="display" [modal]="true" styleClass="cust-dialog" [baseZIndex]="10000">
+    <p-header>
+        {{(isViewDetail) ? 'Forecast Definition' : 'Confirm' }}
+    </p-header>
+
+    <!-- Begin forecast detail content -->
+    <div *ngIf="forecast && isViewDetail && !isPublishConfirm">
+        <div class="row" style="padding-top: 15px; padding-bottom: 15px;">
+            <div class="col-lg-6">
+                <div class="card-body">
+                    <div class="view-content">
+                        <div><span class="text-key">Name: </span><span class="text-val capitalize">{{forecast.staffingRequestName}}</span></div>
+                        <div><span class="text-key">Status: </span><span class="text-val capitalize">{{forecast.status}}</span></div>
+                        <!-- <div><span class="text-key">Term: </span><span class="text-val">{{forecast.term}}</span></div> -->
+                        <div><span class="text-key">Media Type: </span><span class="text-val capitalize">{{forecast.channel}}</span></div>
+                        <div><span class="text-key">Service Quality Objective: </span><span class="text-val capitalize">{{forecast.serviceLevelId ? serviceLevelName : '-'}}</span></div>
+                        <div><span class="text-key">Shrinkage: </span><span class="text-val">{{forecast.shrinkage ? forecast.shrinkage + '%' : '-'}}</span></div>
+                        <div><span class="text-key">Occupancy: </span><span class="text-val">{{forecast.occupancy ? forecast.occupancy + '%' : '-'}}</span></div>
+                    </div>
+                </div>
+            </div>
+            <!--/.col-->
+            <div class="col-lg-6">
+                <div class="card-body">
+                    <div class="view-content">
+                        <div><span class="text-key">Start Date: </span><span class="text-val">{{forecast.startDate + ' 12:00:00'}}</span></div>
+                        <div><span class="text-key">End Date: </span><span class="text-val">{{forecast.endDate + ' 23:59:59'}}</span></div>
+                        <div><span class="text-key">Created On: </span><span class="text-val">{{forecast.createdTimestamp}}</span></div>
+                        <div><span class="text-key">Created By: </span><span class="text-val lowercase">{{forecast.createdBy}}</span></div>
+                        <div><span class="text-key">Updated On: </span><span class="text-val">{{forecast.updatedTimestamp}}</span></div>
+                        <div><span class="text-key">Updated By: </span><span class="text-val lowercase">{{forecast.updatedBy}}</span></div>
+                    </div>
+                </div>
+            </div>
+            <!--/.col-->
+        </div>
+        <div class="row" *ngIf="forecast.staffingRequestDescription" style="padding-bottom: 15px;">
+            <div class="col-12">
+                <div class="card-body">
+                    <div>
+                        <span class="text-key">Description: </span>
+                        <div class="desc"><span class="capitalize">{{forecast.staffingRequestDescription}}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End forecast detail content -->
+
+    <!-- Begin publish confirmation content -->
+    <div *ngIf="isPublishConfirm">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-body-content confirm-text">
+                    Are you sure want to publish the forecast: {{staffingRequestName}}?
+                </div>
+            </div>
+        </div>
+        <!-- End body content -->
+
+        <!-- Begin action footer content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-action-footer">
+                    <button type="button" (click)="closeDialog()" pRipple class="cust-btn-outlined" style="width:200px">Cancel</button>
+                    <button type="submit" (click)="publishForecast()" pRipple class="cust-btn" style="width:200px">Publish</button>
+                </div>
+            </div>
+        </div>
+        <!-- End action footer content -->
+    </div>
+    <!-- End publish confirmation content -->
+
+    <!-- Begin delete confirmation content -->
+    <div *ngIf="!isViewDetail && !isPublishConfirm">
+        <!-- Begin body content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-body-content confirm-text" *ngIf="isDeleteConfirm">
+                    Do you really want to delete the record: {{staffingRequestName}}?
+                </div>
+                <div class="dialog-body-content confirm-text" *ngIf="isDeleteAllConfirm">
+                    Do you really want to delete {{selectedForecasts.length > 1 ? 'these ' + selectedForecasts.length + ' records?' : 'this record?'}}
+                </div>
+            </div>
+        </div>
+        <!-- End body content -->
+
+        <!-- Begin action footer content -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dialog-action-footer">
+                    <button type="button" (click)="closeDialog()" pRipple class="cust-btn-outlined" style="width:200px">Cancel</button>
+                    <button type="submit" (click)="deleteRecord()" *ngIf="isDeleteConfirm" pRipple class="cust-btn" style="width:200px">Delete</button>
+                    <button type="submit" (click)="deleteAllRecords()" *ngIf="isDeleteAllConfirm" pRipple class="cust-btn" style="width:200px">Delete</button>
+                </div>
+            </div>
+        </div>
+        <!-- End action footer content -->
+    </div>
+    <!-- End delete confirmation content -->
+</p-dialog>
+<!-- End forecast detail dialog -->
+</div>

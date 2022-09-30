@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="8px" height="14px" viewBox="0 0 8 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>back</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Design-System-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Iconography" transform="translate(-901.000000, -646.000000)">
+            <g id="back" transform="translate(895.000000, 643.004505)">
+                <g>
+                    <rect id="Rectangle" fill-opacity="0" fill="#FFFFFF" x="0" y="0" width="20" height="20"></rect>
+                    <g id="chevron-back" transform="translate(6.000000, 3.000000)" fill="#0D4DCE" fill-rule="nonzero">
+                        <path d="M7.26149099,13.8706892 L7.88578378,13.2463964 C8.03354054,13.0986396 8.03354054,12.8590631 7.88578378,12.7112748 L2.18806757,7 L7.88578378,1.28869369 C8.03354054,1.14093694 8.03354054,0.90136036 7.88578378,0.753572072 L7.26149099,0.129279279 C7.11373423,-0.0184774775 6.87415766,-0.0184774775 6.72636937,0.129279279 L0.123225225,6.73245495 C-0.0245315315,6.88021171 -0.0245315315,7.11978829 0.123225225,7.26757658 L6.72636937,13.8707207 C6.87415766,14.0184775 7.11373423,14.0184775 7.26149099,13.8706892 Z" id="Path"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

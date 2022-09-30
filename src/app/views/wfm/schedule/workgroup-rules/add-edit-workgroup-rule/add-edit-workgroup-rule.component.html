@@ -1,0 +1,276 @@
+<div class="wfm">
+    <p-toast [baseZIndex]="1021"></p-toast>
+    <!-- Begin top header -->
+    <div class="row top-header">
+        <div class="col-md-6">
+            <h2 class="title">{{ isAddMode ? 'Create ' : 'Update '}} Workgroup Rule</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <button type="button" pRipple (click)="cancelWorkgroupRule()" class="cust-btn-outlined">Cancel</button>
+            <!-- <button type="submit" pRipple (click)="submitWorkgroupRule()" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit">Save</button> -->
+            <button type="submit" pRipple (click)="submitWorkgroupRule()" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit">Publish</button>
+        </div>
+    </div>
+    <!-- End top header -->
+
+    <!-- Begin body content -->
+    <!-- <form name="workgroupRuleForm" [formGroup]="workgroupRuleForm" novalidate> -->
+        <div style="padding: 0px 32px; min-height: calc(100vh - 246px);">
+            <!-- Begin wfm config table -->
+            <!-- <div class="row" id="wfm_configs_table" *ngIf="wfmConfigs?.length > 1" style="padding-top: 15px;">
+                <div class="col-12 cust-table">
+                    <h5 id="wfm_config_header" *ngIf="isAddMode" style="font-weight: 600; padding-bottom: 5px;">{{wfmConfigs?.length > 1 ? 'Choose your Configuration' : 'Configuration'}}</h5>
+                    <h5 id="wfm_config_header" *ngIf="!isAddMode" style="font-weight: 600; padding-bottom: 5px;">Selected Configuration</h5>
+                    <table class="table wfm-table">
+                        <thead>
+                            <tr>
+                                <th *ngIf="wfmConfigs?.length > 1"></th>
+                                <th>Platform</th>
+                                <th>CX Center</th>
+                                <th>Forecast Type</th>
+                                <th>Forecasting Interval</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let config of wfmConfigs">
+                                <td *ngIf="wfmConfigs?.length > 1">
+                                    <input type="radio" [id]="config.wfmConfigId" value="{{config.wfmConfigId}}" (change)="onChangeConfig(config)" name="configOptions" />
+                                </td>
+                                <td>{{config.platformName}}</td>
+                                <td>{{config.cxCenterName}}</td>
+                                <td>{{config.term}}</td>
+                                <td>{{config.interval}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <!-- End wfm config table -->
+            <!-- <hr class="solid" *ngIf="wfmConfigs?.length > 1" /> -->
+            <div class="row" id="service_level_form_group">
+                <div class="col-lg-12">
+                    <!-- Begin rule type and category -->
+                    <div class="row">
+                        <div class="col-12 section-header">
+                            <h5>{{(isAddMode) ? '1. Select the Rule Type and Category and Unit' : 'Selected Options'}}</h5>
+                            <!-- <p>Description for Naming the Rule</p> -->
+                        </div>
+                    </div>
+                    <!-- <div class="row mb-20">
+                        <div class="col-md-3">
+                            <div class="form-group required">
+                                <label class="control-label">Name Your Workgroup Rule</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="workgroupRuleName"
+                                    placeholder="Workgroup Rule Name"
+                                    [ngClass]="{'is-invalid': (isSubmitted || workgroupRuleForm.controls['workgroupRuleName'].touched) && workgroupRuleForm.controls['workgroupRuleName'].errors}"
+                                />
+                                <div *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleName'].invalid && workgroupRuleForm.controls['workgroupRuleName'].dirty || workgroupRuleForm.controls['workgroupRuleName'].errors">
+                                    <small *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleName'].errors?.required" class="errormsg-topic">This field is required. </small>
+                                    <small *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleName'].errors?.maxlength" class="errormsg-topic">Maximum 50 characters only allowed. </small>
+                                    <small *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleName'].errors?.pattern" class="errormsg-topic">
+                                        Workgroup Rule name must contain only alphabets, numbers and the following special characters: hypen & underscore.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Description</label>
+                                <textarea
+                                    id="workgroupRuleDescription"
+                                    name="workgroupRuleDescription"
+                                    formControlName="workgroupRuleDescription"
+                                    [(ngModel)]="description"
+                                    maxlength="400"
+                                    rows="4"
+                                    class="form-control"
+                                    placeholder="Type your content here.."
+                                    [ngClass]="{'is-invalid': (isSubmitted || workgroupRuleForm.controls['workgroupRuleDescription'].touched) && workgroupRuleForm.controls['workgroupRuleDescription'].errors}"
+                                ></textarea>
+                                <small class="form-text text-muted">characters remaining: <code>{{ (description) ? 400 - description.length : 400 - 0 }}</code>/<code>400</code></small>
+                                <div
+                                    *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleDescription'].invalid && workgroupRuleForm.controls['workgroupRuleDescription'].dirty || workgroupRuleForm.controls['workgroupRuleDescription'].errors"
+                                >
+                                    <small *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleDescription'].errors?.maxlength" class="errormsg-topic">Maximum 400 characters only allowed. </small>
+                                    <small *ngIf="isSubmitted && workgroupRuleForm.controls['workgroupRuleDescription'].errors?.pattern" class="errormsg-topic">Description must contain only alphabets, numbers and the following special characters: comma, dot, hypen & underscore.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- End rule type and category -->
+                    <div class="row mb-20">
+                        <div class="col-md-3">
+                            <label class="control-label">Rule Type</label>
+                            <div *ngIf="isAddMode">
+                                <p-dropdown
+                                    [options]="ruleTypes"
+                                    dataKey="Key"
+                                    optionValue="Key"
+                                    optionLabel="Value"
+                                    [filter]="false"
+                                    filterBy="Value"
+                                    [showClear]="false"
+                                    class="cust-p-dropdown"
+                                    placeholder="Select Rule Type"
+                                    (onChange)="onChangeRuleType($event)"
+                                    appendTo="body"
+                                >
+                                </p-dropdown>
+                                <div *ngIf="isSubmitted && !rulesModel.type">
+                                    <small class="errormsg-topic">Select Rule Type</small>
+                                </div> 
+                            </div>
+                            <div class="input-box vertical-align input-disabled" *ngIf="!isAddMode">
+                                {{(rulesModel.type ? rulesModel.type : 'Select Rule Type')}}
+                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                            </div>                  
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">Rule Category</label>
+                            <div *ngIf="isAddMode">
+                                <p-dropdown
+                                    [options]="ruleCategories"
+                                    dataKey="Key"
+                                    optionValue="Key"
+                                    optionLabel="Value"
+                                    [filter]="false"
+                                    filterBy="Value"
+                                    [showClear]="false"
+                                    class="cust-p-dropdown"
+                                    placeholder="Select Rule Category"
+                                    (onChange)="onChangeRuleCategory($event)"
+                                    appendTo="body"
+                                >
+                                </p-dropdown>
+                                <div *ngIf="isSubmitted && !rulesModel.category">
+                                    <small class="errormsg-topic">Select Rule Category</small>
+                                </div> 
+                            </div>  
+                            <div class="input-box vertical-align input-disabled" *ngIf="!isAddMode">
+                                {{(rulesModel.category ? rulesModel.category : 'Select Rule Category')}}
+                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                            </div>                
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label">Rule Unit</label>
+                            <div *ngIf="isAddMode">
+                                <p-dropdown
+                                    [options]="ruleUnits"
+                                    dataKey="Key"
+                                    optionValue="Key"
+                                    optionLabel="Value"
+                                    [filter]="false"
+                                    filterBy="Value"
+                                    [showClear]="false"
+                                    class="cust-p-dropdown"
+                                    placeholder="Select Rule Unit"
+                                    (onChange)="onChangeRuleUnit($event)"
+                                    appendTo="body"
+                                >
+                                </p-dropdown>
+                                <div *ngIf="isSubmitted && !rulesModel.unit">
+                                    <small class="errormsg-topic">Select Rule Unit</small>
+                                </div> 
+                            </div>
+                            <div class="input-box vertical-align input-disabled" *ngIf="!isAddMode">
+                                {{(rulesModel.unit ? rulesModel.unit : 'Select Rule Unit')}}
+                                <i class="pi pi-fw pi-angle-down" style="position: absolute; right: 15px; font-size: 1.5rem;"></i>
+                            </div>                  
+                        </div>
+                    </div>
+                </div>
+                <!--/.col-->
+            </div>
+            <!--/.row-->
+            <hr class="solid" *ngIf="rules?.length"/>
+            <!-- Begin rules table -->
+            <div class="row mb-20" *ngIf="rules?.length">
+                <div class="col-9 section-header">
+                    <h5>2. You can modify the values of workgroup rules here.</h5>
+                    <!-- <p>Description for Naming the Rule</p> -->
+                </div>
+                <!-- <div class="col-3 text-right">
+                    <button (click)="enableEditMode()" *ngIf="global.rolePermissions.work.schedule.isViewEdit && !isEditModeEnabled" type="button" class="cust-btn-x-sm" style="width:75px;font-weight:600;">Edit</button>
+                    <button (click)="disableEditMode()" *ngIf="global.rolePermissions.work.schedule.isViewEdit && isEditModeEnabled" type="button" class="cust-btn-x-sm" style="width:75px;font-weight:600;">Cancel</button>
+                </div> -->
+                <div class="col-lg-12 cust-table">
+                    <!-- Begin PrimeNG datatable -->
+                    <p-table
+                        #dt
+                        dataKey="ruleId"
+                        [value]="rules"
+                        styleClass="p-datatable-customers"
+                        [rowHover]="true"
+                        [showCurrentPageReport]="true"
+                        [filterDelay]="1200"
+                        [globalFilterFields]="['workgroup', 'startDate', 'endDate', 'status', 'updatedTimestamp', 'updatedBy']"
+                        [loading]="loading"
+                    >
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th>Rule Name</th>
+                            <th>Rule Type</th>
+                            <th>Unit</th>
+                            <th>Boundary</th>
+                            <th>Value</th>
+                            <th>Is Mandatory</th>
+                        </tr>
+                    </ng-template>
+                        <ng-template pTemplate="body" let-rule let-i="rowIndex">
+                            <tr [pEditableRow]="rule">
+                                <td>
+                                    {{rule.ruleName}}
+                                </td>
+                                <td>
+                                    {{rule.ruleType}}
+                                </td>
+                                <td>
+                                    {{rule.ruleUnit}}
+                                </td>
+                                <td>
+                                    {{rule.ruleBoundary}}
+                                </td>
+                                <td>
+                                    <div>
+                                        <input pInputText type="text" (input)="onChangeInput(rule, ri)" [(ngModel)]="rule.ruleDefaultValue" required pKeyFilter="int" maxlength="5" class="form-control" style="width: 70px;" 
+                                        [ngClass]="{'is-invalid': rule.ruleDefaultValue && rule.ruleDefaultValue < 1 }" />
+                                        <!-- <input pInputText type="text" [(ngModel)]="rule.ruleDefaultValue" required pKeyFilter="int" maxlength="5" class="form-control" style="width: 70px;" /> -->
+                                        <!-- <small *ngIf="isRulesSubmitted && !rule.ruleDefaultValue" class="errormsg-topic">this field is required</small> -->
+                                    </div>
+                                    <!-- <div *ngIf="!isEditModeEnabled">
+                                        {{rule.ruleDefaultValue}}
+                                    </div> -->
+                                </td>
+                                <td>
+                                    <p-checkbox [(ngModel)]="rules[i].isMandatory" [binary]="true"></p-checkbox>
+                                    <!-- <input type="checkbox" [id]="rule.ruleId" value="{{rule.ruleId}}" [(ngModel)]="rules[i].isMandatory"> -->
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                            <tr>
+                                <td *ngIf="!isLoading" colspan="8" style="text-align: center;">No Record(s) found!</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <!-- End PrimeNG datatable -->
+                    <!-- <p-paginator #p (onPageChange)="paginate($event)" [pageLinkSize]="5" [rows]="pageSize" [showCurrentPageReport] = "true" currentPageReportTemplate="Showing {{first}} to {{last}} of {{totalRecords}} entries" [rowsPerPageOptions]="[10,25,50,100]" [totalRecords]="totalRecords" dropdownAppendTo="body"></p-paginator> -->
+                </div>
+                <!--/.col-->
+            </div>
+            <!-- End rules table -->
+        </div>
+        <div class="row action-footer">
+            <div class="col-12 text-right">
+                <button pRipple type="button" (click)="cancelWorkgroupRule()" class="cust-btn-outlined">Cancel</button>
+                <!-- <button pRipple type="submit" (click)="submitWorkgroupRule()" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit">Save</button> -->
+                <button pRipple type="submit" (click)="submitWorkgroupRule()" class="cust-btn" *ngIf="global.rolePermissions.work.schedule.isViewEdit">Publish</button>
+            </div>
+        </div>
+    <!-- </form> -->
+    <!-- End body content -->
+</div>

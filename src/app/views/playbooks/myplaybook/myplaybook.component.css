@@ -1,0 +1,18 @@
+.and-value{
+    color: #0D4DCE;
+    font-weight: 500;
+    padding: 8px 0;
+}
+.metric-number-type{
+    width: 70px;
+    padding: 0 8px;
+}
+
+.clock-icon{
+    position: relative;
+    right: 20px;
+    z-index: 999;
+    font-size: 18px;
+    top: 8px;
+    color: #0D4DCE;
+}

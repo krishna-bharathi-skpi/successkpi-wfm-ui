@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="7px" viewBox="0 0 10 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>chevron_dropdown</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Dropdown" transform="translate(-230.000000, -16.000000)" fill="#3A3E50">
+            <path d="M235.315223,22.1199838 L239.869275,17.5906241 C240.043575,17.4172691 240.043575,17.1369504 239.869275,16.9635955 L239.031151,16.1300162 C238.856851,15.9566613 238.575005,15.9566613 238.400705,16.1300162 L235,19.5122824 L231.599295,16.1300162 C231.424995,15.9566613 231.143149,15.9566613 230.968849,16.1300162 L230.130725,16.9635955 C229.956425,17.1369504 229.956425,17.4172691 230.130725,17.5906241 L234.684777,22.1199838 C234.859077,22.2933387 235.140923,22.2933387 235.315223,22.1199838 Z" id="chevron_dropdown"></path>
+        </g>
+    </g>
+</svg>
